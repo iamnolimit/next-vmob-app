@@ -118,8 +118,6 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const mainMenus = [
     { label: 'Dashboard', href: '/dashboard', icon: '🏠' },
     { label: 'Obat',      href: '/obat',      icon: '💊' },
-    { label: 'Keuangan',  href: '/keuangan',  icon: '💰' },
-    { label: 'Forecast',  href: '/forecast',  icon: '📊' },
     { label: 'Customer',  href: '/customer',  icon: '👥' },
   ];
 

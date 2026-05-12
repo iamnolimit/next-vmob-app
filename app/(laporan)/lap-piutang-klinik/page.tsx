@@ -27,6 +27,7 @@ export default function LapPiutangKlinikPage() {
         { label: '30 Hari', value: 30 },
       ]}
       intervalTitle="Jatuh Tempo"
+      dateField="jatuhTempo"
     />
   );
 }

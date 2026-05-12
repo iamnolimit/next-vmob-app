@@ -22,6 +22,7 @@ export default function LapPenjualanObatPage() {
       searchFields={['noFaktur', 'pasien', 'dokter']}
       searchPlaceholder="No faktur / pasien / dokter"
       cabangOptions={cabangOptions}
+      dateField="tanggal"
     />
   );
 }

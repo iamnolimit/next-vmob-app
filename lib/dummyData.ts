@@ -296,171 +296,171 @@ export const customerChartData: Record<string, { name: string; loyalCustomer: nu
 // ---- LAPORAN REPORT TABLE DATA ----
 
 export const lapPenjualanObat = [
-  { no: 1, noFaktur: "PJ/2024/03/0001", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", total: 185000, tanggal: "23 Mar 2024" },
-  { no: 2, noFaktur: "PJ/2024/03/0002", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", total: 342000, tanggal: "23 Mar 2024" },
-  { no: 3, noFaktur: "PJ/2024/03/0003", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", total: 127500, tanggal: "23 Mar 2024" },
-  { no: 4, noFaktur: "PJ/2024/03/0004", pasien: "Rina Wulandari", dokter: "dr. Budi Santoso", total: 560000, tanggal: "22 Mar 2024" },
-  { no: 5, noFaktur: "PJ/2024/03/0005", pasien: "Hendra Gunawan", dokter: "dr. Dewi Lestari", total: 89500, tanggal: "22 Mar 2024" },
-  { no: 6, noFaktur: "PJ/2024/03/0006", pasien: "Yuli Astuti", dokter: "dr. Ahmad Rizki", total: 275000, tanggal: "22 Mar 2024" },
-  { no: 7, noFaktur: "PJ/2024/03/0007", pasien: "Doni Permana", dokter: "dr. Sri Mulyani", total: 145000, tanggal: "21 Mar 2024" },
-  { no: 8, noFaktur: "PJ/2024/03/0008", pasien: "Maya Sari", dokter: "dr. Budi Santoso", total: 420000, tanggal: "21 Mar 2024" },
-  { no: 9, noFaktur: "PJ/2024/03/0009", pasien: "Roni Susanto", dokter: "dr. Dewi Lestari", total: 63000, tanggal: "21 Mar 2024" },
-  { no: 10, noFaktur: "PJ/2024/03/0010", pasien: "Fitri Handayani", dokter: "dr. Ahmad Rizki", total: 312500, tanggal: "20 Mar 2024" },
+  { no: 1, noFaktur: "PJ/2026/05/0001", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", total: 185000, tanggal: "10 Mei 2026" },
+  { no: 2, noFaktur: "PJ/2026/05/0002", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", total: 342000, tanggal: "09 Mei 2026" },
+  { no: 3, noFaktur: "PJ/2026/05/0003", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", total: 127500, tanggal: "08 Mei 2026" },
+  { no: 4, noFaktur: "PJ/2026/05/0004", pasien: "Rina Wulandari", dokter: "dr. Budi Santoso", total: 560000, tanggal: "07 Mei 2026" },
+  { no: 5, noFaktur: "PJ/2026/05/0005", pasien: "Hendra Gunawan", dokter: "dr. Dewi Lestari", total: 89500, tanggal: "05 Mei 2026" },
+  { no: 6, noFaktur: "PJ/2026/05/0006", pasien: "Yuli Astuti", dokter: "dr. Ahmad Rizki", total: 275000, tanggal: "03 Mei 2026" },
+  { no: 7, noFaktur: "PJ/2026/04/0007", pasien: "Doni Permana", dokter: "dr. Sri Mulyani", total: 145000, tanggal: "25 Apr 2026" },
+  { no: 8, noFaktur: "PJ/2026/04/0008", pasien: "Maya Sari", dokter: "dr. Budi Santoso", total: 420000, tanggal: "20 Apr 2026" },
+  { no: 9, noFaktur: "PJ/2026/04/0009", pasien: "Roni Susanto", dokter: "dr. Dewi Lestari", total: 63000, tanggal: "15 Apr 2026" },
+  { no: 10, noFaktur: "PJ/2026/04/0010", pasien: "Fitri Handayani", dokter: "dr. Ahmad Rizki", total: 312500, tanggal: "10 Apr 2026" },
 ];
 
 export const lapRegistrasiPasien = [
-  { no: 1, tanggal: "23 Mar 2024", noRM: "RM-240001", pasien: "Ahmad Fauzi", alamat: "Jl. Merdeka No. 12, Jakarta" },
-  { no: 2, tanggal: "23 Mar 2024", noRM: "RM-240002", pasien: "Siti Rahayu", alamat: "Jl. Sudirman No. 45, Jakarta" },
-  { no: 3, tanggal: "22 Mar 2024", noRM: "RM-240003", pasien: "Budi Hartono", alamat: "Jl. Gatot Subroto No. 8, Jakarta" },
-  { no: 4, tanggal: "22 Mar 2024", noRM: "RM-240004", pasien: "Rina Wulandari", alamat: "Jl. Kebon Jeruk No. 21, Jakarta" },
-  { no: 5, tanggal: "21 Mar 2024", noRM: "RM-240005", pasien: "Hendra Gunawan", alamat: "Jl. Pahlawan No. 33, Bandung" },
-  { no: 6, tanggal: "21 Mar 2024", noRM: "RM-240006", pasien: "Yuli Astuti", alamat: "Jl. Diponegoro No. 17, Surabaya" },
-  { no: 7, tanggal: "20 Mar 2024", noRM: "RM-240007", pasien: "Doni Permana", alamat: "Jl. Ahmad Yani No. 5, Bekasi" },
-  { no: 8, tanggal: "20 Mar 2024", noRM: "RM-240008", pasien: "Maya Sari", alamat: "Jl. Veteran No. 29, Depok" },
-  { no: 9, tanggal: "19 Mar 2024", noRM: "RM-240009", pasien: "Roni Susanto", alamat: "Jl. Pemuda No. 42, Tangerang" },
-  { no: 10, tanggal: "19 Mar 2024", noRM: "RM-240010", pasien: "Fitri Handayani", alamat: "Jl. Cempaka No. 7, Bogor" },
+  { no: 1, tanggal: "10 Mei 2026", noRM: "RM-260001", pasien: "Ahmad Fauzi", alamat: "Jl. Merdeka No. 12, Jakarta" },
+  { no: 2, tanggal: "09 Mei 2026", noRM: "RM-260002", pasien: "Siti Rahayu", alamat: "Jl. Sudirman No. 45, Jakarta" },
+  { no: 3, tanggal: "08 Mei 2026", noRM: "RM-260003", pasien: "Budi Hartono", alamat: "Jl. Gatot Subroto No. 8, Jakarta" },
+  { no: 4, tanggal: "07 Mei 2026", noRM: "RM-260004", pasien: "Rina Wulandari", alamat: "Jl. Kebon Jeruk No. 21, Jakarta" },
+  { no: 5, tanggal: "05 Mei 2026", noRM: "RM-260005", pasien: "Hendra Gunawan", alamat: "Jl. Pahlawan No. 33, Bandung" },
+  { no: 6, tanggal: "03 Mei 2026", noRM: "RM-260006", pasien: "Yuli Astuti", alamat: "Jl. Diponegoro No. 17, Surabaya" },
+  { no: 7, tanggal: "25 Apr 2026", noRM: "RM-260007", pasien: "Doni Permana", alamat: "Jl. Ahmad Yani No. 5, Bekasi" },
+  { no: 8, tanggal: "20 Apr 2026", noRM: "RM-260008", pasien: "Maya Sari", alamat: "Jl. Veteran No. 29, Depok" },
+  { no: 9, tanggal: "15 Apr 2026", noRM: "RM-260009", pasien: "Roni Susanto", alamat: "Jl. Pemuda No. 42, Tangerang" },
+  { no: 10, tanggal: "10 Apr 2026", noRM: "RM-260010", pasien: "Fitri Handayani", alamat: "Jl. Cempaka No. 7, Bogor" },
 ];
 
 export const lapKunjunganPasien = [
-  { no: 1, tanggal: "23 Mar 2024", nama: "Ahmad Fauzi", poli: "Poli Umum", dokter: "dr. Budi Santoso" },
-  { no: 2, tanggal: "23 Mar 2024", nama: "Siti Rahayu", poli: "Poli Gigi", dokter: "dr. Dewi Lestari" },
-  { no: 3, tanggal: "23 Mar 2024", nama: "Budi Hartono", poli: "Poli Anak", dokter: "dr. Ahmad Rizki" },
-  { no: 4, tanggal: "22 Mar 2024", nama: "Rina Wulandari", poli: "Poli Umum", dokter: "dr. Sri Mulyani" },
-  { no: 5, tanggal: "22 Mar 2024", nama: "Hendra Gunawan", poli: "Poli Mata", dokter: "dr. Budi Santoso" },
-  { no: 6, tanggal: "22 Mar 2024", nama: "Yuli Astuti", poli: "Poli Umum", dokter: "dr. Dewi Lestari" },
-  { no: 7, tanggal: "21 Mar 2024", nama: "Doni Permana", poli: "Poli THT", dokter: "dr. Ahmad Rizki" },
-  { no: 8, tanggal: "21 Mar 2024", nama: "Maya Sari", poli: "Poli Gigi", dokter: "dr. Sri Mulyani" },
-  { no: 9, tanggal: "20 Mar 2024", nama: "Roni Susanto", poli: "Poli Umum", dokter: "dr. Budi Santoso" },
-  { no: 10, tanggal: "20 Mar 2024", nama: "Fitri Handayani", poli: "Poli Anak", dokter: "dr. Dewi Lestari" },
+  { no: 1, tanggal: "10 Mei 2026", nama: "Ahmad Fauzi", poli: "Poli Umum", dokter: "dr. Budi Santoso" },
+  { no: 2, tanggal: "09 Mei 2026", nama: "Siti Rahayu", poli: "Poli Gigi", dokter: "dr. Dewi Lestari" },
+  { no: 3, tanggal: "08 Mei 2026", nama: "Budi Hartono", poli: "Poli Anak", dokter: "dr. Ahmad Rizki" },
+  { no: 4, tanggal: "07 Mei 2026", nama: "Rina Wulandari", poli: "Poli Umum", dokter: "dr. Sri Mulyani" },
+  { no: 5, tanggal: "05 Mei 2026", nama: "Hendra Gunawan", poli: "Poli Mata", dokter: "dr. Budi Santoso" },
+  { no: 6, tanggal: "03 Mei 2026", nama: "Yuli Astuti", poli: "Poli Umum", dokter: "dr. Dewi Lestari" },
+  { no: 7, tanggal: "25 Apr 2026", nama: "Doni Permana", poli: "Poli THT", dokter: "dr. Ahmad Rizki" },
+  { no: 8, tanggal: "20 Apr 2026", nama: "Maya Sari", poli: "Poli Gigi", dokter: "dr. Sri Mulyani" },
+  { no: 9, tanggal: "15 Apr 2026", nama: "Roni Susanto", poli: "Poli Umum", dokter: "dr. Budi Santoso" },
+  { no: 10, tanggal: "10 Apr 2026", nama: "Fitri Handayani", poli: "Poli Anak", dokter: "dr. Dewi Lestari" },
 ];
 
 export const lapJanjiDenganDokter = [
-  { no: 1, tanggal: "25 Mar 2024 09:00", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", keterangan: "Kontrol tekanan darah" },
-  { no: 2, tanggal: "25 Mar 2024 10:30", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", keterangan: "Cabut gigi bungsu" },
-  { no: 3, tanggal: "26 Mar 2024 08:00", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", keterangan: "Imunisasi anak" },
-  { no: 4, tanggal: "26 Mar 2024 11:00", pasien: "Rina Wulandari", dokter: "dr. Sri Mulyani", keterangan: "Konsultasi penyakit dalam" },
-  { no: 5, tanggal: "27 Mar 2024 09:30", pasien: "Hendra Gunawan", dokter: "dr. Budi Santoso", keterangan: "Kontrol rutin" },
-  { no: 6, tanggal: "27 Mar 2024 14:00", pasien: "Yuli Astuti", dokter: "dr. Dewi Lestari", keterangan: "Periksa gigi" },
-  { no: 7, tanggal: "28 Mar 2024 10:00", pasien: "Doni Permana", dokter: "dr. Ahmad Rizki", keterangan: "Konsultasi THT" },
-  { no: 8, tanggal: "28 Mar 2024 13:00", pasien: "Maya Sari", dokter: "dr. Sri Mulyani", keterangan: "Kontrol penyakit dalam" },
+  { no: 1, tanggal: "12 Mei 2026 09:00", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", keterangan: "Kontrol tekanan darah" },
+  { no: 2, tanggal: "12 Mei 2026 10:30", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", keterangan: "Cabut gigi bungsu" },
+  { no: 3, tanggal: "11 Mei 2026 08:00", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", keterangan: "Imunisasi anak" },
+  { no: 4, tanggal: "10 Mei 2026 11:00", pasien: "Rina Wulandari", dokter: "dr. Sri Mulyani", keterangan: "Konsultasi penyakit dalam" },
+  { no: 5, tanggal: "08 Mei 2026 09:30", pasien: "Hendra Gunawan", dokter: "dr. Budi Santoso", keterangan: "Kontrol rutin" },
+  { no: 6, tanggal: "05 Mei 2026 14:00", pasien: "Yuli Astuti", dokter: "dr. Dewi Lestari", keterangan: "Periksa gigi" },
+  { no: 7, tanggal: "25 Apr 2026 10:00", pasien: "Doni Permana", dokter: "dr. Ahmad Rizki", keterangan: "Konsultasi THT" },
+  { no: 8, tanggal: "20 Apr 2026 13:00", pasien: "Maya Sari", dokter: "dr. Sri Mulyani", keterangan: "Kontrol penyakit dalam" },
 ];
 
 export const lapPembayaranKasir = [
-  { no: 1, tanggal: "23 Mar 2024", noFaktur: "KS/2024/03/0001", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", total: 285000 },
-  { no: 2, tanggal: "23 Mar 2024", noFaktur: "KS/2024/03/0002", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", total: 450000 },
-  { no: 3, tanggal: "23 Mar 2024", noFaktur: "KS/2024/03/0003", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", total: 175000 },
-  { no: 4, tanggal: "22 Mar 2024", noFaktur: "KS/2024/03/0004", pasien: "Rina Wulandari", dokter: "dr. Sri Mulyani", total: 620000 },
-  { no: 5, tanggal: "22 Mar 2024", noFaktur: "KS/2024/03/0005", pasien: "Hendra Gunawan", dokter: "dr. Budi Santoso", total: 95000 },
-  { no: 6, tanggal: "22 Mar 2024", noFaktur: "KS/2024/03/0006", pasien: "Yuli Astuti", dokter: "dr. Dewi Lestari", total: 380000 },
-  { no: 7, tanggal: "21 Mar 2024", noFaktur: "KS/2024/03/0007", pasien: "Doni Permana", dokter: "dr. Ahmad Rizki", total: 215000 },
-  { no: 8, tanggal: "21 Mar 2024", noFaktur: "KS/2024/03/0008", pasien: "Maya Sari", dokter: "dr. Sri Mulyani", total: 510000 },
-  { no: 9, tanggal: "21 Mar 2024", noFaktur: "KS/2024/03/0009", pasien: "Roni Susanto", dokter: "dr. Budi Santoso", total: 75000 },
-  { no: 10, tanggal: "20 Mar 2024", noFaktur: "KS/2024/03/0010", pasien: "Fitri Handayani", dokter: "dr. Dewi Lestari", total: 440000 },
+  { no: 1, tanggal: "10 Mei 2026", noFaktur: "KS/2026/05/0001", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", total: 285000 },
+  { no: 2, tanggal: "09 Mei 2026", noFaktur: "KS/2026/05/0002", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", total: 450000 },
+  { no: 3, tanggal: "08 Mei 2026", noFaktur: "KS/2026/05/0003", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", total: 175000 },
+  { no: 4, tanggal: "07 Mei 2026", noFaktur: "KS/2026/05/0004", pasien: "Rina Wulandari", dokter: "dr. Sri Mulyani", total: 620000 },
+  { no: 5, tanggal: "05 Mei 2026", noFaktur: "KS/2026/05/0005", pasien: "Hendra Gunawan", dokter: "dr. Budi Santoso", total: 95000 },
+  { no: 6, tanggal: "03 Mei 2026", noFaktur: "KS/2026/05/0006", pasien: "Yuli Astuti", dokter: "dr. Dewi Lestari", total: 380000 },
+  { no: 7, tanggal: "25 Apr 2026", noFaktur: "KS/2026/04/0007", pasien: "Doni Permana", dokter: "dr. Ahmad Rizki", total: 215000 },
+  { no: 8, tanggal: "20 Apr 2026", noFaktur: "KS/2026/04/0008", pasien: "Maya Sari", dokter: "dr. Sri Mulyani", total: 510000 },
+  { no: 9, tanggal: "15 Apr 2026", noFaktur: "KS/2026/04/0009", pasien: "Roni Susanto", dokter: "dr. Budi Santoso", total: 75000 },
+  { no: 10, tanggal: "10 Apr 2026", noFaktur: "KS/2026/04/0010", pasien: "Fitri Handayani", dokter: "dr. Dewi Lestari", total: 440000 },
 ];
 export const totalPembayaranKasir = lapPembayaranKasir.reduce((s, r) => s + r.total, 0);
 
 export const lapPendapatanPetugasMedis = [
-  { no: 1, tanggal: "23 Mar 2024", noFaktur: "KS/2024/03/0001", dokter: "dr. Budi Santoso", pemeriksaan: "Konsultasi Umum", feeDokter: 75000 },
-  { no: 2, tanggal: "23 Mar 2024", noFaktur: "KS/2024/03/0002", dokter: "dr. Dewi Lestari", pemeriksaan: "Cabut Gigi", feeDokter: 150000 },
-  { no: 3, tanggal: "23 Mar 2024", noFaktur: "KS/2024/03/0003", dokter: "dr. Ahmad Rizki", pemeriksaan: "Imunisasi", feeDokter: 85000 },
-  { no: 4, tanggal: "22 Mar 2024", noFaktur: "KS/2024/03/0004", dokter: "dr. Sri Mulyani", pemeriksaan: "Penyakit Dalam", feeDokter: 120000 },
-  { no: 5, tanggal: "22 Mar 2024", noFaktur: "KS/2024/03/0005", dokter: "dr. Budi Santoso", pemeriksaan: "Kontrol Rutin", feeDokter: 75000 },
-  { no: 6, tanggal: "22 Mar 2024", noFaktur: "KS/2024/03/0006", dokter: "dr. Dewi Lestari", pemeriksaan: "Periksa Gigi", feeDokter: 100000 },
-  { no: 7, tanggal: "21 Mar 2024", noFaktur: "KS/2024/03/0007", dokter: "dr. Ahmad Rizki", pemeriksaan: "THT", feeDokter: 95000 },
-  { no: 8, tanggal: "21 Mar 2024", noFaktur: "KS/2024/03/0008", dokter: "dr. Sri Mulyani", pemeriksaan: "Penyakit Dalam", feeDokter: 120000 },
+  { no: 1, tanggal: "10 Mei 2026", noFaktur: "KS/2026/05/0001", dokter: "dr. Budi Santoso", pemeriksaan: "Konsultasi Umum", feeDokter: 75000 },
+  { no: 2, tanggal: "09 Mei 2026", noFaktur: "KS/2026/05/0002", dokter: "dr. Dewi Lestari", pemeriksaan: "Cabut Gigi", feeDokter: 150000 },
+  { no: 3, tanggal: "08 Mei 2026", noFaktur: "KS/2026/05/0003", dokter: "dr. Ahmad Rizki", pemeriksaan: "Imunisasi", feeDokter: 85000 },
+  { no: 4, tanggal: "07 Mei 2026", noFaktur: "KS/2026/05/0004", dokter: "dr. Sri Mulyani", pemeriksaan: "Penyakit Dalam", feeDokter: 120000 },
+  { no: 5, tanggal: "05 Mei 2026", noFaktur: "KS/2026/05/0005", dokter: "dr. Budi Santoso", pemeriksaan: "Kontrol Rutin", feeDokter: 75000 },
+  { no: 6, tanggal: "03 Mei 2026", noFaktur: "KS/2026/05/0006", dokter: "dr. Dewi Lestari", pemeriksaan: "Periksa Gigi", feeDokter: 100000 },
+  { no: 7, tanggal: "25 Apr 2026", noFaktur: "KS/2026/04/0007", dokter: "dr. Ahmad Rizki", pemeriksaan: "THT", feeDokter: 95000 },
+  { no: 8, tanggal: "20 Apr 2026", noFaktur: "KS/2026/04/0008", dokter: "dr. Sri Mulyani", pemeriksaan: "Penyakit Dalam", feeDokter: 120000 },
 ];
 export const totalPendapatanPetugasMedis = lapPendapatanPetugasMedis.reduce((s, r) => s + r.feeDokter, 0);
 
 export const lapPenjualanObatKlinik = [
-  { no: 1, tanggal: "23 Mar 2024", noFaktur: "OK/2024/03/0001", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", total: 145000 },
-  { no: 2, tanggal: "23 Mar 2024", noFaktur: "OK/2024/03/0002", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", total: 280000 },
-  { no: 3, tanggal: "23 Mar 2024", noFaktur: "OK/2024/03/0003", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", total: 95000 },
-  { no: 4, tanggal: "22 Mar 2024", noFaktur: "OK/2024/03/0004", pasien: "Rina Wulandari", dokter: "dr. Sri Mulyani", total: 375000 },
-  { no: 5, tanggal: "22 Mar 2024", noFaktur: "OK/2024/03/0005", pasien: "Hendra Gunawan", dokter: "dr. Budi Santoso", total: 62000 },
-  { no: 6, tanggal: "21 Mar 2024", noFaktur: "OK/2024/03/0006", pasien: "Yuli Astuti", dokter: "dr. Dewi Lestari", total: 198000 },
-  { no: 7, tanggal: "21 Mar 2024", noFaktur: "OK/2024/03/0007", pasien: "Doni Permana", dokter: "dr. Ahmad Rizki", total: 127500 },
+  { no: 1, tanggal: "10 Mei 2026", noFaktur: "OK/2026/05/0001", pasien: "Ahmad Fauzi", dokter: "dr. Budi Santoso", total: 145000 },
+  { no: 2, tanggal: "09 Mei 2026", noFaktur: "OK/2026/05/0002", pasien: "Siti Rahayu", dokter: "dr. Dewi Lestari", total: 280000 },
+  { no: 3, tanggal: "08 Mei 2026", noFaktur: "OK/2026/05/0003", pasien: "Budi Hartono", dokter: "dr. Ahmad Rizki", total: 95000 },
+  { no: 4, tanggal: "07 Mei 2026", noFaktur: "OK/2026/05/0004", pasien: "Rina Wulandari", dokter: "dr. Sri Mulyani", total: 375000 },
+  { no: 5, tanggal: "05 Mei 2026", noFaktur: "OK/2026/05/0005", pasien: "Hendra Gunawan", dokter: "dr. Budi Santoso", total: 62000 },
+  { no: 6, tanggal: "25 Apr 2026", noFaktur: "OK/2026/04/0006", pasien: "Yuli Astuti", dokter: "dr. Dewi Lestari", total: 198000 },
+  { no: 7, tanggal: "20 Apr 2026", noFaktur: "OK/2026/04/0007", pasien: "Doni Permana", dokter: "dr. Ahmad Rizki", total: 127500 },
 ];
 export const totalPenjualanObatKlinik = lapPenjualanObatKlinik.reduce((s, r) => s + r.total, 0);
 
 export const lapTagihanJaminan = [
-  { no: 1, tanggal: "23 Mar 2024", noFaktur: "TJ/2024/03/0001", pasien: "Ahmad Fauzi", jaminan: "BPJS Kesehatan", totalBiaya: 425000 },
-  { no: 2, tanggal: "23 Mar 2024", noFaktur: "TJ/2024/03/0002", pasien: "Siti Rahayu", jaminan: "Asuransi Prudential", totalBiaya: 680000 },
-  { no: 3, tanggal: "22 Mar 2024", noFaktur: "TJ/2024/03/0003", pasien: "Budi Hartono", jaminan: "BPJS Kesehatan", totalBiaya: 195000 },
-  { no: 4, tanggal: "22 Mar 2024", noFaktur: "TJ/2024/03/0004", pasien: "Rina Wulandari", jaminan: "Jasa Raharja", totalBiaya: 920000 },
-  { no: 5, tanggal: "21 Mar 2024", noFaktur: "TJ/2024/03/0005", pasien: "Hendra Gunawan", jaminan: "BPJS Kesehatan", totalBiaya: 340000 },
-  { no: 6, tanggal: "21 Mar 2024", noFaktur: "TJ/2024/03/0006", pasien: "Yuli Astuti", jaminan: "Asuransi AXA", totalBiaya: 785000 },
+  { no: 1, tanggal: "10 Mei 2026", noFaktur: "TJ/2026/05/0001", pasien: "Ahmad Fauzi", jaminan: "BPJS Kesehatan", totalBiaya: 425000 },
+  { no: 2, tanggal: "09 Mei 2026", noFaktur: "TJ/2026/05/0002", pasien: "Siti Rahayu", jaminan: "Asuransi Prudential", totalBiaya: 680000 },
+  { no: 3, tanggal: "08 Mei 2026", noFaktur: "TJ/2026/05/0003", pasien: "Budi Hartono", jaminan: "BPJS Kesehatan", totalBiaya: 195000 },
+  { no: 4, tanggal: "07 Mei 2026", noFaktur: "TJ/2026/05/0004", pasien: "Rina Wulandari", jaminan: "Jasa Raharja", totalBiaya: 920000 },
+  { no: 5, tanggal: "03 Mei 2026", noFaktur: "TJ/2026/05/0005", pasien: "Hendra Gunawan", jaminan: "BPJS Kesehatan", totalBiaya: 340000 },
+  { no: 6, tanggal: "25 Apr 2026", noFaktur: "TJ/2026/04/0006", pasien: "Yuli Astuti", jaminan: "Asuransi AXA", totalBiaya: 785000 },
 ];
 export const totalTagihanJaminan = lapTagihanJaminan.reduce((s, r) => s + r.totalBiaya, 0);
 
 export const lapPembelianObat = [
-  { no: 1, noFaktur: "PO/2024/03/0001", supplier: "PT Kimia Farma", total: 5420000 },
-  { no: 2, noFaktur: "PO/2024/03/0002", supplier: "PT Kalbe Farma", total: 8750000 },
-  { no: 3, noFaktur: "PO/2024/03/0003", supplier: "PT Dexa Medica", total: 3240000 },
-  { no: 4, noFaktur: "PO/2024/03/0004", supplier: "PT Phapros", total: 6180000 },
-  { no: 5, noFaktur: "PO/2024/03/0005", supplier: "PT Kimia Farma", total: 4920000 },
-  { no: 6, noFaktur: "PO/2024/03/0006", supplier: "PT Indofarma", total: 7340000 },
-  { no: 7, noFaktur: "PO/2024/03/0007", supplier: "PT Kalbe Farma", total: 2870000 },
-  { no: 8, noFaktur: "PO/2024/03/0008", supplier: "PT Soho Industri", total: 4560000 },
+  { no: 1, tanggal: "10 Mei 2026", noFaktur: "PO/2026/05/0001", supplier: "PT Kimia Farma", gudang: "Gudang Utama", total: 5420000 },
+  { no: 2, tanggal: "09 Mei 2026", noFaktur: "PO/2026/05/0002", supplier: "PT Kalbe Farma", gudang: "Gudang Utama", total: 8750000 },
+  { no: 3, tanggal: "07 Mei 2026", noFaktur: "PO/2026/05/0003", supplier: "PT Dexa Medica", gudang: "Gudang Cabang", total: 3240000 },
+  { no: 4, tanggal: "05 Mei 2026", noFaktur: "PO/2026/05/0004", supplier: "PT Phapros", gudang: "Gudang Cabang", total: 6180000 },
+  { no: 5, tanggal: "03 Mei 2026", noFaktur: "PO/2026/05/0005", supplier: "PT Kimia Farma", gudang: "Gudang Utama", total: 4920000 },
+  { no: 6, tanggal: "25 Apr 2026", noFaktur: "PO/2026/04/0006", supplier: "PT Indofarma", gudang: "Gudang Utama", total: 7340000 },
+  { no: 7, tanggal: "20 Apr 2026", noFaktur: "PO/2026/04/0007", supplier: "PT Kalbe Farma", gudang: "Gudang Cabang", total: 2870000 },
+  { no: 8, tanggal: "10 Apr 2026", noFaktur: "PO/2026/04/0008", supplier: "PT Soho Industri", gudang: "Gudang Cabang", total: 4560000 },
 ];
 export const totalPembelianObat = lapPembelianObat.reduce((s, r) => s + r.total, 0);
 
 export const lapStokOpname = [
-  { no: 1, namaObat: "Amoxicillin 500mg", selisih: -5, nominalSelisih: 37500 },
-  { no: 2, namaObat: "Paracetamol 500mg", selisih: 12, nominalSelisih: 48000 },
-  { no: 3, namaObat: "Omeprazole 20mg", selisih: -3, nominalSelisih: 45000 },
-  { no: 4, namaObat: "Metformin 500mg", selisih: 8, nominalSelisih: 24000 },
-  { no: 5, namaObat: "Amlodipine 5mg", selisih: -2, nominalSelisih: 15000 },
-  { no: 6, namaObat: "Vitamin C 500mg", selisih: 20, nominalSelisih: 40000 },
-  { no: 7, namaObat: "Antasida Doen", selisih: -7, nominalSelisih: 14000 },
-  { no: 8, namaObat: "Ibuprofen 400mg", selisih: 4, nominalSelisih: 22000 },
+  { no: 1, gudang: "Gudang Utama", namaObat: "Amoxicillin 500mg", selisih: -5, nominalSelisih: 37500 },
+  { no: 2, gudang: "Gudang Utama", namaObat: "Paracetamol 500mg", selisih: 12, nominalSelisih: 48000 },
+  { no: 3, gudang: "Gudang Utama", namaObat: "Omeprazole 20mg", selisih: -3, nominalSelisih: 45000 },
+  { no: 4, gudang: "Gudang Cabang", namaObat: "Metformin 500mg", selisih: 8, nominalSelisih: 24000 },
+  { no: 5, gudang: "Gudang Cabang", namaObat: "Amlodipine 5mg", selisih: -2, nominalSelisih: 15000 },
+  { no: 6, gudang: "Gudang Utama", namaObat: "Vitamin C 500mg", selisih: 20, nominalSelisih: 40000 },
+  { no: 7, gudang: "Gudang Cabang", namaObat: "Antasida Doen", selisih: -7, nominalSelisih: 14000 },
+  { no: 8, gudang: "Gudang Utama", namaObat: "Ibuprofen 400mg", selisih: 4, nominalSelisih: 22000 },
 ];
 export const totalNominalSelisih = lapStokOpname.reduce((s, r) => s + Math.abs(r.nominalSelisih), 0);
 
 export const lapHutangObat = [
-  { no: 1, noFaktur: "PO/2024/02/0015", supplier: "PT Kimia Farma", jatuhTempo: "30 Mar 2024", total: 5420000 },
-  { no: 2, noFaktur: "PO/2024/02/0018", supplier: "PT Kalbe Farma", jatuhTempo: "05 Apr 2024", total: 8750000 },
-  { no: 3, noFaktur: "PO/2024/02/0022", supplier: "PT Dexa Medica", jatuhTempo: "10 Apr 2024", total: 3240000 },
-  { no: 4, noFaktur: "PO/2024/03/0003", supplier: "PT Phapros", jatuhTempo: "25 Apr 2024", total: 6180000 },
-  { no: 5, noFaktur: "PO/2024/03/0007", supplier: "PT Indofarma", jatuhTempo: "30 Apr 2024", total: 4920000 },
+  { no: 1, noFaktur: "PO/2026/04/0015", supplier: "PT Kimia Farma", jatuhTempo: "30 Mei 2026", total: 5420000 },
+  { no: 2, noFaktur: "PO/2026/04/0018", supplier: "PT Kalbe Farma", jatuhTempo: "05 Jun 2026", total: 8750000 },
+  { no: 3, noFaktur: "PO/2026/04/0022", supplier: "PT Dexa Medica", jatuhTempo: "10 Jun 2026", total: 3240000 },
+  { no: 4, noFaktur: "PO/2026/05/0003", supplier: "PT Phapros", jatuhTempo: "25 Jun 2026", total: 6180000 },
+  { no: 5, noFaktur: "PO/2026/05/0007", supplier: "PT Indofarma", jatuhTempo: "30 Jun 2026", total: 4920000 },
 ];
 export const totalHutangObat = lapHutangObat.reduce((s, r) => s + r.total, 0);
 
 export const lapPiutangObat = [
-  { no: 1, noFaktur: "PJ/2024/02/0012", pasien: "Ahmad Fauzi", jatuhTempo: "25 Mar 2024", total: 285000 },
-  { no: 2, noFaktur: "PJ/2024/02/0015", pasien: "Siti Rahayu", jatuhTempo: "28 Mar 2024", total: 450000 },
-  { no: 3, noFaktur: "PJ/2024/02/0021", pasien: "Budi Hartono", jatuhTempo: "01 Apr 2024", total: 175000 },
-  { no: 4, noFaktur: "PJ/2024/03/0002", pasien: "Rina Wulandari", jatuhTempo: "05 Apr 2024", total: 620000 },
-  { no: 5, noFaktur: "PJ/2024/03/0005", pasien: "Hendra Gunawan", jatuhTempo: "10 Apr 2024", total: 95000 },
-  { no: 6, noFaktur: "PJ/2024/03/0009", pasien: "Yuli Astuti", jatuhTempo: "15 Apr 2024", total: 380000 },
+  { no: 1, noFaktur: "PJ/2026/04/0012", pasien: "Ahmad Fauzi", jatuhTempo: "10 Mei 2026", total: 285000 },
+  { no: 2, noFaktur: "PJ/2026/04/0015", pasien: "Siti Rahayu", jatuhTempo: "08 Mei 2026", total: 450000 },
+  { no: 3, noFaktur: "PJ/2026/04/0021", pasien: "Budi Hartono", jatuhTempo: "05 Mei 2026", total: 175000 },
+  { no: 4, noFaktur: "PJ/2026/05/0002", pasien: "Rina Wulandari", jatuhTempo: "20 Mei 2026", total: 620000 },
+  { no: 5, noFaktur: "PJ/2026/05/0005", pasien: "Hendra Gunawan", jatuhTempo: "25 Mei 2026", total: 95000 },
+  { no: 6, noFaktur: "PJ/2026/05/0009", pasien: "Yuli Astuti", jatuhTempo: "30 Mei 2026", total: 380000 },
 ];
 export const totalPiutangObat = lapPiutangObat.reduce((s, r) => s + r.total, 0);
 
 export const lapObatExpired = [
-  { no: 1, namaObat: "Amoxicillin 500mg (BATCH: B2023001)", sisaStok: "50 Tablet", tanggalExpired: "31 Mar 2024" },
-  { no: 2, namaObat: "Vitamin C 1000mg (BATCH: V2023042)", sisaStok: "120 Tablet", tanggalExpired: "15 Apr 2024" },
-  { no: 3, namaObat: "Paracetamol 500mg (BATCH: P2023018)", sisaStok: "80 Tablet", tanggalExpired: "30 Apr 2024" },
-  { no: 4, namaObat: "Antasida Doen (BATCH: A2023007)", sisaStok: "45 Tablet", tanggalExpired: "10 May 2024" },
-  { no: 5, namaObat: "Ibuprofen 400mg (BATCH: I2023033)", sisaStok: "60 Tablet", tanggalExpired: "20 May 2024" },
-  { no: 6, namaObat: "Cetirizine 10mg (BATCH: C2023019)", sisaStok: "30 Tablet", tanggalExpired: "30 May 2024" },
-  { no: 7, namaObat: "Omeprazole 20mg (BATCH: O2023055)", sisaStok: "25 Kapsul", tanggalExpired: "15 Jun 2024" },
+  { no: 1, gudang: "Gudang Utama", namaObat: "Amoxicillin 500mg (BATCH: B2025001)", sisaStok: "50 Tablet", tanggalExpired: "31 Mei 2026" },
+  { no: 2, gudang: "Gudang Utama", namaObat: "Vitamin C 1000mg (BATCH: V2025042)", sisaStok: "120 Tablet", tanggalExpired: "15 Jun 2026" },
+  { no: 3, gudang: "Gudang Cabang", namaObat: "Paracetamol 500mg (BATCH: P2025018)", sisaStok: "80 Tablet", tanggalExpired: "30 Jun 2026" },
+  { no: 4, gudang: "Gudang Cabang", namaObat: "Antasida Doen (BATCH: A2025007)", sisaStok: "45 Tablet", tanggalExpired: "10 Jul 2026" },
+  { no: 5, gudang: "Gudang Utama", namaObat: "Ibuprofen 400mg (BATCH: I2025033)", sisaStok: "60 Tablet", tanggalExpired: "20 Jul 2026" },
+  { no: 6, gudang: "Gudang Cabang", namaObat: "Cetirizine 10mg (BATCH: C2025019)", sisaStok: "30 Tablet", tanggalExpired: "30 Jul 2026" },
+  { no: 7, gudang: "Gudang Utama", namaObat: "Omeprazole 20mg (BATCH: O2025055)", sisaStok: "25 Kapsul", tanggalExpired: "15 Agt 2026" },
 ];
 
 export const lapPiutangKlinik = [
-  { no: 1, noFaktur: "KS/2024/02/0015", pasien: "Ahmad Fauzi", jatuhTempo: "25 Mar 2024", total: 340000 },
-  { no: 2, noFaktur: "KS/2024/02/0018", pasien: "Siti Rahayu", jatuhTempo: "28 Mar 2024", total: 520000 },
-  { no: 3, noFaktur: "KS/2024/02/0024", pasien: "Budi Hartono", jatuhTempo: "02 Apr 2024", total: 195000 },
-  { no: 4, noFaktur: "KS/2024/03/0003", pasien: "Rina Wulandari", jatuhTempo: "08 Apr 2024", total: 740000 },
-  { no: 5, noFaktur: "KS/2024/03/0007", pasien: "Hendra Gunawan", jatuhTempo: "12 Apr 2024", total: 280000 },
+  { no: 1, noFaktur: "KS/2026/04/0015", pasien: "Ahmad Fauzi", jatuhTempo: "10 Mei 2026", total: 340000 },
+  { no: 2, noFaktur: "KS/2026/04/0018", pasien: "Siti Rahayu", jatuhTempo: "08 Mei 2026", total: 520000 },
+  { no: 3, noFaktur: "KS/2026/04/0024", pasien: "Budi Hartono", jatuhTempo: "05 Mei 2026", total: 195000 },
+  { no: 4, noFaktur: "KS/2026/05/0003", pasien: "Rina Wulandari", jatuhTempo: "20 Mei 2026", total: 740000 },
+  { no: 5, noFaktur: "KS/2026/05/0007", pasien: "Hendra Gunawan", jatuhTempo: "25 Mei 2026", total: 280000 },
 ];
 export const totalPiutangKlinik = lapPiutangKlinik.reduce((s, r) => s + r.total, 0);
 
 export const lapObatStokHabis = [
-  { no: 1, namaObat: "Amoxicillin 500mg", stokMinimal: "100.00 Tablet", stokNyata: "45.00 Tablet" },
-  { no: 2, namaObat: "Metformin 850mg", stokMinimal: "200.00 Tablet", stokNyata: "80.00 Tablet" },
-  { no: 3, namaObat: "Amlodipine 10mg", stokMinimal: "150.00 Tablet", stokNyata: "30.00 Tablet" },
-  { no: 4, namaObat: "Glimepiride 2mg", stokMinimal: "100.00 Tablet", stokNyata: "15.00 Tablet" },
-  { no: 5, namaObat: "Captopril 25mg", stokMinimal: "200.00 Tablet", stokNyata: "90.00 Tablet" },
-  { no: 6, namaObat: "Simvastatin 20mg", stokMinimal: "150.00 Tablet", stokNyata: "60.00 Tablet" },
+  { no: 1, gudang: "Gudang Utama", namaObat: "Amoxicillin 500mg", stokMinimal: "100.00 Tablet", stokNyata: "45.00 Tablet" },
+  { no: 2, gudang: "Gudang Utama", namaObat: "Metformin 850mg", stokMinimal: "200.00 Tablet", stokNyata: "80.00 Tablet" },
+  { no: 3, gudang: "Gudang Cabang", namaObat: "Amlodipine 10mg", stokMinimal: "150.00 Tablet", stokNyata: "30.00 Tablet" },
+  { no: 4, gudang: "Gudang Cabang", namaObat: "Glimepiride 2mg", stokMinimal: "100.00 Tablet", stokNyata: "15.00 Tablet" },
+  { no: 5, gudang: "Gudang Utama", namaObat: "Captopril 25mg", stokMinimal: "200.00 Tablet", stokNyata: "90.00 Tablet" },
+  { no: 6, gudang: "Gudang Cabang", namaObat: "Simvastatin 20mg", stokMinimal: "150.00 Tablet", stokNyata: "60.00 Tablet" },
 ];
 
 export const lapStokObat = [
@@ -487,12 +487,12 @@ export const lapObatTerlaris = [
 export const totalObatTerlaris = { jumlahTerjual: lapObatTerlaris.reduce((s, r) => s + r.jumlahTerjualRaw, 0), jumlahTransaksi: lapObatTerlaris.reduce((s, r) => s + r.jumlahTransaksi, 0), nominal: lapObatTerlaris.reduce((s, r) => s + r.nominal, 0) };
 
 export const lapPergantianShift = [
-  { no: 1, bukaShift: "23 Mar 2024 07:00", tutupShift: "23 Mar 2024 14:00", kasir: "Ani Susanti", saldoKasir: 2450000 },
-  { no: 2, bukaShift: "23 Mar 2024 14:00", tutupShift: "23 Mar 2024 21:00", kasir: "Budi Pranoto", saldoKasir: 3120000 },
-  { no: 3, bukaShift: "22 Mar 2024 07:00", tutupShift: "22 Mar 2024 14:00", kasir: "Ani Susanti", saldoKasir: 2890000 },
-  { no: 4, bukaShift: "22 Mar 2024 14:00", tutupShift: "22 Mar 2024 21:00", kasir: "Citra Dewi", saldoKasir: 3540000 },
-  { no: 5, bukaShift: "21 Mar 2024 07:00", tutupShift: "21 Mar 2024 14:00", kasir: "Budi Pranoto", saldoKasir: 2180000 },
-  { no: 6, bukaShift: "21 Mar 2024 14:00", tutupShift: "21 Mar 2024 21:00", kasir: "Citra Dewi", saldoKasir: 2960000 },
+  { no: 1, bukaShift: "10 Mei 2026 07:00", tutupShift: "10 Mei 2026 14:00", kasir: "Ani Susanti", saldoKasir: 2450000 },
+  { no: 2, bukaShift: "10 Mei 2026 14:00", tutupShift: "10 Mei 2026 21:00", kasir: "Budi Pranoto", saldoKasir: 3120000 },
+  { no: 3, bukaShift: "09 Mei 2026 07:00", tutupShift: "09 Mei 2026 14:00", kasir: "Ani Susanti", saldoKasir: 2890000 },
+  { no: 4, bukaShift: "09 Mei 2026 14:00", tutupShift: "09 Mei 2026 21:00", kasir: "Citra Dewi", saldoKasir: 3540000 },
+  { no: 5, bukaShift: "08 Mei 2026 07:00", tutupShift: "08 Mei 2026 14:00", kasir: "Budi Pranoto", saldoKasir: 2180000 },
+  { no: 6, bukaShift: "25 Apr 2026 14:00", tutupShift: "25 Apr 2026 21:00", kasir: "Citra Dewi", saldoKasir: 2960000 },
 ];
 export const totalSaldoKasir = lapPergantianShift.reduce((s, r) => s + r.saldoKasir, 0);
 
@@ -578,6 +578,12 @@ export const cabangOptions = [
   { label: 'Klinik Sehat Sentosa Cabang 1', value: 'KSS-002' },
   { label: 'Klinik Sehat Sentosa Cabang 2', value: 'KSS-003' },
   { label: 'Klinik Sehat Sentosa Cabang 3', value: 'KSS-004' },
+];
+
+export const gudangOptions = [
+  { label: 'Semua Gudang', value: '' },
+  { label: 'Gudang Utama', value: 'Gudang Utama' },
+  { label: 'Gudang Cabang', value: 'Gudang Cabang' },
 ];
 
 // Format currency helper

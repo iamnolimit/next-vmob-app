@@ -18,6 +18,7 @@ export default function LapRegistrasiPasienPage() {
       totalValue={`${lapRegistrasiPasien.length} Pasien`}
       searchFields={['noRM', 'pasien', 'alamat']}
       searchPlaceholder="No RM / pasien / alamat"
+      dateField="tanggal"
     />
   );
 }

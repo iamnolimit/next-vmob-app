@@ -20,6 +20,7 @@ export default function LapPembayaranKasirPage() {
       totalValue={formatRupiah(totalPembayaranKasir)}
       searchFields={['pasien', 'noFaktur', 'dokter']}
       searchPlaceholder="Nama Pasien / No Faktur / Dokter"
+      dateField="tanggal"
     />
   );
 }

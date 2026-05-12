@@ -18,6 +18,7 @@ export default function LapJanjiDenganDokterPage() {
       totalValue={`${lapJanjiDenganDokter.length} Janji`}
       searchFields={['pasien', 'dokter', 'keterangan', 'noRM']}
       searchPlaceholder="Pasien / No. RM / dokter / keterangan"
+      dateField="tanggal"
     />
   );
 }

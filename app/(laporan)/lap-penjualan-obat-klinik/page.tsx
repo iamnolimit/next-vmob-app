@@ -19,6 +19,7 @@ export default function LapPenjualanObatKlinikPage() {
       totalValue={formatRupiah(totalPenjualanObatKlinik)}
       searchFields={['pasien', 'noFaktur', 'dokter']}
       searchPlaceholder="No faktur / pasien / dokter"
+      dateField="tanggal"
     />
   );
 }

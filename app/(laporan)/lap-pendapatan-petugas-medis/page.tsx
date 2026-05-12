@@ -19,6 +19,7 @@ export default function LapPendapatanPetugasMedisPage() {
       totalValue={formatRupiah(totalPendapatanPetugasMedis)}
       searchFields={['dokter', 'noFaktur', 'pemeriksaan']}
       searchPlaceholder="Dokter / No. Faktur / pemeriksaan"
+      dateField="tanggal"
     />
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 import ReportTable from '@/components/ReportTable';
-import { lapStokObat } from '@/lib/dummyData';
+import { lapStokObat, gudangOptions } from '@/lib/dummyData';
 
 export default function LapStokObatPage() {
   return (
@@ -17,6 +17,8 @@ export default function LapStokObatPage() {
       searchFields={['namaObat', 'kodeObat', 'gudang']}
       searchPlaceholder="Kode Obat / Nama obat"
       hideDateFilter
+      gudangOptions={gudangOptions}
+      gudangField="gudang"
     />
   );
 }

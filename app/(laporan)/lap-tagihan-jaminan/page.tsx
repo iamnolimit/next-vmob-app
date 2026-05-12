@@ -19,6 +19,7 @@ export default function LapTagihanJaminanPage() {
       totalValue={formatRupiah(totalTagihanJaminan)}
       searchFields={['noFaktur', 'pasien', 'jaminan']}
       searchPlaceholder="No. Faktur / Pasien / Jaminan"
+      dateField="tanggal"
     />
   );
 }

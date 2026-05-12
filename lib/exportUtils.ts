@@ -1,6 +1,40 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Capacitor } from '@capacitor/core';
+
+async function downloadOrShare(blob: Blob, filename: string): Promise<void> {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const { Filesystem, Directory } = await import('@capacitor/filesystem');
+      const { Share } = await import('@capacitor/share');
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      const saved = await Filesystem.writeFile({
+        path: filename,
+        data: base64,
+        directory: Directory.Cache,
+        recursive: true,
+      });
+      await Share.share({ title: filename, files: [saved.uri] });
+      return;
+    } catch {
+      // fall through to web download
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 export interface ExportColumn {
   label: string;
@@ -69,7 +103,7 @@ function writePdfHeader(
 
 // ─── Excel ───────────────────────────────────────────────────────────────────
 
-export function exportToExcel(
+export async function exportToExcel(
   filename: string,
   columns: ExportColumn[],
   data: Record<string, unknown>[],
@@ -115,12 +149,14 @@ export function exportToExcel(
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  XLSX.writeFile(wb, `${filename}.xlsx`);
+  const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }) as ArrayBuffer;
+  const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  await downloadOrShare(blob, `${filename}.xlsx`);
 }
 
 // ─── PDF ─────────────────────────────────────────────────────────────────────
 
-export function exportToPdf(
+export async function exportToPdf(
   filename: string,
   title: string,
   columns: ExportColumn[],
@@ -157,12 +193,12 @@ export function exportToPdf(
   });
 
   addPdfFooter(doc);
-  doc.save(`${filename}.pdf`);
+  await downloadOrShare(doc.output('blob'), `${filename}.pdf`);
 }
 
 // ─── PDF for sectioned reports (Neraca, Laba Rugi) ───────────────────────────
 
-export function exportSectionedToPdf(
+export async function exportSectionedToPdf(
   filename: string,
   title: string,
   sections: ExportSection[],
@@ -188,12 +224,12 @@ export function exportSectionedToPdf(
   });
 
   addPdfFooter(doc);
-  doc.save(`${filename}.pdf`);
+  await downloadOrShare(doc.output('blob'), `${filename}.pdf`);
 }
 
 // ─── Excel for sectioned reports ─────────────────────────────────────────────
 
-export function exportSectionedToExcel(
+export async function exportSectionedToExcel(
   filename: string,
   title: string,
   sections: ExportSection[],
@@ -221,5 +257,7 @@ export function exportSectionedToExcel(
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Laporan');
-  XLSX.writeFile(wb, `${filename}.xlsx`);
+  const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }) as ArrayBuffer;
+  const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  await downloadOrShare(blob, `${filename}.xlsx`);
 }

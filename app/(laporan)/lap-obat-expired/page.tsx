@@ -1,6 +1,6 @@
 'use client';
 import ReportTable from '@/components/ReportTable';
-import { lapObatExpired, cabangOptions } from '@/lib/dummyData';
+import { lapObatExpired, cabangOptions, gudangOptions } from '@/lib/dummyData';
 
 export default function LapObatExpiredPage() {
   return (
@@ -8,13 +8,14 @@ export default function LapObatExpiredPage() {
       title="Laporan Obat Expired"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'namaObat', label: 'Nama Obat', width: 220 },
+        { key: 'gudang', label: 'Gudang', width: 120 },
+        { key: 'namaObat', label: 'Nama Obat', width: 210 },
         { key: 'sisaStok', label: 'Sisa Stok', align: 'right', width: 110 },
-        { key: 'tanggalExpired', label: 'Tanggal Expired', align: 'center', width: 130 },
+        { key: 'tanggalExpired', label: 'Tgl Expired', align: 'center', width: 110 },
       ]}
       data={lapObatExpired as unknown as Record<string, unknown>[]}
-      searchFields={['namaObat']}
-      searchPlaceholder="Nama obat / Batch"
+      searchFields={['namaObat', 'gudang']}
+      searchPlaceholder="Nama obat / Batch / gudang"
       intervalOptions={[
         { label: 'Sudah Expired', value: 1 },
         { label: '30 Hari', value: 2 },
@@ -24,6 +25,8 @@ export default function LapObatExpiredPage() {
       ]}
       intervalTitle="Periode Expired"
       cabangOptions={cabangOptions}
+      gudangOptions={gudangOptions}
+      gudangField="gudang"
     />
   );
 }

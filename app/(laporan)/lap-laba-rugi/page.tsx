@@ -175,7 +175,7 @@ export default function LapLabaRugiPage() {
                   </div>
                   <div className="pb-8">
                     <button
-                      onClick={() => { exportSectionedToExcel('laporan_laba_rugi', 'Laporan Laba Rugi', exportSections, namaKlinik); setShowExportMenu(false); }}
+                      onClick={async () => { await exportSectionedToExcel('laporan_laba_rugi', 'Laporan Laba Rugi', exportSections, namaKlinik); setShowExportMenu(false); }}
                       className="w-full flex items-center gap-4 px-5 py-4 text-left border-b border-gray-100 active:bg-gray-50"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-green-50 flex items-center justify-center flex-shrink-0">
@@ -187,7 +187,7 @@ export default function LapLabaRugiPage() {
                       </div>
                     </button>
                     <button
-                      onClick={() => { exportSectionedToPdf('laporan_laba_rugi', 'Laporan Laba Rugi', exportSections, namaKlinik, `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)} · ${cabangOptions.find(c => c.value === appliedCabang)?.label}`); setShowExportMenu(false); }}
+                      onClick={async () => { await exportSectionedToPdf('laporan_laba_rugi', 'Laporan Laba Rugi', exportSections, namaKlinik, `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)} · ${cabangOptions.find(c => c.value === appliedCabang)?.label}`); setShowExportMenu(false); }}
                       className="w-full flex items-center gap-4 px-5 py-4 text-left active:bg-gray-50"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center flex-shrink-0">

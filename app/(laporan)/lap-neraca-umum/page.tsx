@@ -125,7 +125,7 @@ export default function LapNeracaUmumPage() {
                   </div>
                   <div className="pb-8">
                     <button
-                      onClick={() => { exportSectionedToExcel('laporan_neraca_umum', 'Laporan Neraca Umum', sections, namaKlinik); setShowExportMenu(false); }}
+                      onClick={async () => { await exportSectionedToExcel('laporan_neraca_umum', 'Laporan Neraca Umum', sections, namaKlinik); setShowExportMenu(false); }}
                       className="w-full flex items-center gap-4 px-5 py-4 text-left border-b border-gray-100 active:bg-gray-50"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-green-50 flex items-center justify-center flex-shrink-0">
@@ -137,7 +137,7 @@ export default function LapNeracaUmumPage() {
                       </div>
                     </button>
                     <button
-                      onClick={() => { exportSectionedToPdf('laporan_neraca_umum', 'Laporan Neraca Umum', sections, namaKlinik, subtitle); setShowExportMenu(false); }}
+                      onClick={async () => { await exportSectionedToPdf('laporan_neraca_umum', 'Laporan Neraca Umum', sections, namaKlinik, subtitle); setShowExportMenu(false); }}
                       className="w-full flex items-center gap-4 px-5 py-4 text-left active:bg-gray-50"
                     >
                       <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center flex-shrink-0">

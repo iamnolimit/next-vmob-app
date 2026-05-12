@@ -13,6 +13,15 @@
 # testing
 /coverage
 
+# android
+/android
+
+#unused
+laporan*.*
+ui*.md
+/Design*
+*.apk
+
 # next.js
 /.next/
 /out/
@@ -23,6 +32,7 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # debug
 npm-debug.log*
@@ -39,3 +49,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Capacitor / Android
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+android/capacitor-cordova-android-plugins/build/
+android/local.properties
+*.keystore
+*.jks
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+.DS_Store
+desktop.ini

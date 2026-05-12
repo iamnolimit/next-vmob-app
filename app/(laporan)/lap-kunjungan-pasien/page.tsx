@@ -18,6 +18,7 @@ export default function LapKunjunganPasienPage() {
       totalValue={`${lapKunjunganPasien.length} Kunjungan`}
       searchFields={['nama', 'poli', 'dokter', 'noRM']}
       searchPlaceholder="Pasien / No. RM / poli / dokter"
+      dateField="tanggal"
     />
   );
 }

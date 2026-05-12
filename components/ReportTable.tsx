@@ -7,6 +7,19 @@ import DatePickerInput from './DatePickerInput';
 import SelectInput from './SelectInput';
 import { exportToExcel, exportToPdf } from '@/lib/exportUtils';
 
+const ID_MONTHS: Record<string, number> = {
+  Jan:1, Feb:2, Mar:3, Apr:4, Mei:5, Jun:6, Jul:7, Agt:8, Sep:9, Okt:10, Nov:11, Des:12,
+};
+
+function parseIdDate(s: string): string | null {
+  if (!s) return null;
+  const parts = s.trim().split(/\s+/);
+  if (parts.length < 3) return null;
+  const mNum = ID_MONTHS[parts[1]];
+  if (!mNum) return null;
+  return `${parts[2]}-${String(mNum).padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+}
+
 export interface Column {
   key: string;
   label: string;
@@ -25,6 +38,11 @@ export interface CabangOption {
   value: string;
 }
 
+export interface GudangOption {
+  label: string;
+  value: string;
+}
+
 interface ReportTableProps {
   title: string;
   columns: Column[];
@@ -37,6 +55,12 @@ interface ReportTableProps {
   intervalOptions?: IntervalOption[];
   intervalTitle?: string;
   cabangOptions?: CabangOption[];
+  /** Field name in data row that contains the date string (Indonesian format) */
+  dateField?: string;
+  /** Options for gudang filter */
+  gudangOptions?: GudangOption[];
+  /** Field name in data row to apply gudang filter against */
+  gudangField?: string;
 }
 
 function toISO(d: Date) {
@@ -65,6 +89,9 @@ export default function ReportTable({
   intervalOptions,
   intervalTitle = 'Interval',
   cabangOptions,
+  dateField,
+  gudangOptions,
+  gudangField,
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [showFilter, setShowFilter] = useState(false);
@@ -76,9 +103,24 @@ export default function ReportTable({
   const [selectedCabang, setSelectedCabang] = useState<string>(
     cabangOptions?.[0]?.value ?? ''
   );
+  const [selectedGudang, setSelectedGudang] = useState<string>(
+    gudangOptions?.[0]?.value ?? ''
+  );
   const [appliedFilter, setAppliedFilter] = useState<{
-    start: string; end: string; interval: string | number; cabang?: string;
+    start: string; end: string; interval: string | number; cabang?: string; gudang?: string;
   } | null>(null);
+
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
 
   const [showExportMenu, setShowExportMenu] = useState(false);
 
@@ -90,14 +132,19 @@ export default function ReportTable({
   const exportFilename = title.replace(/\s+/g, '_').toLowerCase();
 
   const getExportData = () =>
-    filtered.map((row) =>
+    sorted.map((row) =>
       Object.fromEntries(
         columns.map((c) => [c.key, c.render ? String(c.render(row) ?? '') : row[c.key]])
       )
     );
 
-  const handleExportExcel = () => {
-    exportToExcel(
+  const handleExportExcel = async () => {
+    if (sorted.length === 0) {
+      alert('Tidak ada data yang bisa dicetak!');
+      setShowExportMenu(false);
+      return;
+    }
+    await exportToExcel(
       exportFilename,
       columns.map((c) => ({ label: c.label, key: c.key, align: c.align })),
       getExportData(),
@@ -107,11 +154,16 @@ export default function ReportTable({
     setShowExportMenu(false);
   };
 
-  const handleExportPdf = () => {
+  const handleExportPdf = async () => {
+    if (sorted.length === 0) {
+      alert('Tidak ada data yang bisa dicetak!');
+      setShowExportMenu(false);
+      return;
+    }
     const subtitle = appliedFilter
       ? `Periode: ${fmtDisplay(appliedFilter.start)} – ${fmtDisplay(appliedFilter.end)}`
       : undefined;
-    exportToPdf(
+    await exportToPdf(
       exportFilename,
       title,
       columns.map((c) => ({ label: c.label, key: c.key, align: c.align })),
@@ -123,7 +175,7 @@ export default function ReportTable({
   };
 
   const applyFilter = () => {
-    setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang });
+    setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
     setShowFilter(false);
   };
 
@@ -132,16 +184,49 @@ export default function ReportTable({
     setEndDate(toISO(today));
     setSelectedInterval(intervalOptions?.[0]?.value ?? 'all');
     setSelectedCabang(cabangOptions?.[0]?.value ?? '');
+    setSelectedGudang(gudangOptions?.[0]?.value ?? '');
+    setSortKey(null);
+    setSortDir('asc');
     setAppliedFilter(null);
   };
 
-  const filtered = search.trim()
-    ? data.filter((row) =>
-        searchFields.some((f) =>
-          String(row[f] ?? '').toLowerCase().includes(search.toLowerCase())
-        )
+  // ── Filtering ──────────────────────────────────────────────────────────
+  let filtered: Record<string, unknown>[] = data;
+
+  // Text search
+  if (search.trim() && searchFields.length > 0) {
+    filtered = filtered.filter((row) =>
+      searchFields.some((f) =>
+        String(row[f] ?? '').toLowerCase().includes(search.toLowerCase())
       )
-    : data;
+    );
+  }
+
+  // Date range filter
+  if (!hideDateFilter && appliedFilter && dateField) {
+    const { start, end } = appliedFilter;
+    filtered = filtered.filter((row) => {
+      const iso = parseIdDate(String(row[dateField] ?? ''));
+      if (!iso) return true;
+      return iso >= start && iso <= end;
+    });
+  }
+
+  // Gudang filter
+  if (appliedFilter?.gudang && appliedFilter.gudang !== '' && gudangField) {
+    const gv = appliedFilter.gudang;
+    filtered = filtered.filter((row) => String(row[gudangField] ?? '') === gv);
+  }
+
+  // ── Sorting ─────────────────────────────────────────────────────────────
+  const sorted = sortKey
+    ? [...filtered].sort((a, b) => {
+        const av = String(a[sortKey] ?? '');
+        const bv = String(b[sortKey] ?? '');
+        const cmp = av.localeCompare(bv, 'id', { numeric: true });
+        return sortDir === 'asc' ? cmp : -cmp;
+      })
+    : filtered;
 
   const activeIntervalLabel = intervalOptions?.find(
     (o) => o.value === (appliedFilter?.interval ?? selectedInterval)
@@ -285,6 +370,16 @@ export default function ReportTable({
                 🏥 {cabangOptions.find(c => c.value === appliedFilter.cabang)?.label}
               </span>
             )}
+            {gudangOptions && appliedFilter.gudang && appliedFilter.gudang !== '' && (
+              <span className="text-[11px] bg-orange-100 text-orange-700 font-medium px-2 py-0.5 rounded-full">
+                🏪 {gudangOptions.find(g => g.value === appliedFilter.gudang)?.label}
+              </span>
+            )}
+            {sortKey && (
+              <span className="text-[11px] bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded-full">
+                ⇅ {columns.find(c => c.key === sortKey)?.label} {sortDir === 'asc' ? '▲' : '▼'}
+              </span>
+            )}
             <button onClick={resetFilter} className="text-[11px] text-red-500 font-semibold px-1">
               × Reset
             </button>
@@ -305,6 +400,16 @@ export default function ReportTable({
                 value={selectedCabang}
                 onChange={setSelectedCabang}
                 options={cabangOptions}
+              />
+            )}
+
+            {/* Gudang select */}
+            {gudangOptions && gudangOptions.length > 0 && (
+              <SelectInput
+                label="Gudang"
+                value={selectedGudang}
+                onChange={setSelectedGudang}
+                options={gudangOptions}
               />
             )}
 
@@ -447,16 +552,20 @@ export default function ReportTable({
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="py-2.5 px-2 text-xs font-bold text-white whitespace-nowrap border-r border-blue-600 last:border-r-0"
+                    onClick={() => handleSort(col.key)}
+                    className="py-2.5 px-2 text-xs font-bold text-white whitespace-nowrap border-r border-blue-600 last:border-r-0 cursor-pointer select-none active:bg-blue-800"
                     style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left' }}
                   >
                     {col.label}
+                    <span className="ml-1 text-[9px] opacity-70">
+                      {sortKey === col.key ? (sortDir === 'asc' ? '▲' : '▼') : '⇅'}
+                    </span>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {sorted.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
                     <div className="flex flex-col items-center gap-2 text-gray-400">
@@ -466,7 +575,7 @@ export default function ReportTable({
                   </td>
                 </tr>
               ) : (
-                filtered.map((row, i) => (
+                sorted.map((row, i) => (
                   <tr key={i}
                     className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}`}>
                     {columns.map((col) => (
@@ -496,7 +605,7 @@ export default function ReportTable({
         {/* Status bar */}
         <div className="flex-shrink-0 bg-white border-t border-gray-100 px-4 py-2 flex items-center justify-between gap-2">
           <span className="text-[10px] text-gray-400 flex-1 min-w-0">
-            <span>{filtered.length} dari {data.length} data</span>
+            <span>{sorted.length} dari {data.length} data</span>
             {appliedFilter && !hideDateFilter && (
               <span className="text-blue-500"> · {fmtDisplay(appliedFilter.start)} – {fmtDisplay(appliedFilter.end)}</span>
             )}

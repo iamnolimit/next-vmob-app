@@ -19,6 +19,7 @@ export default function LapPergantianShiftPage() {
       totalValue={formatRupiah(totalSaldoKasir)}
       searchFields={['kasir']}
       searchPlaceholder="Kasir"
+      dateField="bukaShift"
     />
   );
 }
