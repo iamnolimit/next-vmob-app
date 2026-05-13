@@ -23,8 +23,6 @@ const laporanMenus = [
       { label: 'Janji Dengan Dokter',      href: '/lap-janji-dengan-dokter',      icon: '📅' },
       { label: 'Pembayaran Kasir',         href: '/lap-pembayaran-kasir',         icon: '💳' },
       { label: 'Pendapatan Petugas Medis', href: '/lap-pendapatan-petugas-medis', icon: '👨‍⚕️' },
-      { label: 'Tagihan Jaminan',          href: '/lap-tagihan-jaminan',          icon: '🛡️' },
-      { label: 'Piutang Klinik',           href: '/lap-piutang-klinik',           icon: '💰' },
     ],
   },
   {
@@ -36,16 +34,12 @@ const laporanMenus = [
       { label: 'Stok Obat',       href: '/lap-stok-obat',        icon: '📦' },
       { label: 'Obat Stok Habis', href: '/lap-obat-stok-habis',  icon: '⚠️' },
       { label: 'Obat Expired',    href: '/lap-obat-expired',     icon: '❌' },
-      { label: 'Hutang Obat',     href: '/lap-hutang-obat',      icon: '📉' },
-      { label: 'Piutang Obat',    href: '/lap-piutang-obat',     icon: '📈' },
     ],
   },
   {
     category: 'Keuangan',
     icon: '💹',
     items: [
-      { label: 'Laba Rugi',       href: '/lap-laba-rugi',        icon: '📊' },
-      { label: 'Neraca Umum',     href: '/lap-neraca-umum',      icon: '⚖️' },
       { label: 'Pergantian Shift',href: '/lap-pergantian-shift', icon: '🔄' },
     ],
   },
