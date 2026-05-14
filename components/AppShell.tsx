@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { SidebarProvider, useSidebar } from '@/lib/sidebarContext';
 import { NavLoadingProvider } from '@/lib/navLoadingContext';
@@ -21,16 +21,10 @@ const bottomTabs = [
 ];
 
 function BottomNav() {
-  const [pathname, setPathname] = useState('');
+  const rawPathname = usePathname();
+  const pathname = rawPathname?.replace(/\/$/, '') || '/';
   const router = useRouter();
   const { startLoading } = useNavLoading();
-
-  useEffect(() => {
-    const sync = () => setPathname(window.location.pathname);
-    sync();
-    window.addEventListener('popstate', sync);
-    return () => window.removeEventListener('popstate', sync);
-  }, []);
 
   return (
     <Tabbar
@@ -40,21 +34,23 @@ function BottomNav() {
       style={{ zIndex: 100 }}
     >
       <ToolbarPane>
-        {bottomTabs.map((tab) => (
-          <TabbarLink
-            key={tab.href}
-            active={pathname === tab.href}
-            onClick={() => {
-              if (pathname !== tab.href) startLoading();
-              router.push(tab.href);
-              setPathname(tab.href);
-            }}
-            icon={
-              <span className="text-2xl leading-none block">{tab.icon}</span>
-            }
-            label={tab.label}
-          />
-        ))}
+        {bottomTabs.map((tab) => {
+          const isActive =
+            pathname === tab.href ||
+            (tab.href === '/dashboard' && (pathname === '' || pathname === '/'));
+          return (
+            <TabbarLink
+              key={tab.href}
+              active={isActive}
+              onClick={() => {
+                if (!isActive) startLoading();
+                router.push(tab.href);
+              }}
+              icon={<span className="text-2xl leading-none block">{tab.icon}</span>}
+              label={tab.label}
+            />
+          );
+        })}
       </ToolbarPane>
     </Tabbar>
   );

@@ -15,15 +15,16 @@ const NavLoadingContext = createContext<NavLoadingContextType>({
 export function NavLoadingProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
-  const prevPathname = useRef(pathname);
+  const normalizedPathname = pathname?.replace(/\/$/, '') || '/';
+  const prevPathname = useRef(normalizedPathname);
 
   // Auto-stop when pathname changes (navigation complete)
   useEffect(() => {
-    if (pathname !== prevPathname.current) {
-      prevPathname.current = pathname;
+    if (normalizedPathname !== prevPathname.current) {
+      prevPathname.current = normalizedPathname;
       setIsLoading(false);
     }
-  }, [pathname]);
+  }, [normalizedPathname]);
 
   const startLoading = useCallback(() => {
     setIsLoading(true);

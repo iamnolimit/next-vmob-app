@@ -95,10 +95,11 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const { user, logout } = useAuth();
   const router   = useRouter();
   const pathname = usePathname();
+  const normalizedPathname = pathname?.replace(/\/$/, '') || '/';
   const { startLoading } = useNavLoading();
 
   const go = (href: string) => {
-    if (pathname !== href) startLoading();
+    if (normalizedPathname !== href) startLoading();
     router.push(href);
     onClose();
   };
@@ -165,7 +166,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                     key={item.href}
                     icon={item.icon}
                     label={item.label}
-                    active={pathname === item.href}
+                    active={normalizedPathname === item.href}
                     onClick={() => go(item.href)}
                   />
                 ))}

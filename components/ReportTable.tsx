@@ -94,6 +94,7 @@ export default function ReportTable({
   gudangField,
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
+  const [appliedSearch, setAppliedSearch] = useState('');
   const [showFilter, setShowFilter] = useState(false);
   const [startDate, setStartDate] = useState(toISO(firstOfMonth));
   const [endDate, setEndDate] = useState(toISO(today));
@@ -176,6 +177,7 @@ export default function ReportTable({
 
   const applyFilter = () => {
     setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
+    setAppliedSearch(search);
     setShowFilter(false);
   };
 
@@ -188,16 +190,18 @@ export default function ReportTable({
     setSortKey(null);
     setSortDir('asc');
     setAppliedFilter(null);
+    setSearch('');
+    setAppliedSearch('');
   };
 
   // ── Filtering ──────────────────────────────────────────────────────────
   let filtered: Record<string, unknown>[] = data;
 
-  // Text search
-  if (search.trim() && searchFields.length > 0) {
+  // Text search (applied via Terapkan Filter)
+  if (appliedSearch.trim() && searchFields.length > 0) {
     filtered = filtered.filter((row) =>
       searchFields.some((f) =>
-        String(row[f] ?? '').toLowerCase().includes(search.toLowerCase())
+        String(row[f] ?? '').toLowerCase().includes(appliedSearch.toLowerCase())
       )
     );
   }
@@ -519,25 +523,6 @@ export default function ReportTable({
           </div>
         </div>
 
-        {/* Always-visible search (when filter closed) */}
-        {!showFilter && searchFields.length > 0 && (
-          <div className="px-4 pb-2.5">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={searchPlaceholder}
-                className="w-full pl-9 pr-9 py-2 bg-gray-100 rounded-xl text-sm outline-none"
-              />
-              {search && (
-                <button onClick={() => setSearch('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">✕</button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ── Table ── */}

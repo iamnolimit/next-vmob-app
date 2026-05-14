@@ -37,7 +37,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id" className="h-full">
-      <body className="h-full overflow-hidden bg-gray-50">
+        <body className="h-full overflow-hidden bg-gray-50" suppressHydrationWarning>
         <AuthProvider>
           <KonstaApp>
             {children}

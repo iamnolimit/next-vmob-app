@@ -48,7 +48,7 @@ export default function LaporanHeader({ title, subtitle }: LaporanHeaderProps) {
       <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
       <div className="h-14 flex items-center justify-between px-3 relative">
         <div className="w-24 flex justify-start">
-          <BackBtn onClick={() => router.back()} />
+          <BackBtn onClick={() => router.push('/dashboard')} />
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center min-w-0 px-1">
