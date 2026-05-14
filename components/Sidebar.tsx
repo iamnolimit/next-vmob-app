@@ -29,7 +29,7 @@ const laporanMenus = [
     category: 'Obat & Stok',
     icon: '📦',
     items: [
-      { label: 'Pembelian Obat',  href: '/lap-pembelian-obat',   icon: '🛒' },
+      { label: 'Pembelian',       href: '/lap-pembelian-obat',   icon: '🛒' },
       { label: 'Stok Opname',     href: '/lap-stok-opname',      icon: '📝' },
       { label: 'Stok Obat',       href: '/lap-stok-obat',        icon: '📦' },
       { label: 'Obat Stok Habis', href: '/lap-obat-stok-habis',  icon: '⚠️' },
@@ -109,12 +109,6 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     onClose();
   };
 
-  const mainMenus = [
-    { label: 'Dashboard', href: '/dashboard', icon: '🏠' },
-    { label: 'Obat',      href: '/obat',      icon: '💊' },
-    { label: 'Customer',  href: '/customer',  icon: '👥' },
-  ];
-
   return (
     <Panel side="left" opened={open} onBackdropClick={onClose} className="!z-[200]">
       <Page>
@@ -162,19 +156,6 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
           {/* ── Nav ── */}
           <div className="flex-1 overflow-y-auto">
-
-            <SectionLabel label="Menu Utama" />
-            {mainMenus.map((item) => (
-              <MenuItem
-                key={item.href}
-                icon={item.icon}
-                label={item.label}
-                active={pathname === item.href}
-                onClick={() => go(item.href)}
-              />
-            ))}
-
-            <div className="mx-3 my-2 border-t border-gray-100" />
 
             {laporanMenus.map((group) => (
               <div key={group.category}>

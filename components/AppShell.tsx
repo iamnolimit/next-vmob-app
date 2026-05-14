@@ -15,9 +15,9 @@ interface AppShellProps {
 }
 
 const bottomTabs = [
-  { label: 'Home',     href: '/dashboard', icon: '🏠' },
-  { label: 'Obat',     href: '/obat',      icon: '💊' },
-  { label: 'Customer', href: '/customer',  icon: '👥' },
+  { label: 'Home',  href: '/dashboard', icon: '🏠' },
+  { label: 'Obat',  href: '/obat',      icon: '💊' },
+  { label: 'Profil', href: '/profil',   icon: '👤' },
 ];
 
 function BottomNav() {
