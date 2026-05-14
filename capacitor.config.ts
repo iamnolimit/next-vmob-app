@@ -4,6 +4,10 @@ const config: CapacitorConfig = {
   appId: 'com.vmedis.mobile',
   appName: 'Vmedis Mobile',
   webDir: 'out',
+  server: {
+    url: 'https://next-vmob-app.vercel.app',
+    cleartext: false,
+  },
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
