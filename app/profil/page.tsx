@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 
@@ -10,13 +11,16 @@ const groupColors: Record<string, string> = {
 };
 
 export default function ProfilPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
-  if (!user) {
-    router.replace('/login');
-    return null;
-  }
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) return null;
 
   const fields = [
     { label: 'Nama Lengkap', value: user.nama, icon: '👤' },
