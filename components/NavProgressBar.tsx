@@ -7,12 +7,14 @@ export default function NavProgressBar() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    let t: NodeJS.Timeout;
     if (isLoading) {
-      setVisible(true);
+      // Use setTimeout to avoid synchronous state update during render
+      t = setTimeout(() => setVisible(true), 0);
     } else {
-      const t = setTimeout(() => setVisible(false), 200);
-      return () => clearTimeout(t);
+      t = setTimeout(() => setVisible(false), 200);
     }
+    return () => clearTimeout(t);
   }, [isLoading]);
 
   if (!visible) return null;

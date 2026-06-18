@@ -1,8 +1,70 @@
 'use client';
+import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
-import { lapPergantianShift, totalSaldoKasir, formatRupiah, formatNumber } from '@/lib/dummyData';
+import { useReportData } from '@/lib/useReportData';
+import { formatRupiah, formatNumber } from '@/lib/dummyData';
 
 export default function LapPergantianShiftPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = useCallback((rawData: any, offset = 0) => {
+    const dataArray = rawData?.data?.data || rawData?.data || rawData;
+    if (!Array.isArray(dataArray)) return [];
+
+    const formatDate = (dateString: string) => {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day} ${month} ${year} ${hours}:${minutes}`;
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return dataArray.map((item: any, index: number) => ({
+      no: offset + index + 1,
+      bukaShift: formatDate(item.shfbuka),
+      tutupShift: formatDate(item.shftutup),
+      kasir: item.username || '-',
+      saldoKasir: parseFloat(item.shfakhir || 0),
+      rawData: item,
+    }));
+  }, []);
+
+  const { data, refetch } = useReportData({
+    apiEndpoint: 'aplaporangantishift/index',
+    apiVersion: 'api7',
+    apiParams: {
+      cari: '4',
+      sorting: '',
+      limit: 1000,
+      offset: 0,
+      filter: '',
+      tgldirect: true,
+    },
+    apiNormalizer,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFetchData = useCallback((filters: any) => {
+    const formatDateTime = (isoDate: string, isEnd: boolean) => {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      return `${y}-${m}-${d} ${isEnd ? '23:59:59' : '00:00:00'}`;
+    };
+
+    refetch({
+      tglAwal: formatDateTime(filters.start, false),
+      tglAkhir: formatDateTime(filters.end, true),
+      filter: filters.search,
+    });
+  }, [refetch]);
+
+  const total = data.reduce((s, r) => s + (r.saldoKasir as number), 0);
+
   return (
     <ReportTable
       title="Laporan Pergantian Shift"
@@ -14,12 +76,13 @@ export default function LapPergantianShiftPage() {
         { key: 'saldoKasir', label: 'Saldo Kasir', align: 'right', width: 130,
           render: (r) => formatNumber(r.saldoKasir as number) },
       ]}
-      data={lapPergantianShift as unknown as Record<string, unknown>[]}
+      data={data}
       totalLabel="Total Saldo Kasir"
-      totalValue={formatRupiah(totalSaldoKasir)}
+      totalValue={formatRupiah(total)}
       searchFields={['kasir']}
       searchPlaceholder="Kasir"
       dateField="bukaShift"
+      onFetchData={handleFetchData}
     />
   );
 }

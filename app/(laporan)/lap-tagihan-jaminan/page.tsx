@@ -1,8 +1,45 @@
 'use client';
 import ReportTable from '@/components/ReportTable';
-import { lapTagihanJaminan, totalTagihanJaminan, formatRupiah } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
+import { useReportData } from '@/lib/useReportData';
 
 export default function LapTagihanJaminanPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = (rawData: any, offset = 0) => {
+    const dataArray = rawData?.data || rawData;
+    if (!Array.isArray(dataArray)) return [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return dataArray.map((item: any, index: number) => ({
+      no: offset + index + 1,
+      tanggal: item.tgl || '-',
+      noFaktur: item.pemnofaktur || '-',
+      noRM: item.pasrm || '-',
+      pasien: item.pasnama || '-',
+      jaminan: item.katnama || '-',
+      totalBiaya: parseFloat(item.pemtunai || '0'),
+      rawData: item,
+    }));
+  };
+
+  const { data, loading, error, refetch } = useReportData({
+    apiEndpoint: '/laporan-tagihan-jaminan-pasien/index',
+    apiVersion: 'api5',
+    apiParams: {
+      filter: '',
+      sorting: '',
+      limit: 10,
+      offset: 0,
+      reg: 'db',
+      cari: 4,
+      device: 'mobile',
+    },
+    apiNormalizer,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalTagihanJaminan = data.reduce((sum: number, item: any) => sum + (item.totalBiaya || 0), 0);
+
   return (
     <ReportTable
       title="Laporan Tagihan Jaminan Pasien"
@@ -14,7 +51,18 @@ export default function LapTagihanJaminanPage() {
         { key: 'totalBiaya', label: 'Total', align: 'right', width: 120,
           render: (r) => formatRupiah(r.totalBiaya as number) },
       ]}
-      data={lapTagihanJaminan as unknown as Record<string, unknown>[]}
+      data={data}
+      loading={loading}
+      error={error}
+      onFetchData={(params) => {
+        refetch({
+          tanggalawal: params.start || '',
+          tanggalakhir: params.end || '',
+          filter: params.search || '',
+          offset: 0,
+          limit: 10,
+        });
+      }}
       totalLabel="Total Biaya"
       totalValue={formatRupiah(totalTagihanJaminan)}
       searchFields={['noFaktur', 'pasien', 'jaminan']}

@@ -1,11 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
 import SelectInput from '@/components/SelectInput';
 import DatePickerInput from '@/components/DatePickerInput';
-import { neracaUmumData, totalAktiva, totalKewajibanModal, formatNumber, cabangOptions } from '@/lib/dummyData';
+import { formatNumber, cabangOptions } from '@/lib/dummyData';
 import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
 import { useAuth } from '@/lib/authContext';
+import { useReportData } from '@/lib/useReportData';
 
 const fmt = (n: number) => formatNumber(n);
 const today = new Date();
@@ -26,18 +27,80 @@ export default function LapNeracaUmumPage() {
   const [selectedCabang, setSelectedCabang] = useState(cabangOptions[0].value);
   const [appliedCabang, setAppliedCabang] = useState(cabangOptions[0].value);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = useCallback((rawData: any) => {
+    if (rawData?.status === 1) {
+      return [rawData];
+    }
+    return [];
+  }, []);
+
+  const { data, refetch } = useReportData({
+    apiEndpoint: 'laporanneracanormal/laporan-v2',
+    apiVersion: 'api5',
+    apiParams: {
+      cari: 4,
+      bulan: '',
+      tahun: '',
+      tglAwal: '',
+      tglAkhir: '',
+      carimobile: '',
+      sorting: '',
+      limit: 1000,
+      offset: 0,
+      mn_jenis: 4,
+      reg: 'db',
+      app_jenis: '',
+    },
+    apiNormalizer,
+  });
+
+  useEffect(() => {
+    const formatDate = (isoDate: string) => {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      return `${d} ${months[Number(m) - 1]} ${y}`;
+    };
+
+    const [y, m] = appliedDate.split('-');
+    const bulan = `${months[Number(m) - 1]} ${y}`;
+    const tahun = y;
+    const tgl = formatDate(appliedDate);
+
+    refetch({
+      bulan,
+      tahun,
+      tglAwal: tgl,
+      tglAkhir: tgl,
+    });
+  }, [appliedDate, refetch]);
+
+  const reportData = data[0] || { data1: [], data23: [], datalaba: [], datalabacabang: [] };
+
+  // Process data1 (AKTIVA)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const aktivaItems = (reportData.data1 || []).filter((item: any) => item.urut != '0' && item.urut != '2' && item.urut != 0 && item.urut != 2);
+  const totalAktiva = aktivaItems.reduce((sum: number, item: any) => sum + parseFloat(item.mutasi || 0), 0);
+
+  // Process data23 (KEWAJIBAN & MODAL)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const kewajibanModalItems = (reportData.data23 || []).filter((item: any) => item.urut != '0' && item.urut != '2' && item.urut != 0 && item.urut != 2);
+  const totalKewajibanModal = kewajibanModalItems.reduce((sum: number, item: any) => sum + parseFloat(item.mutasi || 0), 0);
+
   const sections = [
     {
       title: 'AKTIVA',
       rows: [
-        ...neracaUmumData.aktiva.map((r) => ({ label: r.label, value: fmt(r.nominal) })),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...aktivaItems.map((r: any) => ({ label: r.aknama, value: fmt(parseFloat(r.mutasi || 0)) })),
         { label: 'TOTAL AKTIVA', value: fmt(totalAktiva) },
       ],
     },
     {
       title: 'KEWAJIBAN & MODAL',
       rows: [
-        ...neracaUmumData.kewajibanModal.map((r) => ({ label: r.label, value: fmt(r.nominal) })),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...kewajibanModalItems.map((r: any) => ({ label: r.aknama, value: fmt(parseFloat(r.mutasi || 0)) })),
         { label: 'TOTAL KEWAJIBAN & MODAL', value: fmt(totalKewajibanModal) },
       ],
     },
@@ -164,10 +227,11 @@ export default function LapNeracaUmumPage() {
             <h2 className="text-xs font-bold text-blue-700 pb-1.5 border-b-2 border-blue-700 mb-2 uppercase">Aktiva</h2>
             <div className="flex justify-between text-[10px] text-gray-500 mb-2"><span>Keterangan</span><span>Nominal</span></div>
             <div className="space-y-1.5">
-              {neracaUmumData.aktiva.map((item, i) => (
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {aktivaItems.map((item: any, i: number) => (
                 <div key={i} className="flex justify-between text-xs">
-                  <span className="text-gray-700">{item.label}</span>
-                  <span className="font-medium">{fmt(item.nominal)}</span>
+                  <span className="text-gray-700">{item.aknama}</span>
+                  <span className="font-medium">{fmt(parseFloat(item.mutasi || 0))}</span>
                 </div>
               ))}
             </div>
@@ -181,10 +245,11 @@ export default function LapNeracaUmumPage() {
             <h2 className="text-xs font-bold text-purple-700 pb-1.5 border-b-2 border-purple-700 mb-2 uppercase">Kewajiban &amp; Modal</h2>
             <div className="flex justify-between text-[10px] text-gray-500 mb-2"><span>Keterangan</span><span>Nominal</span></div>
             <div className="space-y-1.5">
-              {neracaUmumData.kewajibanModal.map((item, i) => (
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {kewajibanModalItems.map((item: any, i: number) => (
                 <div key={i} className="flex justify-between text-xs">
-                  <span className="text-gray-700">{item.label}</span>
-                  <span className="font-medium">{fmt(item.nominal)}</span>
+                  <span className="text-gray-700">{item.aknama}</span>
+                  <span className="font-medium">{fmt(parseFloat(item.mutasi || 0))}</span>
                 </div>
               ))}
             </div>

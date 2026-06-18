@@ -158,6 +158,40 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {/* ── Nav ── */}
           <div className="flex-1 overflow-y-auto">
 
+            <div>
+              <SectionLabel label="Dashboard" />
+              <MenuItem
+                icon="🏠"
+                label="Home"
+                active={normalizedPathname === '/dashboard'}
+                onClick={() => go('/dashboard')}
+              />
+              <MenuItem
+                icon="📈"
+                label="Smart Forecast"
+                active={normalizedPathname === '/forecast'}
+                onClick={() => go('/forecast')}
+              />
+              <MenuItem
+                icon="💰"
+                label="Keuangan"
+                active={normalizedPathname === '/keuangan'}
+                onClick={() => go('/keuangan')}
+              />
+              <MenuItem
+                icon="💊"
+                label="Obat"
+                active={normalizedPathname === '/obat'}
+                onClick={() => go('/obat')}
+              />
+              <MenuItem
+                icon="👥"
+                label="Customer"
+                active={normalizedPathname === '/customer'}
+                onClick={() => go('/customer')}
+              />
+            </div>
+
             {laporanMenus.map((group) => (
               <div key={group.category}>
                 <SectionLabel label={group.category} />

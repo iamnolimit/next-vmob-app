@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/sidebarContext';
 import { useAuth } from '@/lib/authContext';
@@ -61,6 +61,10 @@ interface ReportTableProps {
   gudangOptions?: GudangOption[];
   /** Field name in data row to apply gudang filter against */
   gudangField?: string;
+  /** Callback to fetch data from API */
+  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; gudang: string }) => void;
+  loading?: boolean;
+  error?: string | null;
 }
 
 function toISO(d: Date) {
@@ -92,6 +96,9 @@ export default function ReportTable({
   dateField,
   gudangOptions,
   gudangField,
+  onFetchData,
+  loading,
+  error,
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [appliedSearch, setAppliedSearch] = useState('');
@@ -129,6 +136,21 @@ export default function ReportTable({
   const { openSidebar } = useSidebar();
   const { user } = useAuth();
   const namaKlinik = user?.cabang ?? 'Vmedis Mobile';
+
+  // Initial fetch
+  useEffect(() => {
+    if (onFetchData) {
+      onFetchData({
+        start: startDate,
+        end: endDate,
+        search: '',
+        interval: selectedInterval,
+        cabang: selectedCabang,
+        gudang: selectedGudang,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const exportFilename = title.replace(/\s+/g, '_').toLowerCase();
 
@@ -179,19 +201,32 @@ export default function ReportTable({
     setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
     setAppliedSearch(search);
     setShowFilter(false);
+    if (onFetchData) {
+      onFetchData({ start: startDate, end: endDate, search, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
+    }
   };
 
   const resetFilter = () => {
-    setStartDate(toISO(firstOfMonth));
-    setEndDate(toISO(today));
-    setSelectedInterval(intervalOptions?.[0]?.value ?? 'all');
-    setSelectedCabang(cabangOptions?.[0]?.value ?? '');
-    setSelectedGudang(gudangOptions?.[0]?.value ?? '');
+    const defaultStart = toISO(firstOfMonth);
+    const defaultEnd = toISO(today);
+    const defaultInterval = intervalOptions?.[0]?.value ?? 'all';
+    const defaultCabang = cabangOptions?.[0]?.value ?? '';
+    const defaultGudang = gudangOptions?.[0]?.value ?? '';
+
+    setStartDate(defaultStart);
+    setEndDate(defaultEnd);
+    setSelectedInterval(defaultInterval);
+    setSelectedCabang(defaultCabang);
+    setSelectedGudang(defaultGudang);
     setSortKey(null);
     setSortDir('asc');
     setAppliedFilter(null);
     setSearch('');
     setAppliedSearch('');
+
+    if (onFetchData) {
+      onFetchData({ start: defaultStart, end: defaultEnd, search: '', interval: defaultInterval, cabang: defaultCabang, gudang: defaultGudang });
+    }
   };
 
   // ── Filtering ──────────────────────────────────────────────────────────
@@ -550,7 +585,25 @@ export default function ReportTable({
               </tr>
             </thead>
             <tbody>
-              {sorted.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={columns.length} className="text-center py-16">
+                    <div className="flex flex-col items-center gap-2 text-gray-400">
+                      <span className="text-4xl animate-spin">⏳</span>
+                      <span className="text-sm">Memuat data...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={columns.length} className="text-center py-16">
+                    <div className="flex flex-col items-center gap-2 text-red-400">
+                      <span className="text-4xl">⚠️</span>
+                      <span className="text-sm">{error}</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : sorted.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
                     <div className="flex flex-col items-center gap-2 text-gray-400">

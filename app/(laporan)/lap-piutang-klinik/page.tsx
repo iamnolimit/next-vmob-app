@@ -1,8 +1,55 @@
 'use client';
 import ReportTable from '@/components/ReportTable';
-import { lapPiutangKlinik, totalPiutangKlinik, formatRupiah, formatNumber } from '@/lib/dummyData';
+import { formatRupiah, formatNumber } from '@/lib/dummyData';
+import { useReportData } from '@/lib/useReportData';
 
 export default function LapPiutangKlinikPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = (rawData: any, offset = 0) => {
+    const dataArray = rawData?.data || rawData;
+    if (!Array.isArray(dataArray)) return [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return dataArray.map((item: any, index: number) => ({
+      no: offset + index + 1,
+      noFaktur: item.pemnofaktur || '-',
+      pasien: item.pasnama || '-',
+      jatuhTempo: item.tanggaldeadline || '-',
+      total: parseFloat(item.kekurangan || '0'),
+      rawData: item,
+    }));
+  };
+
+  const getTodayWIB = () => {
+    const now = new Date();
+    const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+    const year = wibTime.getUTCFullYear();
+    const month = String(wibTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(wibTime.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const { data, loading, error, refetch } = useReportData({
+    apiEndpoint: '/appiutang-klinik/index',
+    apiVersion: 'api5',
+    apiParams: {
+      date: getTodayWIB(),
+      tanggalawal: '',
+      tanggalakhir: '',
+      carimobile: '',
+      sorting: '',
+      limit: 20,
+      offset: 0,
+      deadline: '',
+      reg: 'db',
+      cari: 4,
+    },
+    apiNormalizer,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalPiutangKlinik = data.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
+
   return (
     <ReportTable
       title="Laporan Piutang Klinik"
@@ -14,7 +61,19 @@ export default function LapPiutangKlinikPage() {
         { key: 'total', label: 'Total', align: 'right', width: 130,
           render: (r) => formatNumber(r.total as number) },
       ]}
-      data={lapPiutangKlinik as unknown as Record<string, unknown>[]}
+      data={data}
+      loading={loading}
+      error={error}
+      onFetchData={(params) => {
+        refetch({
+          tanggalawal: params.start || '',
+          tanggalakhir: params.end || '',
+          carimobile: params.search || '',
+          offset: 0,
+          limit: 20,
+          deadline: params.interval !== 'all' ? params.interval : '',
+        });
+      }}
       totalLabel="Total Kekurangan"
       totalValue={formatRupiah(totalPiutangKlinik)}
       searchFields={['noFaktur', 'pasien']}

@@ -1,14 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
 import SelectInput from '@/components/SelectInput';
 import DatePickerInput from '@/components/DatePickerInput';
-import {
-  labaRugiData, totalPemasukanLabaRugi, totalPengeluaranLabaRugi,
-  totalHPP, labaKotor, labaBersih, formatNumber, cabangOptions,
-} from '@/lib/dummyData';
+import { formatNumber, cabangOptions } from '@/lib/dummyData';
 import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
 import { useAuth } from '@/lib/authContext';
+import { useReportData } from '@/lib/useReportData';
 
 type PeriodType = 'tanggal' | 'bulan' | 'tahun';
 
@@ -35,7 +33,111 @@ export default function LapLabaRugiPage() {
   const [selectedCabang, setSelectedCabang] = useState(cabangOptions[0].value);
   const [appliedCabang, setAppliedCabang] = useState(cabangOptions[0].value);
 
-  const isProfit = labaBersih >= 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = useCallback((rawData: any) => {
+    let resdata = null;
+    if (rawData?.data && !Array.isArray(rawData.data)) {
+      resdata = rawData.data;
+    } else if (rawData?.data?.data) {
+      resdata = rawData.data.data;
+    } else if (rawData) {
+      resdata = rawData;
+    }
+
+    if (resdata && (resdata.data || resdata.data1 || resdata.data2)) {
+      const obatterjual = resdata.data2 ? parseFloat(resdata.data2.total) || 0 : 0;
+      const obatretur = resdata.data3 ? parseFloat(resdata.data3.total) || 0 : 0;
+      const jasaterjual = resdata.data6 ? parseFloat(resdata.data6.total) || 0 : 0;
+      const jasaretur = resdata.data7 ? parseFloat(resdata.data7.total) || 0 : 0;
+      const pemasukan = resdata.data4 ? parseFloat(resdata.data4.mutasi) || 0 : 0;
+      const pengeluaran = resdata.data5 ? Math.abs(parseFloat(resdata.data5.mutasi) || 0) : 0;
+
+      const totalhpp = obatterjual + jasaterjual - obatretur - jasaretur;
+      const labakotor = pemasukan - totalhpp;
+      const lababersih = labakotor - pengeluaran;
+
+      return [{
+        pemasukanData: resdata.data || [],
+        pengeluaranData: resdata.data1 || [],
+        totalPemasukan: pemasukan,
+        totalPengeluaran: pengeluaran,
+        totalHPP: totalhpp,
+        labaKotor: labakotor,
+        labaBersih: lababersih,
+      }];
+    }
+    return [];
+  }, []);
+
+  const { data, refetch, loading } = useReportData({
+    apiEndpoint: 'dy-lap-laba-rugi/laporan/',
+    apiVersion: 'api7',
+    apiParams: {
+      cari: 4,
+      bulan: '',
+      tahun: '',
+      tglAwal: '',
+      tglAkhir: '',
+      reg: 'db',
+      mn_jenis: '',
+    },
+    apiNormalizer,
+  });
+
+  useEffect(() => {
+    const formatDate = (isoDate: string) => {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      return `${d} ${months[Number(m) - 1]} ${y}`;
+    };
+
+    let cariValue = 4;
+    let bulan = '';
+    let tahun = '';
+    let tglAwal = '';
+    let tglAkhir = '';
+
+    if (periodType === 'tanggal') {
+      cariValue = 4;
+      tglAwal = formatDate(appliedStart);
+      tglAkhir = formatDate(appliedEnd);
+    } else if (periodType === 'bulan') {
+      cariValue = 3;
+      const [y, m] = appliedStart.split('-');
+      bulan = `${y}-${m}`;
+      tahun = y;
+      tglAwal = `01 ${months[Number(m) - 1]} ${y}`;
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      tglAkhir = `${lastDay} ${months[Number(m) - 1]} ${y}`;
+    } else {
+      cariValue = 2;
+      const [y] = appliedStart.split('-');
+      tahun = y;
+      tglAwal = `01 Jan ${y}`;
+      tglAkhir = `31 Des ${y}`;
+    }
+
+    refetch({
+      cari: cariValue,
+      bulan,
+      tahun,
+      tglAwal,
+      tglAkhir,
+      apiEndpoint: cariValue === 2 || cariValue === 3 ? 'dy-lap-laba-rugi-bulan/laporan/' : 'dy-lap-laba-rugi/laporan/',
+    });
+  }, [appliedStart, appliedEnd, periodType, refetch]);
+
+  const reportData = data[0] || {
+    pemasukanData: [],
+    pengeluaranData: [],
+    totalPemasukan: 0,
+    totalPengeluaran: 0,
+    totalHPP: 0,
+    labaKotor: 0,
+    labaBersih: 0,
+  };
+
+  const isProfit = reportData.labaBersih >= 0;
   const fmt = (v: number) => formatNumber(v);
 
   const applyFilter = () => {
@@ -48,24 +150,26 @@ export default function LapLabaRugiPage() {
   const exportSections = [
     {
       title: 'PEMASUKAN',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rows: [
-        ...labaRugiData.pemasukan.map((r) => ({ label: r.namaAkun, value: fmt(r.nominal) })),
-        { label: 'Total Pemasukan', value: fmt(totalPemasukanLabaRugi) },
+        ...reportData.pemasukanData.map((r: any) => ({ label: r.aknama, value: fmt(parseFloat(r.mutasi || 0)) })),
+        { label: 'Total Pemasukan', value: fmt(reportData.totalPemasukan) },
       ],
     },
     {
       title: 'PENGELUARAN',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rows: [
-        ...labaRugiData.pengeluaran.map((r) => ({ label: r.namaAkun, value: fmt(r.nominal) })),
-        { label: 'HPP', value: fmt(totalHPP) },
-        { label: 'Total Pengeluaran', value: fmt(totalPengeluaranLabaRugi) },
+        ...reportData.pengeluaranData.map((r: any) => ({ label: r.aknama, value: fmt(Math.abs(parseFloat(r.mutasi || 0))) })),
+        { label: 'HPP', value: fmt(reportData.totalHPP) },
+        { label: 'Total Pengeluaran', value: fmt(reportData.totalPengeluaran) },
       ],
     },
     {
       title: 'RINGKASAN',
       rows: [
-        { label: 'Laba Kotor', value: fmt(labaKotor) },
-        { label: 'Laba Bersih', value: fmt(labaBersih) },
+        { label: 'Laba Kotor', value: fmt(reportData.labaKotor) },
+        { label: 'Laba Bersih', value: fmt(reportData.labaBersih) },
       ],
     },
   ];
@@ -222,48 +326,33 @@ export default function LapLabaRugiPage() {
           ))}
         </div>
 
-        {Array.from({ length: Math.max(labaRugiData.pemasukan.length, labaRugiData.pengeluaran.length) }).map((_, i) => (
+        {Array.from({ length: Math.max(reportData.pemasukanData.length, reportData.pengeluaranData.length) }).map((_, i) => (
           <div key={i} className="flex gap-2 mb-1">
             <div className="flex-1 flex justify-between text-xs">
-              {labaRugiData.pemasukan[i]
-                ? (<><span className="text-gray-700 pl-2">{labaRugiData.pemasukan[i].namaAkun}</span><span className="font-medium">{fmt(labaRugiData.pemasukan[i].nominal)}</span></>)
+              {reportData.pemasukanData[i]
+                ? (<><span className="text-gray-700 pl-2">{reportData.pemasukanData[i].aknama}</span><span className="font-medium">{fmt(parseFloat(reportData.pemasukanData[i].mutasi || 0))}</span></>)
                 : <span />}
             </div>
             <div className="flex-1 flex justify-between text-xs">
-              {labaRugiData.pengeluaran[i]
-                ? (<><span className="text-gray-700 pl-2">{labaRugiData.pengeluaran[i].namaAkun}</span><span className="font-medium">{fmt(labaRugiData.pengeluaran[i].nominal)}</span></>)
+              {reportData.pengeluaranData[i]
+                ? (<><span className="text-gray-700 pl-2">{reportData.pengeluaranData[i].aknama}</span><span className="font-medium">{fmt(Math.abs(parseFloat(reportData.pengeluaranData[i].mutasi || 0)))}</span></>)
                 : <span />}
             </div>
           </div>
         ))}
 
         <div className="flex gap-2 mt-3 pt-2 border-t-2 border-gray-900">
-          <div className="flex-1 flex justify-between text-sm font-bold"><span>Total</span><span>{fmt(totalPemasukanLabaRugi)}</span></div>
-          <div className="flex-1 flex justify-between text-sm font-bold"><span>Total</span><span>{fmt(totalPengeluaranLabaRugi)}</span></div>
-        </div>
-
-        {/* HPP */}
-        <div className="mt-4 pt-3 border-t border-gray-200">
-          <div className="text-sm font-bold pb-1 border-b-2 border-gray-900 mb-2">Harga Pokok Penjualan</div>
-          <div className="flex justify-between text-xs text-gray-500 mb-2"><span>Nama Akun</span><span>Nominal</span></div>
-          {labaRugiData.hpp.map((item, i) => (
-            <div key={i} className="flex justify-between text-xs mb-1">
-              <span className="text-gray-700 pl-2">{item.namaAkun}</span>
-              <span>{fmt(item.nominal)}</span>
-            </div>
-          ))}
-          <div className="flex justify-between text-sm font-bold mt-2 pt-2 border-t-2 border-gray-900">
-            <span>Total</span><span>{fmt(totalHPP)}</span>
-          </div>
+          <div className="flex-1 flex justify-between text-sm font-bold"><span>Total</span><span>{fmt(reportData.totalPemasukan)}</span></div>
+          <div className="flex-1 flex justify-between text-sm font-bold"><span>Total</span><span>{fmt(reportData.totalPengeluaran)}</span></div>
         </div>
 
         {/* Summary */}
         <div className="mt-3 space-y-2">
           {[
-            { label: 'Total HPP', val: totalHPP, color: '' },
-            { label: 'Laba Kotor', val: labaKotor, color: labaKotor < 0 ? 'text-red-600' : '' },
-            { label: 'Total Pengeluaran', val: totalPengeluaranLabaRugi, color: '' },
-            { label: 'Laba Bersih', val: labaBersih, color: labaBersih < 0 ? 'text-red-600' : '' },
+            { label: 'Total HPP', val: reportData.totalHPP, color: '' },
+            { label: 'Laba Kotor', val: reportData.labaKotor, color: reportData.labaKotor < 0 ? 'text-red-600' : '' },
+            { label: 'Total Pengeluaran', val: reportData.totalPengeluaran, color: '' },
+            { label: 'Laba Bersih', val: reportData.labaBersih, color: reportData.labaBersih < 0 ? 'text-red-600' : '' },
           ].map(({ label, val, color }) => (
             <div key={label} className={`flex justify-between text-sm font-bold py-2 border-t border-dashed border-gray-300 ${color}`}>
               <span>{label}</span><span>{fmt(val)}</span>
@@ -274,7 +363,7 @@ export default function LapLabaRugiPage() {
         {/* Final box */}
         <div className={`mt-4 rounded-2xl border-2 p-4 flex items-center justify-center gap-4 ${isProfit ? 'bg-gray-50 border-gray-900' : 'bg-red-50 border-red-500'}`}>
           <span className={`text-lg font-bold ${isProfit ? 'text-gray-900' : 'text-red-600'}`}>Laba Rugi:</span>
-          <span className={`text-2xl font-extrabold ${isProfit ? 'text-gray-900' : 'text-red-600'}`}>{fmt(labaBersih)}</span>
+          <span className={`text-2xl font-extrabold ${isProfit ? 'text-gray-900' : 'text-red-600'}`}>{fmt(reportData.labaBersih)}</span>
         </div>
       </div>
     </div>

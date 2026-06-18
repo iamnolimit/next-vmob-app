@@ -5,7 +5,7 @@ import { getUser, saveUser, clearUser, login as doLogin, type UserProfile } from
 interface AuthContextValue {
   user: UserProfile | null;
   loading: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (domain: string, username: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -22,18 +22,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = getUser();
-    setUser(stored);
-    setLoading(false);
+    // Use setTimeout to avoid synchronous state update during render
+    setTimeout(() => {
+      setUser(stored);
+      setLoading(false);
+    }, 0);
   }, []);
 
-  const login = useCallback(async (username: string, password: string): Promise<boolean> => {
-    const profile = doLogin(username, password);
-    if (profile) {
-      setUser(profile);
-      return true;
-    }
-    return false;
-  }, []);
+  const login = useCallback(
+    async (domain: string, username: string, password: string): Promise<boolean> => {
+      const profile = await doLogin(domain, username, password);
+      if (profile) {
+        setUser(profile);
+        return true;
+      }
+      return false;
+    },
+    []
+  );
 
   const logout = useCallback(() => {
     clearUser();

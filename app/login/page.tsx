@@ -2,10 +2,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/authContext';
+import { login as doLogin } from '@/lib/auth';
 
 export default function LoginPage() {
-  const { login } = useAuth();
   const router = useRouter();
   const [domain, setDomain] = useState('');
   const [username, setUsername] = useState('');
@@ -52,12 +51,17 @@ export default function LoginPage() {
     }
     setLoading(true);
     setError('');
-    const ok = await login(username.trim(), password);
-    setLoading(false);
-    if (ok) {
-      router.replace('/dashboard');
-    } else {
-      setError('Username atau password salah.');
+    try {
+      const profile = await doLogin(domain.trim(), username.trim(), password);
+      setLoading(false);
+      if (profile) {
+        router.replace('/dashboard');
+      } else {
+        setError('Login gagal. Periksa kembali data Anda.');
+      }
+    } catch (err: unknown) {
+      setLoading(false);
+      setError(err instanceof Error ? err.message : 'Login gagal.');
     }
   };
 

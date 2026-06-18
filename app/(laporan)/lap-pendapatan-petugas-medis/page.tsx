@@ -1,8 +1,66 @@
 'use client';
+import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
-import { lapPendapatanPetugasMedis, totalPendapatanPetugasMedis, formatRupiah } from '@/lib/dummyData';
+import { useReportData } from '@/lib/useReportData';
+import { formatRupiah } from '@/lib/dummyData';
 
 export default function LapPendapatanPetugasMedisPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = useCallback((rawData: any, offset = 0) => {
+    const dataArray = rawData?.data || rawData;
+    if (!Array.isArray(dataArray)) return [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return dataArray.map((item: any, index: number) => {
+      const dpemfeedokter = parseFloat(item.dpemfeedoktertext || 0);
+      const dpemretfeedokter = parseFloat(item.dpemretfeedoktertext || 0);
+      const feeDokter = dpemfeedokter - dpemretfeedokter;
+
+      return {
+        no: offset + index + 1,
+        tanggal: item.pemtanggal || '-',
+        noFaktur: item.pemnofaktur || '-',
+        dokter: item.doknama || '-',
+        pemeriksaan: item.bianama || '-',
+        feeDokter,
+        rawData: item,
+      };
+    });
+  }, []);
+
+  const { data, refetch } = useReportData({
+    apiEndpoint: 'laporan-pendapatan-petugas-medis/index',
+    apiVersion: 'api5',
+    apiParams: {
+      filter: '',
+      sorting: '',
+      limit: 1000,
+      offset: 0,
+      reg: 'db',
+      cari: 4,
+      device: 'mobile',
+    },
+    apiNormalizer,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFetchData = useCallback((filters: any) => {
+    const formatDate = (isoDate: string) => {
+      if (!isoDate) return '';
+      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+      const [y, m, d] = isoDate.split('-');
+      return `${d} ${months[Number(m) - 1]} ${y}`;
+    };
+
+    refetch({
+      tanggalawal: formatDate(filters.start),
+      tanggalakhir: formatDate(filters.end),
+      filter: filters.search,
+    });
+  }, [refetch]);
+
+  const total = data.reduce((s, r) => s + (r.feeDokter as number), 0);
+
   return (
     <ReportTable
       title="Laporan Pendapatan Petugas Medis"
@@ -14,12 +72,13 @@ export default function LapPendapatanPetugasMedisPage() {
         { key: 'feeDokter', label: 'Fee Dokter', align: 'right', width: 120,
           render: (r) => formatRupiah(r.feeDokter as number) },
       ]}
-      data={lapPendapatanPetugasMedis as unknown as Record<string, unknown>[]}
+      data={data}
       totalLabel="Total Pendapatan Dokter"
-      totalValue={formatRupiah(totalPendapatanPetugasMedis)}
+      totalValue={formatRupiah(total)}
       searchFields={['dokter', 'noFaktur', 'pemeriksaan']}
       searchPlaceholder="Dokter / No. Faktur / pemeriksaan"
       dateField="tanggal"
+      onFetchData={handleFetchData}
     />
   );
 }

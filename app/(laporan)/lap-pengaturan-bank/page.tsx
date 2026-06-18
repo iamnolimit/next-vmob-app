@@ -1,17 +1,44 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
-import { bankData } from '@/lib/dummyData';
-
-interface BankItem { id: number; bankName: string; accountNumber: string; accountName: string; isDefault: boolean; }
+import { useAuth } from '@/lib/authContext';
+import { useReportData } from '@/lib/useReportData';
 
 export default function LapPengaturanBankPage() {
-  const [banks, setBanks] = useState<BankItem[]>(bankData);
+  const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [alert, setAlert] = useState('');
 
-  const setDefault = (id: number) => { setBanks(banks.map((b) => ({ ...b, isDefault: b.id === id }))); setAlert('Rekening berhasil dijadikan default.'); };
-  const deleteBank = (id: number) => { setBanks(banks.filter((b) => b.id !== id)); setAlert('Rekening berhasil dihapus.'); };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = (rawData: any) => {
+    if (rawData?.status === 1) {
+      return rawData.data || [];
+    }
+    return [];
+  };
+
+  const { data: banks, loading, error, refetch } = useReportData({
+    apiEndpoint: '/mobile-bank/index',
+    apiVersion: 'apivmart',
+    apiParams: {
+      user_id: user?.user_id || '',
+      appid: user?.cabang || '', // Using cabang as app_id fallback
+    },
+    apiNormalizer,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  const enkrip = (norek: string) => {
+    if (!norek) return 'Tidak ada';
+    const len = norek.length;
+    return '*'.repeat(Math.max(0, len - 4)) + norek.slice(-4);
+  };
+
+  const setDefault = (id: number) => { setAlert('Rekening berhasil dijadikan default. (Dummy)'); };
+  const deleteBank = (id: number) => { setAlert('Rekening berhasil dihapus. (Dummy)'); };
 
   return (
     <div className="flex flex-col h-full">
@@ -47,21 +74,27 @@ export default function LapPengaturanBankPage() {
         )}
 
         <div className="px-4 py-3 space-y-3">
-          {banks.map((bank) => (
+          {loading && <p className="text-center text-sm text-gray-500">Memuat data...</p>}
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
+          {!loading && !error && banks.length === 0 && (
+            <p className="text-center text-sm text-gray-500">Belum ada rekening bank.</p>
+          )}
+
+          {!loading && !error && banks.map((bank: any) => (
             <div key={bank.id} className="bg-white rounded-2xl p-4 ios-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-bold text-gray-900">{bank.bankName}</span>
-                    {bank.isDefault && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">DEFAULT</span>}
+                    <span className="text-sm font-bold text-gray-900">{bank.bank_nama}</span>
+                    {bank.is_default === '1' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">DEFAULT</span>}
                   </div>
-                  <p className="text-sm font-mono text-gray-700">{bank.accountNumber}</p>
-                  <p className="text-xs text-gray-500">{bank.accountName}</p>
+                  <p className="text-sm font-mono text-gray-700">{enkrip(bank.bank_norek)}</p>
+                  <p className="text-xs text-gray-500">{bank.bank_atasnama}</p>
                 </div>
                 <span className="text-2xl">🏦</span>
               </div>
               <div className="flex gap-2">
-                {!bank.isDefault && (
+                {bank.is_default !== '1' && (
                   <button onClick={() => setDefault(bank.id)} className="flex-1 bg-blue-50 text-blue-600 rounded-xl py-1.5 text-xs font-semibold">Set Default</button>
                 )}
                 <button onClick={() => setAlert('Form edit dibuka. (Dummy)')} className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-1.5 text-xs font-semibold">Edit</button>

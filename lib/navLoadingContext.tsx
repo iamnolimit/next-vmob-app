@@ -22,7 +22,7 @@ export function NavLoadingProvider({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     if (normalizedPathname !== prevPathname.current) {
       prevPathname.current = normalizedPathname;
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), 0);
     }
   }, [normalizedPathname]);
 

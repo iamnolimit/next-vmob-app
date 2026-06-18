@@ -1,10 +1,57 @@
 'use client';
+import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
-import { lapPenjualanObat, formatRupiah, formatNumber, cabangOptions } from '@/lib/dummyData';
-
-const total = lapPenjualanObat.reduce((s, r) => s + r.total, 0);
+import { useReportData } from '@/lib/useReportData';
+import { formatRupiah, formatNumber, cabangOptions } from '@/lib/dummyData';
 
 export default function LapPenjualanObatPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const apiNormalizer = useCallback((rawData: any, offset = 0) => {
+    const dataArray = rawData?.data || rawData;
+    if (!Array.isArray(dataArray)) return [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return dataArray.map((item: any, index: number) => ({
+      no: offset + index + 1,
+      noFaktur: item.pjnofaktur || '',
+      pasien: item.pasnama || '-',
+      dokter: item.doknama || '-',
+      total: parseFloat(item.grandtotal || 0),
+      tanggal: item.pjtanggal || '',
+      rawData: item,
+    }));
+  }, []);
+
+  const { data, refetch } = useReportData({
+    apiEndpoint: 'apt-lap-penjualanobat-batch/indexlaporan-v2',
+    apiVersion: 'api5',
+    apiParams: {
+      cari: '4',
+      sorting: '',
+      limit: 1000,
+      offset: 0,
+    },
+    apiNormalizer,
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFetchData = useCallback((filters: any) => {
+    const formatDate = (isoDate: string) => {
+      if (!isoDate) return '';
+      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+      const [y, m, d] = isoDate.split('-');
+      return `${d} ${months[Number(m) - 1]} ${y}`;
+    };
+
+    refetch({
+      tanggalawal: formatDate(filters.start),
+      tanggalakhir: formatDate(filters.end),
+      filter: filters.search,
+    });
+  }, [refetch]);
+
+  const total = data.reduce((s, r) => s + (r.total as number), 0);
+
   return (
     <ReportTable
       title="Laporan Penjualan Obat"
@@ -16,13 +63,14 @@ export default function LapPenjualanObatPage() {
         { key: 'total', label: 'Total', align: 'right', width: 110,
           render: (r) => formatNumber(r.total as number) },
       ]}
-      data={lapPenjualanObat as unknown as Record<string, unknown>[]}
+      data={data}
       totalLabel="Total Penjualan"
       totalValue={formatRupiah(total)}
       searchFields={['noFaktur', 'pasien', 'dokter']}
       searchPlaceholder="No faktur / pasien / dokter"
       cabangOptions={cabangOptions}
       dateField="tanggal"
+      onFetchData={handleFetchData}
     />
   );
 }

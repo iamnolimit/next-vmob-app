@@ -1,27 +1,69 @@
 'use client';
-import { useState } from 'react';
-import { Segmented, SegmentedButton } from 'konsta/react';
-import { customerStats, customerChartData, customerChartItems } from '@/lib/dummyData';
+import { useState, useEffect } from 'react';
+import { Segmented, SegmentedButton, Preloader } from 'konsta/react';
+import { customerChartItems } from '@/lib/dummyData';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
+import { useFetch } from '@/lib/useFetch';
+import { customerPageConfig } from '@/lib/apiConfigs';
+import { useAuth } from '@/lib/authContext';
+import { normalizeApiData, generateCustomerSafeChartData } from '@/lib/utils';
 
 const tabs = [
-  { label: '3 Bulan', value: 'tigaBulan' },
-  { label: '6 Bulan', value: 'enamBulan' },
-  { label: '1 Tahun', value: 'satTahun'  },
+  { label: '3 Bulan', value: 'threeMonth' },
+  { label: '6 Bulan', value: 'sixMonth' },
+  { label: '1 Tahun', value: 'oneYear'  },
 ];
 
 const dateLabels: Record<string, string> = {
-  tigaBulan: '3 Bulan Terakhir',
-  enamBulan: '6 Bulan Terakhir',
-  satTahun:  '1 Tahun Terakhir',
+  threeMonth: '3 Bulan Terakhir',
+  sixMonth: '6 Bulan Terakhir',
+  oneYear:  '1 Tahun Terakhir',
 };
 
 export default function CustomerPage() {
-  const [activeTab, setActiveTab] = useState('tigaBulan');
-  const stats     = customerStats[activeTab as keyof typeof customerStats] ?? [];
-  const chartData = customerChartData[activeTab] ?? [];
+  const [activeTab, setActiveTab] = useState('threeMonth');
+  const { user } = useAuth();
+
+  const { data: apiData, loading, refetch } = useFetch({
+    endpoint: customerPageConfig.apiEndpoint,
+    apiVersion: customerPageConfig.apiVersion,
+    params: user ? customerPageConfig.getApiParams(user, activeTab) : {},
+    isMutation: false,
+  });
+
+  useEffect(() => {
+    if (user) {
+      refetch(customerPageConfig.getApiParams(user, activeTab));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, user]);
+
+  const normalizedData = normalizeApiData(apiData, 'customer');
+  const data = normalizedData || {};
+
+  const datapasienbaru = data.datapasienbaru || {};
+  const datakunjungan = data.datakunjungan || {};
+
+  const stats = [
+    {
+      label: 'Pasien Baru',
+      value: `${datapasienbaru.count || 0} Orang`,
+      icon: '👤',
+      color: '#4CAF50',
+      change: datapasienbaru.peningkatan || 0,
+    },
+    {
+      label: 'Kunjungan Pasien',
+      value: `${datakunjungan.count || 0} Orang`,
+      icon: '👥',
+      color: '#2196F3',
+      change: datakunjungan.peningkatan || 0,
+    },
+  ];
+
+  const chartData = generateCustomerSafeChartData(data);
 
   return (
     <>
@@ -44,21 +86,27 @@ export default function CustomerPage() {
       />
 
       <div className="flex-1 overflow-y-auto pb-6">
-        <div className="pb-4">
-          <div className="mt-4">
-            {stats.map((stat, i) => (
-              <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={(stat as { invoiceCount?: string }).invoiceCount} />
-            ))}
+        {loading ? (
+          <div className="flex justify-center items-center h-40">
+            <Preloader />
           </div>
+        ) : (
+          <div className="pb-4">
+            <div className="mt-4">
+              {stats.map((stat, i) => (
+                <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={(stat as { invoiceCount?: string }).invoiceCount} />
+              ))}
+            </div>
 
-          {/* Chart pertumbuhan pasien — dinamis sesuai periode */}
-          <ChartCarousel
-            key={activeTab}
-            data={chartData}
-            items={customerChartItems}
-            title={dateLabels[activeTab]}
-          />
-        </div>
+            {/* Chart pertumbuhan pasien — dinamis sesuai periode */}
+            <ChartCarousel
+              key={activeTab}
+              data={chartData}
+              items={customerChartItems}
+              title={dateLabels[activeTab]}
+            />
+          </div>
+        )}
       </div>
     </>
   );
