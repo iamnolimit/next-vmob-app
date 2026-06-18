@@ -1,9 +1,8 @@
 import qs from 'qs';
 import { NextResponse } from 'next/server';
 
-const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api7.vmedis.com/';
-const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api5.vmedis.com/';
-
+const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
+const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
 function getBaseUrl(apiVersion: string): string {
   switch (apiVersion) {
     case 'api5':
