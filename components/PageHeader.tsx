@@ -27,16 +27,31 @@ function HamburgerBtn({ onClick }: { onClick: () => void }) {
   );
 }
 
-function ProfileBtn({ onClick }: { onClick: () => void }) {
+function ProfileBtn({ onClick, user }: { onClick: () => void, user: any }) {
+  const avatarColors: Record<string, string> = {
+    Admin:    'bg-purple-500',
+    Dokter:   'bg-blue-500',
+    Kasir:    'bg-green-500',
+    Apoteker: 'bg-orange-500',
+  };
+
   return (
     <button
       onClick={onClick}
-      className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform"
+      className={`w-12 h-12 flex items-center justify-center rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform overflow-hidden border-2 border-white ${user ? (avatarColors[user.group] ?? 'bg-blue-400') : 'bg-white'}`}
     >
-      <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg>
+      {user ? (
+        user.avatar.startsWith('http') ? (
+          <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-white font-bold text-lg">{user.avatar}</span>
+        )
+      ) : (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      )}
     </button>
   );
 }
@@ -45,9 +60,9 @@ function BackBtn({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 mb-4 active:scale-95 transition-transform"
+      className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform text-gray-700"
     >
-      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
         <path d="M15 18l-6-6 6-6" />
       </svg>
     </button>
@@ -96,7 +111,7 @@ export default function PageHeader({
         {/* Right slot: Profile */}
         {showMenu && (
           <div className="flex-shrink-0 self-start">
-            <ProfileBtn onClick={() => router.push('/profil')} />
+            <ProfileBtn onClick={() => router.push('/profil')} user={user} />
           </div>
         )}
       </div>

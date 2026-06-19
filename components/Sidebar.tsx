@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useNavLoading } from '@/lib/navLoadingContext';
@@ -6,7 +7,7 @@ import {
   Pill, Hospital, Flame, ClipboardList, UserCheck, CalendarDays, 
   CreditCard, Stethoscope, ShoppingCart, ClipboardCheck, Package, 
   AlertTriangle, XCircle, RefreshCcw, LayoutDashboard, LineChart, 
-  CircleDollarSign, UsersRound, LogOut, ChevronRight, X
+  CircleDollarSign, UsersRound, LogOut, ChevronRight, X, Plus
 } from 'lucide-react';
 
 const laporanMenus = [
@@ -98,11 +99,12 @@ function MenuItem({
 }
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
-  const { user, logout } = useAuth();
+  const { user, sessions, logout, switchSession, removeSession } = useAuth();
   const router   = useRouter();
   const pathname = usePathname();
   const normalizedPathname = pathname?.replace(/\/$/, '') || '/';
   const { startLoading } = useNavLoading();
+  const [showSessions, setShowSessions] = useState(false);
 
   const go = (href: string) => {
     if (normalizedPathname !== href) startLoading();
@@ -140,13 +142,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         <div className="flex flex-col h-full relative z-10">
 
           {/* ── Header ── */}
-          <div className="flex items-center justify-between px-5 h-16 border-b border-gray-100/50 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#0362fc] to-blue-700 rounded-xl flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-sm">V</span>
-              </div>
-              <p className="text-[15px] font-bold text-gray-800 tracking-tight">Vmedis Mobile</p>
-            </div>
+          <div className="flex items-center justify-end px-5 h-16 border-b border-gray-100/50 flex-shrink-0">
             <button
               onClick={onClose}
               className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors"
@@ -159,26 +155,16 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
           {/* ── Profile ── */}
           {user && (
-            <div className="px-4 py-4 flex-shrink-0">
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-sm ${avatarColors[user.group] ?? 'bg-blue-400'}`}>
-                  {user.avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-900 font-bold text-[14px] truncate">{user.nama}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-gray-500 text-[11px] truncate">@{user.username}</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => go('/profil')}
-                  className="flex items-center justify-center w-8 h-8 bg-white text-gray-600 rounded-full shadow-sm border border-gray-200/50 hover:bg-gray-50 transition-colors flex-shrink-0"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+            <div className="px-4 pb-6 flex-shrink-0 flex flex-col items-center text-center border-b border-gray-100/50">
+              <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 overflow-hidden border-4 border-white ${avatarColors[user.group] ?? 'bg-blue-400'}`}>
+                {user.avatar.startsWith('http') ? (
+                  <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
+                ) : (
+                  user.avatar
+                )}
               </div>
+              <p className="text-gray-900 font-bold text-[16px] truncate w-full px-2">{user.nama}</p>
+              <span className="text-gray-500 text-[12px] truncate w-full px-2 mt-0.5">@{user.username}</span>
             </div>
           )}
 
@@ -238,7 +224,18 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           </div>
 
           {/* ── Footer / Logout ── */}
-          <div className="border-t border-gray-100 px-3 pt-2.5 pb-3 flex-shrink-0">
+          <div className="border-t border-gray-100 px-3 pt-2.5 pb-3 flex-shrink-0 space-y-2">
+            <button
+              onClick={() => {
+                setShowSessions(true);
+              }}
+              className="w-full flex items-center justify-center gap-2 bg-blue-50 text-blue-600 text-sm font-semibold py-2.5 rounded-xl active:bg-blue-100 transition-colors"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Ganti Akun
+            </button>
             <button
               onClick={handleLogout}
               className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 text-sm font-semibold py-2.5 rounded-xl active:bg-red-100 transition-colors"
@@ -252,6 +249,79 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           </div>
         </div>
       </div>
+
+      {/* Sessions Bottom Sheet */}
+      {showSessions && (
+        <div
+          className="fixed inset-0 z-[210] flex flex-col justify-end"
+          style={{ background: 'rgba(0,0,0,0.45)' }}
+          onClick={() => setShowSessions(false)}
+        >
+          <div
+            className="bg-white rounded-t-3xl overflow-hidden max-h-[80vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle bar */}
+            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+              <div className="w-10 h-1 rounded-full bg-gray-300" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-shrink-0">
+              <span className="text-base font-bold text-gray-900">Pilih Akun</span>
+              <button onClick={() => setShowSessions(false)} className="p-1 text-gray-500 hover:bg-gray-100 rounded-full">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto p-4 space-y-3">
+              {sessions.map((session) => (
+                <div key={`${session.domain}-${session.username}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                  <button
+                    className="flex items-center gap-3 flex-1 text-left"
+                    onClick={() => {
+                      switchSession(session);
+                      setShowSessions(false);
+                      onClose();
+                      router.replace('/dashboard');
+                    }}
+                  >
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden ${avatarColors[session.group] ?? 'bg-blue-400'}`}>
+                      {session.avatar.startsWith('http') ? (
+                        <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
+                      ) : (
+                        session.avatar
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-gray-900 truncate">{session.nama}</p>
+                      <p className="text-xs text-gray-500 truncate">@{session.username} • {session.domain}</p>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => removeSession(session.username, session.domain)}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-full ml-2"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              ))}
+              
+              <button
+                onClick={() => {
+                  setShowSessions(false);
+                  onClose();
+                  router.push('/login');
+                }}
+                className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-200 rounded-2xl text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              >
+                <Plus size={20} />
+                <span className="text-sm font-medium">Tambah Akun Baru</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

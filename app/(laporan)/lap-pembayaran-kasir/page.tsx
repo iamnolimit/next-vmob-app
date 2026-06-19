@@ -28,7 +28,7 @@ export default function LapPembayaranKasirPage() {
 
   const { data, refetch } = useReportData({
     apiEndpoint: 'kln-lap-bayar-kasir/index',
-    apiVersion: 'api5',
+    apiVersion: 'api7',
     apiParams: {
       filter: '',
       sorting: '',

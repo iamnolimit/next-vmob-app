@@ -24,10 +24,54 @@ export interface UserProfile {
 }
 
 const KEY = 'vmob_user';
+const SESSIONS_KEY = 'vmob_sessions';
 
 export function saveUser(profile: UserProfile) {
   if (typeof window !== 'undefined') {
     localStorage.setItem(KEY, JSON.stringify(profile));
+    
+    // Update sessions list
+    const sessions = getSessions();
+    const existingIndex = sessions.findIndex(s => s.username === profile.username && s.domain === profile.domain);
+    if (existingIndex >= 0) {
+      sessions[existingIndex] = profile;
+    } else {
+      sessions.push(profile);
+    }
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+  }
+}
+
+export function getSessions(): UserProfile[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(SESSIONS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function switchSession(profile: UserProfile) {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(KEY, JSON.stringify(profile));
+  }
+}
+
+export function removeSession(username: string, domain: string) {
+  if (typeof window !== 'undefined') {
+    let sessions = getSessions();
+    sessions = sessions.filter(s => !(s.username === username && s.domain === domain));
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    
+    const currentUser = getUser();
+    if (currentUser && currentUser.username === username && currentUser.domain === domain) {
+      if (sessions.length > 0) {
+        switchSession(sessions[0]);
+      } else {
+        clearUser();
+      }
+    }
   }
 }
 
@@ -44,6 +88,7 @@ export function getUser(): UserProfile | null {
 export function clearUser() {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(KEY);
+    localStorage.removeItem(SESSIONS_KEY);
   }
 }
 
@@ -101,12 +146,12 @@ export async function login(
     app_id: String(dataUser?.app_id ?? ''),
     app_reg: String(dataUser?.app_reg ?? ''),
     user_id: String(dataUser?.id ?? ''),
-    nama: dataUser?.nama ?? dataUser?.name ?? username,
+    nama: dataUser?.nama_lengkap ?? dataUser?.nama ?? dataUser?.name ?? username,
     username: dataUser?.username ?? username,
     email: dataUser?.email ?? '',
     jabatan: dataUser?.jabatan ?? '',
-    cabang: dataUser?.nama_apotek ?? dataUser?.cabang ?? '',
-    avatar: (dataUser?.nama ?? username).substring(0, 2).toUpperCase(),
+    cabang: dataUser?.kl_nama ?? dataUser?.nama_apotek ?? dataUser?.cabang ?? '',
+    avatar: dataUser?.kl_logo ? `https://apt.vmedis.com/foto/${dataUser.kl_logo}` : (dataUser?.nama_lengkap ?? dataUser?.nama ?? username).substring(0, 2).toUpperCase(),
     group: String(dataUser?.gr_id ?? ''),
     domain,
     gr_id: dataUser?.gr_id ?? '',

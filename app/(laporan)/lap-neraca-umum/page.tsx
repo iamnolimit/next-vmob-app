@@ -110,7 +110,7 @@ export default function LapNeracaUmumPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <LaporanHeader title="Laporan Neraca Umum" />
+      <LaporanHeader title="Laporan Neraca Umum" onExport={() => setShowExportMenu(true)} />
 
       {/* Filter */}
       <div className="bg-white border-b border-gray-200 flex-shrink-0">

@@ -62,9 +62,11 @@ interface ReportTableProps {
   /** Field name in data row to apply gudang filter against */
   gudangField?: string;
   /** Callback to fetch data from API */
-  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; gudang: string }) => void;
+  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; gudang: string; offset: number; limit: number }) => void;
   loading?: boolean;
   error?: string | null;
+  /** Whether there is more data to load */
+  hasMore?: boolean;
 }
 
 function toISO(d: Date) {
@@ -99,6 +101,7 @@ export default function ReportTable({
   onFetchData,
   loading,
   error,
+  hasMore = false,
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [appliedSearch, setAppliedSearch] = useState('');
@@ -120,6 +123,8 @@ export default function ReportTable({
 
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [offset, setOffset] = useState(0);
+  const limit = 50;
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -147,10 +152,30 @@ export default function ReportTable({
         interval: selectedInterval,
         cabang: selectedCabang,
         gudang: selectedGudang,
+        offset: 0,
+        limit,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleLoadMore = () => {
+    if (loading || !hasMore) return;
+    const newOffset = offset + limit;
+    setOffset(newOffset);
+    if (onFetchData) {
+      onFetchData({
+        start: startDate,
+        end: endDate,
+        search: appliedSearch,
+        interval: selectedInterval,
+        cabang: selectedCabang,
+        gudang: selectedGudang,
+        offset: newOffset,
+        limit,
+      });
+    }
+  };
 
   const exportFilename = title.replace(/\s+/g, '_').toLowerCase();
 
@@ -201,8 +226,9 @@ export default function ReportTable({
     setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
     setAppliedSearch(search);
     setShowFilter(false);
+    setOffset(0);
     if (onFetchData) {
-      onFetchData({ start: startDate, end: endDate, search, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
+      onFetchData({ start: startDate, end: endDate, search, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang, offset: 0, limit });
     }
   };
 
@@ -223,9 +249,10 @@ export default function ReportTable({
     setAppliedFilter(null);
     setSearch('');
     setAppliedSearch('');
+    setOffset(0);
 
     if (onFetchData) {
-      onFetchData({ start: defaultStart, end: defaultEnd, search: '', interval: defaultInterval, cabang: defaultCabang, gudang: defaultGudang });
+      onFetchData({ start: defaultStart, end: defaultEnd, search: '', interval: defaultInterval, cabang: defaultCabang, gudang: defaultGudang, offset: 0, limit });
     }
   };
 
@@ -275,31 +302,28 @@ export default function ReportTable({
     <div className="flex flex-col h-full bg-gray-50">
 
       {/* ── Header ── */}
-      <div
-        className="flex-shrink-0 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)' }}
-      >
-        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
-        <div className="h-14 flex items-center justify-between px-3 relative">
-          <div className="w-24 flex justify-start">
+      <div className="relative z-10 mb-4">
+        <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
+          <div className="flex-shrink-0 self-start">
             <button
               onClick={() => router.back()}
-              className="flex items-center gap-0.5 text-white/90 active:opacity-60 pr-1"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform text-gray-700"
             >
               <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
-              <span className="text-base font-medium">Kembali</span>
             </button>
           </div>
-          <div className="flex-1 text-center min-w-0 px-1">
-            <p className="text-base font-bold text-white truncate">{title}</p>
+          <div className="flex-1 flex flex-col justify-center min-w-0">
+            <h1 className="text-[22px] font-bold text-gray-900 tracking-tight leading-tight">
+              {title}
+            </h1>
           </div>
           <div className="flex items-center justify-end gap-1">
             {/* Export button */}
             <button
               onClick={() => setShowExportMenu(true)}
-              className="w-10 h-10 flex items-center justify-center text-white rounded-xl active:bg-white/10"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform text-gray-700"
               title="Export"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -356,12 +380,12 @@ export default function ReportTable({
 
             <button
               onClick={openSidebar}
-              className="w-11 h-11 flex items-center justify-center text-white rounded-xl active:bg-white/10"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform"
             >
-              <svg viewBox="0 0 24 24" className="w-7 h-7" fill="currentColor">
-                <rect x="3" y="5"  width="18" height="2.5" rx="1.25" />
-                <rect x="3" y="11" width="14" height="2.5" rx="1.25" />
-                <rect x="3" y="17" width="18" height="2.5" rx="1.25" />
+              <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700" fill="currentColor">
+                <rect x="4" y="6"  width="16" height="2" rx="1" />
+                <rect x="4" y="11" width="12" height="2" rx="1" />
+                <rect x="4" y="16" width="16" height="2" rx="1" />
               </svg>
             </button>
           </div>
@@ -562,18 +586,26 @@ export default function ReportTable({
 
       {/* ── Table ── */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-auto">
+        <div 
+          className="flex-1 overflow-auto"
+          onScroll={(e) => {
+            const target = e.target as HTMLDivElement;
+            if (target.scrollHeight - target.scrollTop <= target.clientHeight + 100) {
+              handleLoadMore();
+            }
+          }}
+        >
           <table
             className="w-full border-collapse"
             style={{ minWidth: columns.reduce((s, c) => s + (c.width ?? 100), 0) }}
           >
             <thead className="sticky top-0 z-10">
-              <tr className="bg-blue-700">
+              <tr className="bg-gray-100">
                 {columns.map((col) => (
                   <th
                     key={col.key}
                     onClick={() => handleSort(col.key)}
-                    className="py-2.5 px-2 text-xs font-bold text-white whitespace-nowrap border-r border-blue-600 last:border-r-0 cursor-pointer select-none active:bg-blue-800"
+                    className="py-2.5 px-2 text-xs font-bold text-gray-700 whitespace-nowrap border-r border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200"
                     style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left' }}
                   >
                     {col.label}
@@ -613,50 +645,49 @@ export default function ReportTable({
                   </td>
                 </tr>
               ) : (
-                sorted.map((row, i) => (
-                  <tr key={i}
-                    className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}`}>
-                    {columns.map((col) => (
-                      <td
-                        key={col.key}
-                        className="py-2.5 px-2 text-xs text-gray-800 align-top border-r border-gray-100 last:border-r-0"
-                        style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left', wordBreak: 'break-word' }}
-                      >
-                        {col.render ? col.render(row) : String(row[col.key] ?? '-')}
+                <>
+                  {sorted.map((row, i) => (
+                    <tr key={i}
+                      className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}`}>
+                      {columns.map((col) => (
+                        <td
+                          key={col.key}
+                          className="py-2.5 px-2 text-xs text-gray-800 align-top border-r border-gray-100 last:border-r-0"
+                          style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left', wordBreak: 'break-word' }}
+                        >
+                          {col.render ? col.render(row) : String(row[col.key] ?? '-')}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  {loading && hasMore && (
+                    <tr>
+                      <td colSpan={columns.length} className="text-center py-4">
+                        <div className="flex justify-center items-center gap-2 text-gray-400">
+                          <span className="animate-spin">⏳</span>
+                          <span className="text-xs">Memuat data selanjutnya...</span>
+                        </div>
                       </td>
-                    ))}
-                  </tr>
-                ))
+                    </tr>
+                  )}
+                </>
               )}
             </tbody>
           </table>
-        </div>
-
-        {/* Grand total */}
-        {totalLabel && totalValue && (
-          <div className="flex-shrink-0 border-t-2 border-blue-300 bg-blue-50 px-4 py-3 flex items-center justify-between">
-            <span className="text-xs font-bold text-blue-800">{totalLabel}</span>
-            <span className="text-sm font-extrabold text-blue-900">{totalValue}</span>
-          </div>
-        )}
-
-        {/* Status bar */}
-        <div className="flex-shrink-0 bg-white border-t border-gray-100 px-4 py-2 flex items-center justify-between gap-2">
-          <span className="text-[10px] text-gray-400 flex-1 min-w-0">
-            <span>{sorted.length} dari {data.length} data</span>
-            {appliedFilter && !hideDateFilter && (
-              <span className="text-blue-500"> · {fmtDisplay(appliedFilter.start)} – {fmtDisplay(appliedFilter.end)}</span>
-            )}
-            {appliedFilter && intervalOptions && (
-              <span className="text-purple-500"> · {activeIntervalLabel}</span>
-            )}
-          </span>
-          {search && (
-            <button onClick={() => setSearch('')} className="text-[10px] text-blue-600 font-semibold flex-shrink-0">
-              Hapus cari
-            </button>
+          
+          {/* Spacer inside the scrollable area to prevent content from being hidden behind the floating total */}
+          {totalLabel && totalValue && (
+            <div className="h-28" />
           )}
         </div>
+
+        {/* Grand total (Floating) */}
+        {totalLabel && totalValue && (
+          <div className="fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-5 py-4 flex items-center justify-between z-50">
+            <span className="text-sm font-bold text-blue-800">{totalLabel}</span>
+            <span className="text-lg font-extrabold text-blue-900">{totalValue}</span>
+          </div>
+        )}
       </div>
     </div>
   );

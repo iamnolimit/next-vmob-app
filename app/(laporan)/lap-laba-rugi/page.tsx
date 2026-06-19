@@ -176,7 +176,7 @@ export default function LapLabaRugiPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <LaporanHeader title="Laporan Laba Rugi" />
+      <LaporanHeader title="Laporan Laba Rugi" onExport={() => setShowExportMenu(true)} />
 
       {/* Filter Panel */}
       <div className="bg-white border-b border-gray-200 flex-shrink-0">

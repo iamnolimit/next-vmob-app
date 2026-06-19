@@ -79,12 +79,13 @@ function ShellInner({ children, showBottomNav }: AppShellProps) {
   const { open, closeSidebar } = useSidebar();
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && pathname !== '/login') {
       router.replace('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, pathname]);
 
   if (loading) {
     return (
@@ -97,15 +98,17 @@ function ShellInner({ children, showBottomNav }: AppShellProps) {
     );
   }
 
-  if (!user) return null;
+  if (!user && pathname !== '/login') return null;
+
+  const isLoginPage = pathname === '/login';
 
   return (
     <>
-      <Sidebar open={open} onClose={closeSidebar} />
-      <div className={`flex flex-col h-full ${showBottomNav ? 'pb-24' : ''}`}>
+      {!isLoginPage && <Sidebar open={open} onClose={closeSidebar} />}
+      <div className={`flex flex-col h-full ${showBottomNav && user && !isLoginPage ? 'pb-24' : ''}`}>
         {children}
       </div>
-      {showBottomNav && <BottomNav />}
+      {showBottomNav && user && !isLoginPage && <BottomNav />}
     </>
   );
 }

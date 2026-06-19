@@ -40,9 +40,12 @@ export default function LapDashboardDokterPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <LaporanHeader title="Dashboard Dokter" subtitle={`${user?.nama || 'Dokter'} · ${user?.cabang || ''}`} />
+      <LaporanHeader 
+        title="Dashboard Dokter" 
+        subtitle={`${user?.nama || 'Dokter'} · ${user?.cabang || ''}`}
+      />
 
-      <div className="flex-1 overflow-y-auto bg-gray-50 px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto bg-gray-50 px-4 pb-24 space-y-4">
         <p className="text-xs text-gray-400 text-center">{today}</p>
 
         {loading && <p className="text-center text-sm text-gray-500">Memuat data...</p>}

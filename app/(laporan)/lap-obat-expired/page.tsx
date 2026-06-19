@@ -54,8 +54,8 @@ export default function LapObatExpiredPage() {
   };
 
   const { data, refetch } = useReportData({
-    apiEndpoint: 'ap-lapobatexpired/indexlaporan',
-    apiVersion: 'api5',
+    apiEndpoint: 'ap-obatexpired-batch/index-v2',
+    apiVersion: 'api7',
     apiParams: {
       gudid: 1,
       cari: '4',

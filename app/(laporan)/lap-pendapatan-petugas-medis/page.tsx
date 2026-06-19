@@ -30,7 +30,7 @@ export default function LapPendapatanPetugasMedisPage() {
 
   const { data, refetch } = useReportData({
     apiEndpoint: 'laporan-pendapatan-petugas-medis/index',
-    apiVersion: 'api5',
+    apiVersion: 'api7',
     apiParams: {
       filter: '',
       sorting: '',

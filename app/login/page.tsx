@@ -1,44 +1,28 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { login as doLogin } from '@/lib/auth';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/lib/authContext';
 
-export default function LoginPage() {
+import { Hospital, User, Lock, Eye, EyeOff, ChevronDown, Plus, X } from 'lucide-react';
+
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login, sessions, switchSession, removeSession } = useAuth();
   const [domain, setDomain] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSessions, setShowSessions] = useState(false);
 
-  // Lupa password
-  const [showForgot, setShowForgot] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotError, setForgotError] = useState('');
-  const [forgotSent, setForgotSent] = useState(false);
-  const [forgotLoading, setForgotLoading] = useState(false);
-
-  const handleForgot = async () => {
-    if (!forgotEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail)) {
-      setForgotError('Masukkan alamat email yang valid.');
-      return;
+  useEffect(() => {
+    if (searchParams.get('showSessions') === 'true' && sessions.length > 0) {
+      setShowSessions(true);
     }
-    setForgotLoading(true);
-    setForgotError('');
-    await new Promise((r) => setTimeout(r, 1200));
-    setForgotLoading(false);
-    setForgotSent(true);
-  };
-
-  const closeForgot = () => {
-    setShowForgot(false);
-    setForgotEmail('');
-    setForgotError('');
-    setForgotSent(false);
-    setForgotLoading(false);
-  };
+  }, [searchParams, sessions.length]);
 
   const handleLogin = async () => {
     if (!domain.trim()) {
@@ -52,10 +36,10 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const profile = await doLogin(domain.trim(), username.trim(), password);
+      const success = await login(domain.trim(), username.trim(), password);
       setLoading(false);
-      if (profile) {
-        router.replace('/dashboard');
+      if (success) {
+        router.push('/dashboard');
       } else {
         setError('Login gagal. Periksa kembali data Anda.');
       }
@@ -67,8 +51,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-5 py-10"
-      style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)' }}
+      className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-gray-50"
     >
       <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
 
@@ -103,8 +86,8 @@ export default function LoginPage() {
             <label className="text-[11px] font-semibold text-gray-500 mb-1.5 block uppercase tracking-wide">
               Domain
             </label>
-            <div className="flex items-center bg-gray-100 rounded-xl border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all overflow-hidden">
-              <span className="pl-3.5 text-base flex-shrink-0">🏥</span>
+            <div className="flex items-center bg-gray-100 rounded-full border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all overflow-hidden">
+              <span className="pl-4 text-gray-400 flex-shrink-0"><Hospital size={18} /></span>
               <input
                 type="text"
                 value={domain}
@@ -115,7 +98,7 @@ export default function LoginPage() {
                 autoComplete="off"
                 onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               />
-              <span className="pr-3.5 text-sm text-gray-400 font-medium flex-shrink-0">.vmedis.com</span>
+              <span className="pr-4 text-sm text-gray-400 font-medium flex-shrink-0">.vmedis.com</span>
             </div>
           </div>
 
@@ -125,13 +108,13 @@ export default function LoginPage() {
               Username
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base">👤</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><User size={18} /></span>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Masukkan username"
-                className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-xl text-sm outline-none border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-gray-100 rounded-full text-sm outline-none border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all"
                 autoCapitalize="none"
                 autoComplete="username"
                 onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
@@ -140,159 +123,137 @@ export default function LoginPage() {
           </div>
 
           {/* Password */}
-          <div className="mb-1">
+          <div className="mb-6">
             <label className="text-[11px] font-semibold text-gray-500 mb-1.5 block uppercase tracking-wide">
               Password
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base">🔒</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={18} /></span>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
-                className="w-full pl-10 pr-12 py-3 bg-gray-100 rounded-xl text-sm outline-none border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all"
+                className="w-full pl-11 pr-12 py-3 bg-gray-100 rounded-full text-sm outline-none border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all"
                 autoComplete="current-password"
                 onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-          </div>
-
-          {/* Lupa password */}
-          <div className="flex justify-end mb-5">
-            <button
-              type="button"
-              onClick={() => setShowForgot(true)}
-              className="text-xs text-blue-600 font-medium py-1"
-            >
-              Lupa Password?
-            </button>
           </div>
 
           {/* Submit */}
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl text-sm shadow-md active:opacity-90 transition-opacity disabled:opacity-60"
+            className="w-full bg-green-600 text-white font-bold py-3.5 rounded-full text-sm shadow-md active:opacity-90 transition-opacity disabled:opacity-60"
           >
             {loading ? 'Proses Masuk...' : 'Masuk'}
           </button>
+
+          {/* Saved Sessions Toggle */}
+          {sessions.length > 0 && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setShowSessions(true)}
+                className="text-sm text-blue-600 font-medium hover:underline"
+              >
+                Pilih Akun Tersimpan
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <p className="text-center text-xs text-white/40 mt-6">
+      <p className="text-center text-xs text-gray-400 mt-6">
         © 2025 Vmedis Mobile v1.0.0
       </p>
 
-      {/* ── Lupa Password Bottom Sheet ── */}
-      {showForgot && (
+      {/* Sessions Bottom Sheet */}
+      {showSessions && (
         <div
           className="fixed inset-0 z-50 flex flex-col justify-end"
           style={{ background: 'rgba(0,0,0,0.45)' }}
-          onClick={closeForgot}
+          onClick={() => setShowSessions(false)}
         >
           <div
-            className="bg-white rounded-t-3xl overflow-hidden"
+            className="bg-white rounded-t-3xl overflow-hidden max-h-[80vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
-            <div className="flex justify-center pt-3 pb-1">
+            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
               <div className="w-10 h-1 rounded-full bg-gray-300" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-2 border-b border-gray-100">
-              <button onClick={closeForgot} className="text-sm font-medium text-gray-500 py-1">
-                Batal
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-shrink-0">
+              <span className="text-base font-bold text-gray-900">Pilih Akun</span>
+              <button onClick={() => setShowSessions(false)} className="p-1 text-gray-500 hover:bg-gray-100 rounded-full">
+                <X size={20} />
               </button>
-              <span className="text-sm font-bold text-gray-900">Lupa Password</span>
-              <div className="w-12" />
             </div>
 
-            <div className="px-5 pt-5 pb-10">
-              {forgotSent ? (
-                /* ── Success state ── */
-                <div className="flex flex-col items-center text-center gap-3 py-4">
-                  <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 6L9 17l-5-5" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-900">Email Terkirim!</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Instruksi reset password telah dikirim ke
-                    </p>
-                    <p className="text-xs font-semibold text-blue-600 mt-0.5">{forgotEmail}</p>
-                  </div>
-                  <p className="text-[11px] text-gray-400">Silakan periksa kotak masuk atau folder spam Anda.</p>
+            <div className="overflow-y-auto p-4 space-y-3">
+              {sessions.map((session) => (
+                <div key={`${session.domain}-${session.username}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100">
                   <button
-                    onClick={closeForgot}
-                    className="mt-2 w-full bg-blue-600 text-white text-sm font-bold py-3 rounded-xl active:bg-blue-700"
+                    className="flex items-center gap-3 flex-1 text-left"
+                    onClick={() => {
+                      switchSession(session);
+                      router.replace('/dashboard');
+                    }}
                   >
-                    Mengerti
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg overflow-hidden">
+                      {session.avatar.startsWith('http') ? (
+                        <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
+                      ) : (
+                        session.avatar
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-gray-900 truncate">{session.nama}</p>
+                      <p className="text-xs text-gray-500 truncate">@{session.username} • {session.domain}</p>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => removeSession(session.username, session.domain)}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-full ml-2"
+                  >
+                    <X size={18} />
                   </button>
                 </div>
-              ) : (
-                /* ── Form ── */
-                <>
-                  <p className="text-sm text-gray-500 mb-5">
-                    Masukkan alamat email yang terdaftar. Kami akan mengirimkan instruksi untuk mereset password Anda.
-                  </p>
-
-                  {forgotError && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 mb-4 flex items-center gap-2">
-                      <span className="text-red-500 text-sm">⚠️</span>
-                      <span className="text-xs text-red-600">{forgotError}</span>
-                    </div>
-                  )}
-
-                  <label className="text-[11px] font-semibold text-gray-500 mb-1.5 block uppercase tracking-wide">
-                    Alamat Email
-                  </label>
-                  <div className="relative mb-5">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base">✉️</span>
-                    <input
-                      type="email"
-                      value={forgotEmail}
-                      onChange={(e) => { setForgotEmail(e.target.value); setForgotError(''); }}
-                      placeholder="contoh@email.com"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-xl text-sm outline-none border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all"
-                      autoComplete="email"
-                      onKeyDown={(e) => e.key === 'Enter' && handleForgot()}
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleForgot}
-                    disabled={forgotLoading}
-                    className="w-full bg-blue-600 text-white text-sm font-bold py-3.5 rounded-xl shadow-md active:bg-blue-700 disabled:opacity-60 transition-opacity flex items-center justify-center gap-2"
-                  >
-                    {forgotLoading ? (
-                      <>
-                        <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                          <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                          <path className="opacity-90" d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                        </svg>
-                        Mengirim...
-                      </>
-                    ) : (
-                      'Kirim Instruksi Reset'
-                    )}
-                  </button>
-                </>
-              )}
+              ))}
+              
+              <button
+                onClick={() => {
+                  setShowSessions(false);
+                  setDomain('');
+                  setUsername('');
+                  setPassword('');
+                }}
+                className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-200 rounded-2xl text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              >
+                <Plus size={20} />
+                <span className="text-sm font-medium">Tambah Akun Baru</span>
+              </button>
             </div>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
