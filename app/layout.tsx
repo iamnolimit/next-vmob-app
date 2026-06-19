@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/lib/authContext";
-import KonstaApp from "@/components/KonstaApp";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -37,11 +36,16 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id" className="h-full">
-        <body className="h-full overflow-hidden bg-gray-50" suppressHydrationWarning>
+        <body className="h-full overflow-hidden bg-[#f4f6f8] relative" suppressHydrationWarning>
+        {/* Global Ambient Background */}
+        <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#0362fc]/10 rounded-full blur-[100px]" />
+          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[30%] bg-[#0362fc]/5 rounded-full blur-[100px]" />
+          <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-[#0362fc]/10 rounded-full blur-[120px]" />
+        </div>
+
         <AuthProvider>
-          <KonstaApp>
-            {children}
-          </KonstaApp>
+          {children}
         </AuthProvider>
         <ServiceWorkerRegister />
       </body>

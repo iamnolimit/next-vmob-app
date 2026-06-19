@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vmedis-mobile-v1';
+const CACHE_NAME = 'vmedis-mobile-v3';
 
 const STATIC_ASSETS = [
   '/',

@@ -5,7 +5,7 @@ export interface ChartItem {
   title: string;
   dataKey: string;
   color: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 interface ChartCarouselProps {
@@ -53,35 +53,32 @@ export default function ChartCarousel({ data, items, title, dataByChart }: Chart
 
   return (
     <div
-      className="chart-card bg-white rounded-2xl mx-4 mb-4 ios-shadow overflow-hidden select-none"
+      className="chart-container mx-4 mb-6 select-none"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between px-1 pt-2 pb-4">
+        <div className="flex items-center gap-3">
           {/* Icon with pop animation on chart switch */}
           <div
             key={`icon-${current}`}
-            className="chart-icon w-8 h-8 rounded-xl flex items-center justify-center text-lg"
+            className="chart-icon w-10 h-10 rounded-2xl flex items-center justify-center text-xl"
             style={{ background: `${item.color}18` }}
           >
             {item.icon}
           </div>
           <div key={`title-${current}`} className="chart-title">
-            <p className="text-sm font-bold text-gray-900 leading-tight">{item.title}</p>
-            {title && <p className="text-[11px] text-gray-400 leading-tight">{title}</p>}
+            <p className="text-[16px] font-bold text-gray-900 leading-tight">{item.title}</p>
+            {title && <p className="text-[13px] text-gray-500 leading-tight mt-0.5">{title}</p>}
           </div>
         </div>
 
-        {/* Counter + Prev / Next */}
-        <div className="flex items-center gap-1">
-          <span className="text-[10px] text-gray-400 mr-1 font-medium">
-            {current + 1}/{items.length}
-          </span>
+        {/* Prev / Next */}
+        <div className="flex items-center gap-2">
           <button
             onClick={prev}
-            className="w-8 h-8 flex items-center justify-center rounded-lg active:scale-90 transition-transform"
+            className="w-8 h-8 flex items-center justify-center rounded-full active:scale-90 transition-transform"
             style={{ background: `${item.color}18` }}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke={item.color} strokeWidth={2.5} strokeLinecap="round">
@@ -90,7 +87,7 @@ export default function ChartCarousel({ data, items, title, dataByChart }: Chart
           </button>
           <button
             onClick={next}
-            className="w-8 h-8 flex items-center justify-center rounded-lg active:scale-90 transition-transform"
+            className="w-8 h-8 flex items-center justify-center rounded-full active:scale-90 transition-transform"
             style={{ background: `${item.color}18` }}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke={item.color} strokeWidth={2.5} strokeLinecap="round">
@@ -100,43 +97,123 @@ export default function ChartCarousel({ data, items, title, dataByChart }: Chart
         </div>
       </div>
 
-      {/* Chart bars — key={current} triggers re-animation on chart switch */}
-      <div className="relative px-4 pb-2">
-        <div key={current} className="flex items-end gap-1.5">
-          {activeData.map((d, i) => {
-            const barPx    = Math.max(Math.round((values[i] / max) * BAR_MAX_HEIGHT), 4);
-            const delay    = `${i * 45}ms`;
-            return (
-              <button
-                key={i}
-                className="flex-1 flex flex-col items-center gap-1 focus:outline-none active:opacity-70 transition-opacity"
-                onClick={() => handleBarTap(i)}
-              >
-                <span className="text-[9px] text-gray-400 leading-none">{formatShort(values[i])}</span>
-                <div
-                  className="chart-bar w-full rounded-t-md"
-                  style={{
-                    height: barPx,
-                    background: `linear-gradient(180deg, ${item.color} 0%, ${item.color}cc 100%)`,
-                    animationDelay: delay,
+      {/* Chart line — key={current} triggers re-animation on chart switch */}
+      <div className="relative px-4 pb-6 h-[160px] flex items-end">
+        <div key={current} className="w-full h-full relative">
+          {/* SVG Line Chart */}
+          <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+            {/* Draw gradient area under the line */}
+            <defs>
+              <linearGradient id={`gradient-${current}`} x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor={item.color} stopOpacity="0.2" />
+                <stop offset="100%" stopColor={item.color} stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path
+              d={`M 0 100 L 0 ${100 - (Math.max((values[0] / max) * 90, 5))} ${values.map((v, i) => {
+                if (i === 0) return '';
+                const prevX = values.length > 1 ? ((i - 1) / (values.length - 1)) * 100 : 50;
+                const prevY = 100 - (Math.max((values[i - 1] / max) * 90, 5));
+                const x = values.length > 1 ? (i / (values.length - 1)) * 100 : 50;
+                const y = 100 - (Math.max((v / max) * 90, 5));
+                
+                // Control points for cubic bezier curve (smooth wave)
+                const cp1x = prevX + (x - prevX) / 2;
+                const cp1y = prevY;
+                const cp2x = prevX + (x - prevX) / 2;
+                const cp2y = y;
+                
+                return `C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x} ${y}`;
+              }).join(' ')} L 100 100 Z`}
+              fill={`url(#gradient-${current})`}
+              className="chart-area-path"
+            />
+
+            {/* Draw line */}
+            <path
+              d={`M 0 ${100 - (Math.max((values[0] / max) * 90, 5))} ${values.map((v, i) => {
+                if (i === 0) return '';
+                const prevX = values.length > 1 ? ((i - 1) / (values.length - 1)) * 100 : 50;
+                const prevY = 100 - (Math.max((values[i - 1] / max) * 90, 5));
+                const x = values.length > 1 ? (i / (values.length - 1)) * 100 : 50;
+                const y = 100 - (Math.max((v / max) * 90, 5));
+                
+                // Control points for cubic bezier curve (smooth wave)
+                const cp1x = prevX + (x - prevX) / 2;
+                const cp1y = prevY;
+                const cp2x = prevX + (x - prevX) / 2;
+                const cp2y = y;
+                
+                return `C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x} ${y}`;
+              }).join(' ')}`}
+              fill="none"
+              stroke={item.color}
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="chart-line-path"
+              vectorEffect="non-scaling-stroke"
+            />
+            
+            {/* Draw points using HTML elements to avoid SVG scaling distortion */}
+            <div className="absolute inset-0 pointer-events-none">
+              {values.map((v, i) => {
+                const x = values.length > 1 ? (i / (values.length - 1)) * 100 : 50;
+                const y = 100 - (Math.max((v / max) * 90, 5));
+                return (
+                  <div
+                    key={i}
+                    className="absolute w-2.5 h-2.5 rounded-full bg-white border-2 chart-line-point"
+                    style={{
+                      left: `${x}%`,
+                      top: `${y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      borderColor: item.color,
+                      animationDelay: `${i * 45}ms`
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </svg>
+
+          {/* Invisible buttons for interaction */}
+          <div className="absolute inset-0">
+            {activeData.map((d, i) => {
+              const x = values.length > 1 ? (i / (values.length - 1)) * 100 : 50;
+              return (
+                <button
+                  key={i}
+                  className="absolute h-full flex flex-col justify-end items-center focus:outline-none group"
+                  style={{ 
+                    left: `${x}%`, 
+                    transform: 'translateX(-50%)',
+                    width: `${100 / Math.max(values.length, 1)}%`,
+                    minWidth: '40px'
                   }}
-                />
-                <span
-                  className="text-[9px] font-medium leading-none transition-colors duration-300"
-                  style={{ color: selectedBar?.name === String(d.name) ? item.color : '#6b7280' }}
+                  onClick={() => handleBarTap(i)}
                 >
-                  {String(d.name)}
-                </span>
-              </button>
-            );
-          })}
+                  <div className="w-full h-full flex flex-col justify-between items-center opacity-0 group-active:opacity-100 transition-opacity">
+                    <span className="text-[10px] text-gray-500 font-medium leading-none mt-1">{formatShort(values[i])}</span>
+                    <div className="w-px h-full bg-gray-300/50 my-1" />
+                  </div>
+                  <span
+                    className="text-[10px] font-medium leading-none transition-colors duration-300 absolute -bottom-5 w-full text-center"
+                    style={{ color: selectedBar?.name === String(d.name) ? item.color : '#9ca3af' }}
+                  >
+                    {String(d.name)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Tap popup */}
         {selectedBar && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-gray-900/90 text-white rounded-2xl px-5 py-3 text-center shadow-xl animate-fadeIn">
-              <p className="text-xs text-gray-300 font-medium">{selectedBar.name}</p>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="bg-white/90 backdrop-blur-md text-gray-900 rounded-2xl px-5 py-3 text-center shadow-lg border border-gray-100 animate-fadeIn">
+              <p className="text-xs text-gray-500 font-medium">{selectedBar.name}</p>
               <p className="text-lg font-bold mt-0.5" style={{ color: item.color }}>
                 {selectedBar.value}
               </p>
@@ -146,7 +223,7 @@ export default function ChartCarousel({ data, items, title, dataByChart }: Chart
       </div>
 
       {/* Dot indicators */}
-      <div className="flex justify-center gap-1.5 pb-3 pt-1">
+      <div className="flex justify-center gap-1.5 pb-1 pt-4">
         {items.map((_, i) => (
           <button
             key={i}

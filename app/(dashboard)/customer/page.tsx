@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Segmented, SegmentedButton, Preloader } from 'konsta/react';
 import { customerChartItems } from '@/lib/dummyData';
+import { UserPlus, Users } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
+import TabSelector from '@/components/TabSelector';
 import { useFetch } from '@/lib/useFetch';
 import { customerPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
@@ -50,14 +51,14 @@ export default function CustomerPage() {
     {
       label: 'Pasien Baru',
       value: `${datapasienbaru.count || 0} Orang`,
-      icon: '👤',
+      icon: <UserPlus size={20} />,
       color: '#4CAF50',
       change: datapasienbaru.peningkatan || 0,
     },
     {
       label: 'Kunjungan Pasien',
       value: `${datakunjungan.count || 0} Orang`,
-      icon: '👥',
+      icon: <Users size={20} />,
       color: '#2196F3',
       change: datakunjungan.peningkatan || 0,
     },
@@ -71,40 +72,38 @@ export default function CustomerPage() {
         title="Customer"
         subtitle={`Data customer ${dateLabels[activeTab]}`}
         subnavbar={
-          <Segmented strong>
-            {tabs.map((tab) => (
-              <SegmentedButton
-                key={tab.value}
-                active={activeTab === tab.value}
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </SegmentedButton>
-            ))}
-          </Segmented>
+          <TabSelector 
+            tabs={tabs} 
+            activeTab={activeTab} 
+            onChange={setActiveTab} 
+          />
         }
       />
 
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            <Preloader />
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="pb-4">
+            {/* Chart pertumbuhan pasien — dinamis sesuai periode */}
             <div className="mt-4">
-              {stats.map((stat, i) => (
-                <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={(stat as { invoiceCount?: string }).invoiceCount} />
-              ))}
+              <ChartCarousel
+                key={activeTab}
+                data={chartData}
+                items={customerChartItems}
+                title={dateLabels[activeTab]}
+              />
             </div>
 
-            {/* Chart pertumbuhan pasien — dinamis sesuai periode */}
-            <ChartCarousel
-              key={activeTab}
-              data={chartData}
-              items={customerChartItems}
-              title={dateLabels[activeTab]}
-            />
+            <div className="mt-6 grid grid-cols-1 gap-4 px-4">
+              {stats.map((stat, i) => (
+                <div key={i} className="mx-0 mb-0">
+                  <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={(stat as { invoiceCount?: string }).invoiceCount} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

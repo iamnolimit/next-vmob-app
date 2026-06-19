@@ -1,11 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Segmented, SegmentedButton, Preloader } from 'konsta/react';
 import { obatChartItems, pembelianObatTerbanyak, obatTerlaris } from '@/lib/dummyData';
+import { Pill, AlertTriangle, Package, Search } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import RankedList from '@/components/RankedList';
 import PageHeader from '@/components/PageHeader';
+import TabSelector from '@/components/TabSelector';
 import { useFetch } from '@/lib/useFetch';
 import { obatPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
@@ -74,7 +75,7 @@ export default function ObatPage() {
     {
       label: 'Nilai Stok Obat',
       value: formatRupiah(dataNilaiObat?.nilai || 0),
-      icon: '💊',
+      icon: <Pill size={20} />,
       color: '#1A73E8',
       change: 0,
       invoiceCount: dataNilaiObat?.count ? `${dataNilaiObat.count} Obat` : '',
@@ -82,7 +83,7 @@ export default function ObatPage() {
     {
       label: 'Obat Expired',
       value: formatRupiah(dataObatExpired?.nilai || 0),
-      icon: '⚠️',
+      icon: <AlertTriangle size={20} />,
       color: '#1A73E8',
       change: 0,
       invoiceCount: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '',
@@ -90,7 +91,7 @@ export default function ObatPage() {
     {
       label: 'Obat Stok Habis',
       value: dataObatStokHabis?.count ? `${dataObatStokHabis.count} Obat` : '0 Obat',
-      icon: '📦',
+      icon: <Package size={20} />,
       color: '#1A73E8',
       change: 0,
       invoiceCount: '',
@@ -98,7 +99,7 @@ export default function ObatPage() {
     {
       label: 'Obat Hilang',
       value: formatRupiah(nilaiObatHilang),
-      icon: '🔍',
+      icon: <Search size={20} />,
       color: '#1A73E8',
       change: parseFloat(obatHilangChange.value) * (obatHilangChange.isPositive ? 1 : -1),
       invoiceCount: dataObatStokHilang?.count ? `${dataObatStokHilang.count} Obat` : '0 Obat',
@@ -116,42 +117,44 @@ export default function ObatPage() {
         title="Obat"
         subtitle={`Data obat ${dateLabels[activeTab]}`}
         subnavbar={
-          <Segmented strong>
-            {tabs.map((tab) => (
-              <SegmentedButton
-                key={tab.value}
-                active={activeTab === tab.value}
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </SegmentedButton>
-            ))}
-          </Segmented>
+          <TabSelector 
+            tabs={tabs} 
+            activeTab={activeTab} 
+            onChange={setActiveTab} 
+          />
         }
       />
 
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            <Preloader />
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="pb-4">
             <div className="mt-4">
+              <ChartCarousel data={chartData} items={obatChartItems} title={dateLabels[activeTab]} />
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-4 px-4">
               {stats.map((stat, i) => (
-                <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
+                <div key={i} className="mx-0 mb-0">
+                  <StatCard label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
+                </div>
               ))}
             </div>
 
-            <ChartCarousel data={chartData} items={obatChartItems} title={dateLabels[activeTab]} />
+            <div className="mt-6">
+              <RankedList title="Pembelian Obat Terbanyak" icon="🛒" color="#4CAF50"
+                items={pembelianObatTerbanyakData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah, nilai: 0 }))}
+                type="obat" />
+            </div>
 
-            <RankedList title="Pembelian Obat Terbanyak" icon="🛒" color="#4CAF50"
-              items={pembelianObatTerbanyakData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah, nilai: 0 }))}
-              type="obat" />
-
-            <RankedList title="Obat Terlaris" icon="🔥" color="#FF5722"
-              items={obatTerlarisData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah, nilai: 0 }))}
-              type="obat" />
+            <div className="mt-6">
+              <RankedList title="Obat Terlaris" icon="🔥" color="#FF5722"
+                items={obatTerlarisData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah, nilai: 0 }))}
+                type="obat" />
+            </div>
           </div>
         )}
       </div>

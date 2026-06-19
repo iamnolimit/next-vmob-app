@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Segmented, SegmentedButton, Preloader } from 'konsta/react';
 import { dashboardChartItems } from '@/lib/dummyData';
+import { Store, ShoppingCart, Hospital, Home, CircleDollarSign } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
+import TabSelector from '@/components/TabSelector';
 import { useFetch } from '@/lib/useFetch';
 import { dashboardPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
@@ -72,7 +73,7 @@ export default function DashboardPage() {
     {
       label: 'Penjualan Kasir',
       value: latestPenjualanKasir ? formatRupiah(latestPenjualanKasir.grandtotal || 0) : 'Rp 0',
-      icon: '🏪',
+      icon: <Store size={20} />,
       color: '#FF9800',
       change: parseFloat(penjualanKasirChange.value) * (penjualanKasirChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPenjualanKasir?.jumfaktur, 0)} faktur`,
@@ -80,7 +81,7 @@ export default function DashboardPage() {
     {
       label: 'Penjualan Online',
       value: latestPenjualanOnline ? formatRupiah(latestPenjualanOnline.grandtotal || 0) : 'Rp 0',
-      icon: '🛒',
+      icon: <ShoppingCart size={20} />,
       color: '#4CAF50',
       change: parseFloat(penjualanOnlineChange.value) * (penjualanOnlineChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPenjualanOnline?.jumfaktur, 0)} faktur`,
@@ -88,7 +89,7 @@ export default function DashboardPage() {
     {
       label: 'Pemeriksaan Klinik',
       value: latestPemeriksaanKlinik ? formatRupiah(latestPemeriksaanKlinik.grandtotal || 0) : 'Rp 0',
-      icon: '🏥',
+      icon: <Hospital size={20} />,
       color: '#9C27B0',
       change: parseFloat(pemeriksaanKlinikChange.value) * (pemeriksaanKlinikChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPemeriksaanKlinik?.jumfaktur, 0)} faktur`,
@@ -96,7 +97,7 @@ export default function DashboardPage() {
     {
       label: 'Pendapatan HomeCare',
       value: latestPendapatanHC ? formatRupiah(latestPendapatanHC.grandtotal || 0) : 'Rp 0',
-      icon: '🏠',
+      icon: <Home size={20} />,
       color: '#F44336',
       change: parseFloat(pendapatanHCChange.value) * (pendapatanHCChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPendapatanHC?.jumfaktur, 0)} faktur`,
@@ -104,7 +105,7 @@ export default function DashboardPage() {
     {
       label: 'Total Pendapatan',
       value: latestTotalPendapatan ? formatRupiah(latestTotalPendapatan.grandtotal || 0) : 'Rp 0',
-      icon: '💰',
+      icon: <CircleDollarSign size={20} />,
       color: '#2196F3',
       change: parseFloat(totalPendapatanChange.value) * (totalPendapatanChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestTotalPendapatan?.jumfaktur, 0)} faktur`,
@@ -125,42 +126,39 @@ export default function DashboardPage() {
         title="Dashboard"
         subtitle={`Data ${dateLabels[activeTab]}`}
         subnavbar={
-          <Segmented strong>
-            {tabs.map((tab) => (
-              <SegmentedButton
-                key={tab.value}
-                active={activeTab === tab.value}
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </SegmentedButton>
-            ))}
-          </Segmented>
+          <TabSelector 
+            tabs={tabs} 
+            activeTab={activeTab} 
+            onChange={setActiveTab} 
+          />
         }
       />
 
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            <Preloader />
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="pb-4">
             <div className="mt-4">
-              {stats.map((stat, i) => (
-                <StatCard
-                  key={i}
-                  label={stat.label}
-                  value={stat.value}
-                  change={stat.change}
-                  icon={stat.icon}
-                  color={stat.color}
-                  invoiceCount={stat.invoiceCount}
-                />
-              ))}
+              <ChartCarousel data={chartData} items={dashboardChartItems} title={dateLabels[activeTab]} />
             </div>
 
-            <ChartCarousel data={chartData} items={dashboardChartItems} title={dateLabels[activeTab]} />
+            <div className="mt-6 grid grid-cols-1 gap-4 px-4">
+              {stats.map((stat, i) => (
+                <div key={i} className="mx-0 mb-0">
+                  <StatCard
+                    label={stat.label}
+                    value={stat.value}
+                    change={stat.change}
+                    icon={stat.icon}
+                    color={stat.color}
+                    invoiceCount={stat.invoiceCount}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

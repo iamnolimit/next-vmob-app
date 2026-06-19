@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Segmented, SegmentedButton, Preloader } from 'konsta/react';
 import { keuanganChartItems } from '@/lib/dummyData';
+import { Landmark, Banknote, Scale, TrendingUp, TrendingDown, BarChart3, Receipt, FileText, Hospital } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
+import TabSelector from '@/components/TabSelector';
 import { useFetch } from '@/lib/useFetch';
 import { keuanganPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
@@ -112,7 +113,7 @@ export default function KeuanganPage() {
     {
       label: 'Total Aset',
       value: formatRupiah(totalAsetValue),
-      icon: '🏦',
+      icon: <Landmark size={20} />,
       color: '#1A73E8',
       change: parseFloat(totalAsetChange.value) * (totalAsetChange.isPositive ? 1 : -1),
       invoiceCount: 'Total aset perusahaan',
@@ -120,7 +121,7 @@ export default function KeuanganPage() {
     {
       label: 'Total Cash',
       value: latestCash ? formatRupiah(latestCash.y || 0) : 'Rp 0',
-      icon: '💵',
+      icon: <Banknote size={20} />,
       color: '#1A73E8',
       change: parseFloat(cashChange.value) * (cashChange.isPositive ? 1 : -1),
       invoiceCount: 'Kas dan setara kas',
@@ -128,7 +129,7 @@ export default function KeuanganPage() {
     {
       label: 'Total Pasiva',
       value: latestPasiva ? formatRupiah(latestPasiva.y || 0) : 'Rp 0',
-      icon: '⚖️',
+      icon: <Scale size={20} />,
       color: '#1A73E8',
       change: parseFloat(pasivaChange.value) * (pasivaChange.isPositive ? 1 : -1),
       invoiceCount: 'Total kewajiban',
@@ -136,7 +137,7 @@ export default function KeuanganPage() {
     {
       label: 'Total Pendapatan',
       value: latestPendapatan ? formatRupiah(latestPendapatan.y || 0) : 'Rp 0',
-      icon: '📈',
+      icon: <TrendingUp size={20} />,
       color: '#1A73E8',
       change: parseFloat(pendapatanChange.value) * (pendapatanChange.isPositive ? 1 : -1),
       invoiceCount: 'Pendapatan operasional',
@@ -144,7 +145,7 @@ export default function KeuanganPage() {
     {
       label: 'Total Pengeluaran',
       value: latestPengeluaran ? formatRupiah(latestPengeluaran.y || 0) : 'Rp 0',
-      icon: '📉',
+      icon: <TrendingDown size={20} />,
       color: '#1A73E8',
       change: parseFloat(pengeluaranChange.value) * (pengeluaranChange.isPositive ? 1 : -1),
       invoiceCount: 'Biaya operasional',
@@ -152,7 +153,7 @@ export default function KeuanganPage() {
     {
       label: 'Laba Rugi',
       value: latestLabarugi ? formatRupiah(latestLabarugi.y || 0) : 'Rp 0',
-      icon: '📊',
+      icon: <BarChart3 size={20} />,
       color: '#1A73E8',
       change: parseFloat(labarugiChange.value) * (labarugiChange.isPositive ? 1 : -1),
       invoiceCount: 'Laba bersih periode',
@@ -160,7 +161,7 @@ export default function KeuanganPage() {
     {
       label: 'Hutang Obat Jatuh Tempo',
       value: latestHutang ? formatRupiah(latestHutang.y || 0) : 'Rp 0',
-      icon: '🧾',
+      icon: <Receipt size={20} />,
       color: '#1A73E8',
       change: parseFloat(hutangChange.value) * (hutangChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestHutang?.jmlfaktur, 0)} faktur`,
@@ -168,7 +169,7 @@ export default function KeuanganPage() {
     {
       label: 'Piutang Apotek Jatuh Tempo',
       value: latestPiutang ? formatRupiah(latestPiutang.y || 0) : 'Rp 0',
-      icon: '📄',
+      icon: <FileText size={20} />,
       color: '#1A73E8',
       change: parseFloat(piutangChange.value) * (piutangChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPiutang?.jmlfaktur, 0)} faktur`,
@@ -176,7 +177,7 @@ export default function KeuanganPage() {
     {
       label: 'Piutang Klinik Jatuh Tempo',
       value: latestPiutangKlinik ? formatRupiah(latestPiutangKlinik.y || 0) : 'Rp 0',
-      icon: '🏥',
+      icon: <Hospital size={20} />,
       color: '#1A73E8',
       change: parseFloat(piutangKlinikChange.value) * (piutangKlinikChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPiutangKlinik?.jmlfaktur, 0)} faktur`,
@@ -191,34 +192,32 @@ export default function KeuanganPage() {
         title="Keuangan"
         subtitle={`Data keuangan ${dateLabels[activeTab]}`}
         subnavbar={
-          <Segmented strong>
-            {tabs.map((tab) => (
-              <SegmentedButton
-                key={tab.value}
-                active={activeTab === tab.value}
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </SegmentedButton>
-            ))}
-          </Segmented>
+          <TabSelector 
+            tabs={tabs} 
+            activeTab={activeTab} 
+            onChange={setActiveTab} 
+          />
         }
       />
 
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            <Preloader />
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="pb-4">
             <div className="mt-4">
-              {stats.map((stat, i) => (
-                <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
-              ))}
+              <ChartCarousel data={chartData} items={keuanganChartItems} title={dateLabels[activeTab]} />
             </div>
 
-            <ChartCarousel data={chartData} items={keuanganChartItems} title={dateLabels[activeTab]} />
+            <div className="mt-6 grid grid-cols-1 gap-4 px-4">
+              {stats.map((stat, i) => (
+                <div key={i} className="mx-0 mb-0">
+                  <StatCard label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

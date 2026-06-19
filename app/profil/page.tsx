@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
+import { User, Mail, Briefcase, Hospital, Tag } from 'lucide-react';
 
 const groupColors: Record<string, string> = {
   Admin: 'bg-purple-500',
@@ -23,11 +24,11 @@ export default function ProfilPage() {
   if (loading || !user) return null;
 
   const fields = [
-    { label: 'Nama Lengkap', value: user.nama, icon: '👤' },
-    { label: 'Email', value: user.email, icon: '📧' },
-    { label: 'Jabatan', value: user.jabatan, icon: '💼' },
-    { label: 'Cabang / Klinik', value: user.cabang, icon: '🏥' },
-    { label: 'Grup / Role', value: user.group, icon: '🏷️' },
+    { label: 'Nama Lengkap', value: user.nama, icon: <User size={20} /> },
+    { label: 'Email', value: user.email, icon: <Mail size={20} /> },
+    { label: 'Jabatan', value: user.jabatan, icon: <Briefcase size={20} /> },
+    { label: 'Cabang / Klinik', value: user.cabang, icon: <Hospital size={20} /> },
+    { label: 'Grup / Role', value: user.group, icon: <Tag size={20} /> },
   ];
 
   return (
@@ -68,7 +69,7 @@ export default function ProfilPage() {
               key={f.label}
               className={`flex items-center gap-4 px-4 py-3.5 ${i < fields.length - 1 ? 'border-b border-gray-100' : ''}`}
             >
-              <span className="text-xl w-8 text-center">{f.icon}</span>
+              <span className="w-8 flex justify-center text-gray-400">{f.icon}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 font-medium">{f.label}</p>
                 <p className="text-sm text-gray-900 font-semibold truncate">{f.value}</p>
@@ -82,7 +83,12 @@ export default function ProfilPage() {
           onClick={() => router.push('/ganti-password')}
           className="w-full bg-white rounded-2xl px-4 py-4 ios-shadow flex items-center gap-3 active:bg-gray-50"
         >
-          <span className="text-xl">🔑</span>
+          <span className="w-8 flex justify-center text-gray-400">
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
           <div className="flex-1 text-left">
             <p className="text-sm font-semibold text-gray-800">Ganti Password</p>
             <p className="text-xs text-gray-500">Perbarui kata sandi Anda</p>

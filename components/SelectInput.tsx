@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { Hospital } from 'lucide-react';
 
 export interface SelectOption {
   label: string;
@@ -11,7 +12,7 @@ interface SelectInputProps {
   value: string;
   onChange: (value: string) => void;
   options: SelectOption[];
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 export default function SelectInput({
@@ -19,7 +20,7 @@ export default function SelectInput({
   value,
   onChange,
   options,
-  icon = '🏥',
+  icon = <Hospital size={16} />,
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
 

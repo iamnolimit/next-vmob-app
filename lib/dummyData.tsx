@@ -1,29 +1,31 @@
 // ============================================================
 // DUMMY STATIC DATA untuk semua halaman mobile Vmedis
 // ============================================================
+import React from 'react';
+import { Store, ShoppingCart, Hospital, Home, CircleDollarSign, Landmark, Banknote, Scale, TrendingUp, TrendingDown, LineChart, ClipboardList, FileText, Pill, AlertTriangle, Package, Search } from 'lucide-react';
 
 // ---- DASHBOARD PAGE DATA ----
 export const dashboardStats = {
   hariIni: [
-    { label: "Penjualan Kasir",      value: "Rp 2.450.000",       change: 12.5,  icon: "🏪", color: "#1A73E8", invoiceCount: "48 faktur" },
-    { label: "Penjualan Online",     value: "Rp 1.320.000",       change: 8.3,   icon: "🛒", color: "#1A73E8", invoiceCount: "27 faktur" },
-    { label: "Pemeriksaan Klinik",   value: "Rp 3.180.000",       change: -3.2,  icon: "🏥", color: "#1A73E8", invoiceCount: "31 faktur" },
-    { label: "Pendapatan HomeCare",  value: "Rp 640.000",         change: 5.1,   icon: "🏠", color: "#1A73E8", invoiceCount: "6 faktur"  },
-    { label: "Total Pendapatan",     value: "Rp 7.590.000",       change: 9.7,   icon: "💰", color: "#1A73E8", invoiceCount: "112 faktur" },
+    { label: "Penjualan Kasir",      value: "Rp 2.450.000",       change: 12.5,  icon: <Store size={20} />, color: "#1A73E8", invoiceCount: "48 faktur" },
+    { label: "Penjualan Online",     value: "Rp 1.320.000",       change: 8.3,   icon: <ShoppingCart size={20} />, color: "#1A73E8", invoiceCount: "27 faktur" },
+    { label: "Pemeriksaan Klinik",   value: "Rp 3.180.000",       change: -3.2,  icon: <Hospital size={20} />, color: "#1A73E8", invoiceCount: "31 faktur" },
+    { label: "Pendapatan HomeCare",  value: "Rp 640.000",         change: 5.1,   icon: <Home size={20} />, color: "#1A73E8", invoiceCount: "6 faktur"  },
+    { label: "Total Pendapatan",     value: "Rp 7.590.000",       change: 9.7,   icon: <CircleDollarSign size={20} />, color: "#1A73E8", invoiceCount: "112 faktur" },
   ],
   bulanIni: [
-    { label: "Penjualan Kasir",      value: "Rp 48.750.000",      change: 9.2,   icon: "🏪", color: "#1A73E8", invoiceCount: "1.240 faktur" },
-    { label: "Penjualan Online",     value: "Rp 26.400.000",      change: 14.7,  icon: "🛒", color: "#1A73E8", invoiceCount: "680 faktur"  },
-    { label: "Pemeriksaan Klinik",   value: "Rp 81.200.000",      change: 6.8,   icon: "🏥", color: "#1A73E8", invoiceCount: "820 faktur"  },
-    { label: "Pendapatan HomeCare",  value: "Rp 14.500.000",      change: -2.1,  icon: "🏠", color: "#1A73E8", invoiceCount: "145 faktur"  },
-    { label: "Total Pendapatan",     value: "Rp 170.850.000",     change: 11.3,  icon: "💰", color: "#1A73E8", invoiceCount: "2.885 faktur" },
+    { label: "Penjualan Kasir",      value: "Rp 48.750.000",      change: 9.2,   icon: <Store size={20} />, color: "#1A73E8", invoiceCount: "1.240 faktur" },
+    { label: "Penjualan Online",     value: "Rp 26.400.000",      change: 14.7,  icon: <ShoppingCart size={20} />, color: "#1A73E8", invoiceCount: "680 faktur"  },
+    { label: "Pemeriksaan Klinik",   value: "Rp 81.200.000",      change: 6.8,   icon: <Hospital size={20} />, color: "#1A73E8", invoiceCount: "820 faktur"  },
+    { label: "Pendapatan HomeCare",  value: "Rp 14.500.000",      change: -2.1,  icon: <Home size={20} />, color: "#1A73E8", invoiceCount: "145 faktur"  },
+    { label: "Total Pendapatan",     value: "Rp 170.850.000",     change: 11.3,  icon: <CircleDollarSign size={20} />, color: "#1A73E8", invoiceCount: "2.885 faktur" },
   ],
   tahunIni: [
-    { label: "Penjualan Kasir",      value: "Rp 580.200.000",     change: 21.4,  icon: "🏪", color: "#1A73E8", invoiceCount: "14.820 faktur" },
-    { label: "Penjualan Online",     value: "Rp 312.400.000",     change: 28.6,  icon: "🛒", color: "#1A73E8", invoiceCount: "8.120 faktur"  },
-    { label: "Pemeriksaan Klinik",   value: "Rp 945.000.000",     change: 17.3,  icon: "🏥", color: "#1A73E8", invoiceCount: "9.840 faktur"  },
-    { label: "Pendapatan HomeCare",  value: "Rp 172.800.000",     change: 13.7,  icon: "🏠", color: "#1A73E8", invoiceCount: "1.740 faktur"  },
-    { label: "Total Pendapatan",     value: "Rp 2.010.400.000",   change: 24.6,  icon: "💰", color: "#1A73E8", invoiceCount: "34.520 faktur" },
+    { label: "Penjualan Kasir",      value: "Rp 580.200.000",     change: 21.4,  icon: <Store size={20} />, color: "#1A73E8", invoiceCount: "14.820 faktur" },
+    { label: "Penjualan Online",     value: "Rp 312.400.000",     change: 28.6,  icon: <ShoppingCart size={20} />, color: "#1A73E8", invoiceCount: "8.120 faktur"  },
+    { label: "Pemeriksaan Klinik",   value: "Rp 945.000.000",     change: 17.3,  icon: <Hospital size={20} />, color: "#1A73E8", invoiceCount: "9.840 faktur"  },
+    { label: "Pendapatan HomeCare",  value: "Rp 172.800.000",     change: 13.7,  icon: <Home size={20} />, color: "#1A73E8", invoiceCount: "1.740 faktur"  },
+    { label: "Total Pendapatan",     value: "Rp 2.010.400.000",   change: 24.6,  icon: <CircleDollarSign size={20} />, color: "#1A73E8", invoiceCount: "34.520 faktur" },
   ],
 };
 
@@ -39,11 +41,11 @@ export const dashboardChartData = [
 ];
 
 export const dashboardChartItems = [
-  { title: "Total Pendapatan",    dataKey: "totalPendapatan",    color: "#2196F3", icon: "💰" },
-  { title: "Penjualan Kasir",     dataKey: "penjualanKasir",     color: "#FF9800", icon: "🏪" },
-  { title: "Penjualan Online",    dataKey: "penjualanOnline",    color: "#4CAF50", icon: "🛒" },
-  { title: "Pemeriksaan Klinik",  dataKey: "pemeriksaanKlinik",  color: "#9C27B0", icon: "🏥" },
-  { title: "Pendapatan HomeCare", dataKey: "pendapatanHomecare", color: "#F44336", icon: "🏠" },
+  { title: "Total Pendapatan",    dataKey: "totalPendapatan",    color: "#2196F3", icon: <CircleDollarSign size={16} /> },
+  { title: "Penjualan Kasir",     dataKey: "penjualanKasir",     color: "#FF9800", icon: <Store size={16} /> },
+  { title: "Penjualan Online",    dataKey: "penjualanOnline",    color: "#4CAF50", icon: <ShoppingCart size={16} /> },
+  { title: "Pemeriksaan Klinik",  dataKey: "pemeriksaanKlinik",  color: "#9C27B0", icon: <Hospital size={16} /> },
+  { title: "Pendapatan HomeCare", dataKey: "pendapatanHomecare", color: "#F44336", icon: <Home size={16} /> },
 ];
 
 // ---- KEUANGAN CHART DATA ----
@@ -58,36 +60,36 @@ export const keuanganChartData = [
 ];
 
 export const keuanganChartItems = [
-  { title: "Total Aset",          dataKey: "totalAset",         color: "#2196F3", icon: "🏦" },
-  { title: "Total Cash",          dataKey: "totalCash",         color: "#4CAF50", icon: "💵" },
-  { title: "Total Pasiva",        dataKey: "totalPasiva",       color: "#FF9800", icon: "⚖️" },
-  { title: "Total Pendapatan",    dataKey: "totalPendapatan",   color: "#4CAF50", icon: "📈" },
-  { title: "Total Pengeluaran",   dataKey: "totalPengeluaran",  color: "#F44336", icon: "📉" },
-  { title: "Laba Rugi",           dataKey: "labaRugi",          color: "#9C27B0", icon: "💹" },
-  { title: "Total Hutang Obat",   dataKey: "totalHutangObat",   color: "#F44336", icon: "📋" },
-  { title: "Total Piutang Apotek",dataKey: "totalPiutangApotek",color: "#FF9800", icon: "📄" },
-  { title: "Total Piutang Klinik",dataKey: "totalPiutangKlinik",color: "#9C27B0", icon: "🏥" },
+  { title: "Total Aset",          dataKey: "totalAset",         color: "#2196F3", icon: <Landmark size={16} /> },
+  { title: "Total Cash",          dataKey: "totalCash",         color: "#4CAF50", icon: <Banknote size={16} /> },
+  { title: "Total Pasiva",        dataKey: "totalPasiva",       color: "#FF9800", icon: <Scale size={16} /> },
+  { title: "Total Pendapatan",    dataKey: "totalPendapatan",   color: "#4CAF50", icon: <TrendingUp size={16} /> },
+  { title: "Total Pengeluaran",   dataKey: "totalPengeluaran",  color: "#F44336", icon: <TrendingDown size={16} /> },
+  { title: "Laba Rugi",           dataKey: "labaRugi",          color: "#9C27B0", icon: <LineChart size={16} /> },
+  { title: "Total Hutang Obat",   dataKey: "totalHutangObat",   color: "#F44336", icon: <ClipboardList size={16} /> },
+  { title: "Total Piutang Apotek",dataKey: "totalPiutangApotek",color: "#FF9800", icon: <FileText size={16} /> },
+  { title: "Total Piutang Klinik",dataKey: "totalPiutangKlinik",color: "#9C27B0", icon: <Hospital size={16} /> },
 ];
 
 // ---- OBAT PAGE DATA ----
 export const obatStats = {
   hariIni: [
-    { label: "Nilai Stok Obat",  value: "Rp 87.500.000",  icon: "💊", color: "#1A73E8", invoiceCount: "1.248 Obat" },
-    { label: "Obat Expired",     value: "Rp 1.240.000",   icon: "⚠️", color: "#1A73E8", invoiceCount: "7 Obat"     },
-    { label: "Obat Stok Habis",  value: "6 Obat",         icon: "📦", color: "#1A73E8" },
-    { label: "Obat Hilang",      value: "Rp 320.000",     change: 4.2, icon: "🔍", color: "#1A73E8", invoiceCount: "3 Obat" },
+    { label: "Nilai Stok Obat",  value: "Rp 87.500.000",  icon: <Pill size={20} />, color: "#1A73E8", invoiceCount: "1.248 Obat" },
+    { label: "Obat Expired",     value: "Rp 1.240.000",   icon: <AlertTriangle size={20} />, color: "#1A73E8", invoiceCount: "7 Obat"     },
+    { label: "Obat Stok Habis",  value: "6 Obat",         icon: <Package size={20} />, color: "#1A73E8" },
+    { label: "Obat Hilang",      value: "Rp 320.000",     change: 4.2, icon: <Search size={20} />, color: "#1A73E8", invoiceCount: "3 Obat" },
   ],
   bulanIni: [
-    { label: "Nilai Stok Obat",  value: "Rp 87.500.000",  icon: "💊", color: "#1A73E8", invoiceCount: "1.248 Obat" },
-    { label: "Obat Expired",     value: "Rp 3.840.000",   icon: "⚠️", color: "#1A73E8", invoiceCount: "23 Obat"    },
-    { label: "Obat Stok Habis",  value: "18 Obat",        icon: "📦", color: "#1A73E8" },
-    { label: "Obat Hilang",      value: "Rp 1.280.000",   change: 7.5, icon: "🔍", color: "#1A73E8", invoiceCount: "12 Obat" },
+    { label: "Nilai Stok Obat",  value: "Rp 87.500.000",  icon: <Pill size={20} />, color: "#1A73E8", invoiceCount: "1.248 Obat" },
+    { label: "Obat Expired",     value: "Rp 3.840.000",   icon: <AlertTriangle size={20} />, color: "#1A73E8", invoiceCount: "23 Obat"    },
+    { label: "Obat Stok Habis",  value: "18 Obat",        icon: <Package size={20} />, color: "#1A73E8" },
+    { label: "Obat Hilang",      value: "Rp 1.280.000",   change: 7.5, icon: <Search size={20} />, color: "#1A73E8", invoiceCount: "12 Obat" },
   ],
   tahunIni: [
-    { label: "Nilai Stok Obat",  value: "Rp 87.500.000",  icon: "💊", color: "#1A73E8", invoiceCount: "1.248 Obat" },
-    { label: "Obat Expired",     value: "Rp 18.200.000",  icon: "⚠️", color: "#1A73E8", invoiceCount: "74 Obat"    },
-    { label: "Obat Stok Habis",  value: "42 Obat",        icon: "📦", color: "#1A73E8" },
-    { label: "Obat Hilang",      value: "Rp 9.640.000",   change: -8.3, icon: "🔍", color: "#1A73E8", invoiceCount: "48 Obat" },
+    { label: "Nilai Stok Obat",  value: "Rp 87.500.000",  icon: <Pill size={20} />, color: "#1A73E8", invoiceCount: "1.248 Obat" },
+    { label: "Obat Expired",     value: "Rp 18.200.000",  icon: <AlertTriangle size={20} />, color: "#1A73E8", invoiceCount: "74 Obat"    },
+    { label: "Obat Stok Habis",  value: "42 Obat",        icon: <Package size={20} />, color: "#1A73E8" },
+    { label: "Obat Hilang",      value: "Rp 9.640.000",   change: -8.3, icon: <Search size={20} />, color: "#1A73E8", invoiceCount: "48 Obat" },
   ],
 };
 
@@ -102,8 +104,8 @@ export const obatChartData = [
 ];
 
 export const obatChartItems = [
-  { title: "Data Obat Hilang", dataKey: "obatHilang",    color: "#FF5722", icon: "🔍" },
-  { title: "Pembelian Obat",   dataKey: "pembelianObat", color: "#4CAF50", icon: "🛒" },
+  { title: "Data Obat Hilang", dataKey: "obatHilang",    color: "#FF5722", icon: <Search size={16} /> },
+  { title: "Pembelian Obat",   dataKey: "pembelianObat", color: "#4CAF50", icon: <ShoppingCart size={16} /> },
 ];
 
 export const pembelianObatTerbanyak = [
@@ -125,71 +127,71 @@ export const obatTerlaris = [
 // ---- KEUANGAN PAGE DATA ----
 export const keuanganStats = {
   hariIni: [
-    { label: "Total Aset",                value: "Rp 523.000.000",   change: 2.4,   icon: "🏦", color: "#1A73E8", invoiceCount: "Total aset perusahaan"  },
-    { label: "Total Cash",                value: "Rp 67.000.000",    change: 5.1,   icon: "💵", color: "#1A73E8", invoiceCount: "Kas dan setara kas"      },
-    { label: "Total Pasiva",              value: "Rp 182.000.000",   change: -1.3,  icon: "⚖️", color: "#1A73E8", invoiceCount: "Total kewajiban"         },
-    { label: "Total Pendapatan",          value: "Rp 76.000.000",    change: 11.3,  icon: "📈", color: "#1A73E8", invoiceCount: "Pendapatan operasional"   },
-    { label: "Total Pengeluaran",         value: "Rp 46.000.000",    change: 7.8,   icon: "📉", color: "#1A73E8", invoiceCount: "Biaya operasional"        },
-    { label: "Laba Rugi",                 value: "Rp 30.000.000",    change: 18.7,  icon: "💹", color: "#1A73E8", invoiceCount: "Laba bersih periode"      },
-    { label: "Hutang Obat Jatuh Tempo",   value: "Rp 32.800.000",    change: -4.2,  icon: "📋", color: "#1A73E8", invoiceCount: "5 faktur"                 },
-    { label: "Piutang Apotek Jatuh Tempo",value: "Rp 18.200.000",    change: 3.5,   icon: "📄", color: "#1A73E8", invoiceCount: "6 faktur"                 },
-    { label: "Piutang Klinik Jatuh Tempo",value: "Rp 13.500.000",    change: 9.2,   icon: "🏥", color: "#1A73E8", invoiceCount: "4 faktur"                 },
+    { label: "Total Aset",                value: "Rp 523.000.000",   change: 2.4,   icon: <Landmark size={20} />, color: "#1A73E8", invoiceCount: "Total aset perusahaan"  },
+    { label: "Total Cash",                value: "Rp 67.000.000",    change: 5.1,   icon: <Banknote size={20} />, color: "#1A73E8", invoiceCount: "Kas dan setara kas"      },
+    { label: "Total Pasiva",              value: "Rp 182.000.000",   change: -1.3,  icon: <Scale size={20} />, color: "#1A73E8", invoiceCount: "Total kewajiban"         },
+    { label: "Total Pendapatan",          value: "Rp 76.000.000",    change: 11.3,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "Pendapatan operasional"   },
+    { label: "Total Pengeluaran",         value: "Rp 46.000.000",    change: 7.8,   icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "Biaya operasional"        },
+    { label: "Laba Rugi",                 value: "Rp 30.000.000",    change: 18.7,  icon: <LineChart size={20} />, color: "#1A73E8", invoiceCount: "Laba bersih periode"      },
+    { label: "Hutang Obat Jatuh Tempo",   value: "Rp 32.800.000",    change: -4.2,  icon: <ClipboardList size={20} />, color: "#1A73E8", invoiceCount: "5 faktur"                 },
+    { label: "Piutang Apotek Jatuh Tempo",value: "Rp 18.200.000",    change: 3.5,   icon: <FileText size={20} />, color: "#1A73E8", invoiceCount: "6 faktur"                 },
+    { label: "Piutang Klinik Jatuh Tempo",value: "Rp 13.500.000",    change: 9.2,   icon: <Hospital size={20} />, color: "#1A73E8", invoiceCount: "4 faktur"                 },
   ],
   bulanIni: [
-    { label: "Total Aset",                value: "Rp 523.000.000",   change: 3.1,   icon: "🏦", color: "#1A73E8", invoiceCount: "Total aset perusahaan"  },
-    { label: "Total Cash",                value: "Rp 67.000.000",    change: 8.3,   icon: "💵", color: "#1A73E8", invoiceCount: "Kas dan setara kas"      },
-    { label: "Total Pasiva",              value: "Rp 182.000.000",   change: -2.1,  icon: "⚖️", color: "#1A73E8", invoiceCount: "Total kewajiban"         },
-    { label: "Total Pendapatan",          value: "Rp 510.000.000",   change: 14.6,  icon: "📈", color: "#1A73E8", invoiceCount: "Pendapatan operasional"   },
-    { label: "Total Pengeluaran",         value: "Rp 312.000.000",   change: 9.4,   icon: "📉", color: "#1A73E8", invoiceCount: "Biaya operasional"        },
-    { label: "Laba Rugi",                 value: "Rp 198.000.000",   change: 22.4,  icon: "💹", color: "#1A73E8", invoiceCount: "Laba bersih periode"      },
-    { label: "Hutang Obat Jatuh Tempo",   value: "Rp 32.800.000",    change: -6.8,  icon: "📋", color: "#1A73E8", invoiceCount: "5 faktur"                 },
-    { label: "Piutang Apotek Jatuh Tempo",value: "Rp 18.200.000",    change: 4.7,   icon: "📄", color: "#1A73E8", invoiceCount: "6 faktur"                 },
-    { label: "Piutang Klinik Jatuh Tempo",value: "Rp 13.500.000",    change: 11.3,  icon: "🏥", color: "#1A73E8", invoiceCount: "4 faktur"                 },
+    { label: "Total Aset",                value: "Rp 523.000.000",   change: 3.1,   icon: <Landmark size={20} />, color: "#1A73E8", invoiceCount: "Total aset perusahaan"  },
+    { label: "Total Cash",                value: "Rp 67.000.000",    change: 8.3,   icon: <Banknote size={20} />, color: "#1A73E8", invoiceCount: "Kas dan setara kas"      },
+    { label: "Total Pasiva",              value: "Rp 182.000.000",   change: -2.1,  icon: <Scale size={20} />, color: "#1A73E8", invoiceCount: "Total kewajiban"         },
+    { label: "Total Pendapatan",          value: "Rp 510.000.000",   change: 14.6,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "Pendapatan operasional"   },
+    { label: "Total Pengeluaran",         value: "Rp 312.000.000",   change: 9.4,   icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "Biaya operasional"        },
+    { label: "Laba Rugi",                 value: "Rp 198.000.000",   change: 22.4,  icon: <LineChart size={20} />, color: "#1A73E8", invoiceCount: "Laba bersih periode"      },
+    { label: "Hutang Obat Jatuh Tempo",   value: "Rp 32.800.000",    change: -6.8,  icon: <ClipboardList size={20} />, color: "#1A73E8", invoiceCount: "5 faktur"                 },
+    { label: "Piutang Apotek Jatuh Tempo",value: "Rp 18.200.000",    change: 4.7,   icon: <FileText size={20} />, color: "#1A73E8", invoiceCount: "6 faktur"                 },
+    { label: "Piutang Klinik Jatuh Tempo",value: "Rp 13.500.000",    change: 11.3,  icon: <Hospital size={20} />, color: "#1A73E8", invoiceCount: "4 faktur"                 },
   ],
   tahunIni: [
-    { label: "Total Aset",                value: "Rp 523.000.000",   change: 12.8,  icon: "🏦", color: "#1A73E8", invoiceCount: "Total aset perusahaan"  },
-    { label: "Total Cash",                value: "Rp 67.000.000",    change: 18.4,  icon: "💵", color: "#1A73E8", invoiceCount: "Kas dan setara kas"      },
-    { label: "Total Pasiva",              value: "Rp 182.000.000",   change: -5.3,  icon: "⚖️", color: "#1A73E8", invoiceCount: "Total kewajiban"         },
-    { label: "Total Pendapatan",          value: "Rp 2.010.400.000", change: 24.6,  icon: "📈", color: "#1A73E8", invoiceCount: "Pendapatan operasional"   },
-    { label: "Total Pengeluaran",         value: "Rp 394.100.000",   change: 8.3,   icon: "📉", color: "#1A73E8", invoiceCount: "Biaya operasional"        },
-    { label: "Laba Rugi",                 value: "Rp 1.616.300.000", change: 31.2,  icon: "💹", color: "#1A73E8", invoiceCount: "Laba bersih periode"      },
-    { label: "Hutang Obat Jatuh Tempo",   value: "Rp 32.800.000",    change: -11.4, icon: "📋", color: "#1A73E8", invoiceCount: "5 faktur"                 },
-    { label: "Piutang Apotek Jatuh Tempo",value: "Rp 18.200.000",    change: 7.2,   icon: "📄", color: "#1A73E8", invoiceCount: "6 faktur"                 },
-    { label: "Piutang Klinik Jatuh Tempo",value: "Rp 13.500.000",    change: 14.8,  icon: "🏥", color: "#1A73E8", invoiceCount: "4 faktur"                 },
+    { label: "Total Aset",                value: "Rp 523.000.000",   change: 12.8,  icon: <Landmark size={20} />, color: "#1A73E8", invoiceCount: "Total aset perusahaan"  },
+    { label: "Total Cash",                value: "Rp 67.000.000",    change: 18.4,  icon: <Banknote size={20} />, color: "#1A73E8", invoiceCount: "Kas dan setara kas"      },
+    { label: "Total Pasiva",              value: "Rp 182.000.000",   change: -5.3,  icon: <Scale size={20} />, color: "#1A73E8", invoiceCount: "Total kewajiban"         },
+    { label: "Total Pendapatan",          value: "Rp 2.010.400.000", change: 24.6,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "Pendapatan operasional"   },
+    { label: "Total Pengeluaran",         value: "Rp 394.100.000",   change: 8.3,   icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "Biaya operasional"        },
+    { label: "Laba Rugi",                 value: "Rp 1.616.300.000", change: 31.2,  icon: <LineChart size={20} />, color: "#1A73E8", invoiceCount: "Laba bersih periode"      },
+    { label: "Hutang Obat Jatuh Tempo",   value: "Rp 32.800.000",    change: -11.4, icon: <ClipboardList size={20} />, color: "#1A73E8", invoiceCount: "5 faktur"                 },
+    { label: "Piutang Apotek Jatuh Tempo",value: "Rp 18.200.000",    change: 7.2,   icon: <FileText size={20} />, color: "#1A73E8", invoiceCount: "6 faktur"                 },
+    { label: "Piutang Klinik Jatuh Tempo",value: "Rp 13.500.000",    change: 14.8,  icon: <Hospital size={20} />, color: "#1A73E8", invoiceCount: "4 faktur"                 },
   ],
 };
 
 // ---- FORECAST PAGE DATA ----
 export const forecastStats = {
   tigaBulan: [
-    { label: "Pareto A",                  value: "Rp 48.200.000",   change: 5.4,  icon: "⭐", color: "#1A73E8", invoiceCount: "124 Obat" },
-    { label: "Pareto B",                  value: "Rp 21.800.000",   change: 3.2,  icon: "🌟", color: "#1A73E8", invoiceCount: "87 Obat"  },
-    { label: "Pareto C",                  value: "Rp 9.400.000",    change: -1.8, icon: "✨", color: "#1A73E8", invoiceCount: "56 Obat"  },
-    { label: "Dibawah Pareto C (Stok Mati)", value: "Rp 3.200.000", change: -6.3, icon: "⚠️", color: "#1A73E8", invoiceCount: "34 Obat"  },
-    { label: "Stock On Hand",             value: "Rp 87.500.000",   change: 2.1,  icon: "📦", color: "#1A73E8", invoiceCount: "185 Obat" },
-    { label: "Over Stock",                value: "Rp 14.200.000",   change: -4.7, icon: "📈", color: "#1A73E8", invoiceCount: "28 Obat"  },
-    { label: "Under Stock",               value: "Rp 6.800.000",    change: 8.3,  icon: "📉", color: "#1A73E8", invoiceCount: "19 Obat"  },
-    { label: "Potential Lost",            value: "Rp 2.100.000",    change: -9.4, icon: "💸", color: "#1A73E8", invoiceCount: "12 Obat"  },
+    { label: "Pareto A",                  value: "Rp 48.200.000",   change: 5.4,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "124 Obat" },
+    { label: "Pareto B",                  value: "Rp 21.800.000",   change: 3.2,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "87 Obat"  },
+    { label: "Pareto C",                  value: "Rp 9.400.000",    change: -1.8, icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "56 Obat"  },
+    { label: "Dibawah Pareto C (Stok Mati)", value: "Rp 3.200.000", change: -6.3, icon: <AlertTriangle size={20} />, color: "#1A73E8", invoiceCount: "34 Obat"  },
+    { label: "Stock On Hand",             value: "Rp 87.500.000",   change: 2.1,  icon: <Package size={20} />, color: "#1A73E8", invoiceCount: "185 Obat" },
+    { label: "Over Stock",                value: "Rp 14.200.000",   change: -4.7, icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "28 Obat"  },
+    { label: "Under Stock",               value: "Rp 6.800.000",    change: 8.3,  icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "19 Obat"  },
+    { label: "Potential Lost",            value: "Rp 2.100.000",    change: -9.4, icon: <CircleDollarSign size={20} />, color: "#1A73E8", invoiceCount: "12 Obat"  },
   ],
   enamBulan: [
-    { label: "Pareto A",                  value: "Rp 96.400.000",   change: 8.7,  icon: "⭐", color: "#1A73E8", invoiceCount: "124 Obat" },
-    { label: "Pareto B",                  value: "Rp 43.600.000",   change: 6.4,  icon: "🌟", color: "#1A73E8", invoiceCount: "87 Obat"  },
-    { label: "Pareto C",                  value: "Rp 18.800.000",   change: -2.6, icon: "✨", color: "#1A73E8", invoiceCount: "56 Obat"  },
-    { label: "Dibawah Pareto C (Stok Mati)", value: "Rp 6.400.000", change: -8.1, icon: "⚠️", color: "#1A73E8", invoiceCount: "34 Obat"  },
-    { label: "Stock On Hand",             value: "Rp 87.500.000",   change: 3.8,  icon: "📦", color: "#1A73E8", invoiceCount: "185 Obat" },
-    { label: "Over Stock",                value: "Rp 14.200.000",   change: -6.2, icon: "📈", color: "#1A73E8", invoiceCount: "28 Obat"  },
-    { label: "Under Stock",               value: "Rp 6.800.000",    change: 11.4, icon: "📉", color: "#1A73E8", invoiceCount: "19 Obat"  },
-    { label: "Potential Lost",            value: "Rp 2.100.000",    change:-12.7, icon: "💸", color: "#1A73E8", invoiceCount: "12 Obat"  },
+    { label: "Pareto A",                  value: "Rp 96.400.000",   change: 8.7,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "124 Obat" },
+    { label: "Pareto B",                  value: "Rp 43.600.000",   change: 6.4,  icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "87 Obat"  },
+    { label: "Pareto C",                  value: "Rp 18.800.000",   change: -2.6, icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "56 Obat"  },
+    { label: "Dibawah Pareto C (Stok Mati)", value: "Rp 6.400.000", change: -8.1, icon: <AlertTriangle size={20} />, color: "#1A73E8", invoiceCount: "34 Obat"  },
+    { label: "Stock On Hand",             value: "Rp 87.500.000",   change: 3.8,  icon: <Package size={20} />, color: "#1A73E8", invoiceCount: "185 Obat" },
+    { label: "Over Stock",                value: "Rp 14.200.000",   change: -6.2, icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "28 Obat"  },
+    { label: "Under Stock",               value: "Rp 6.800.000",    change: 11.4, icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "19 Obat"  },
+    { label: "Potential Lost",            value: "Rp 2.100.000",    change:-12.7, icon: <CircleDollarSign size={20} />, color: "#1A73E8", invoiceCount: "12 Obat"  },
   ],
   satTahun: [
-    { label: "Pareto A",                  value: "Rp 192.800.000",  change: 14.2, icon: "⭐", color: "#1A73E8", invoiceCount: "124 Obat" },
-    { label: "Pareto B",                  value: "Rp 87.200.000",   change: 11.8, icon: "🌟", color: "#1A73E8", invoiceCount: "87 Obat"  },
-    { label: "Pareto C",                  value: "Rp 37.600.000",   change: -4.3, icon: "✨", color: "#1A73E8", invoiceCount: "56 Obat"  },
-    { label: "Dibawah Pareto C (Stok Mati)", value: "Rp 12.800.000",change:-14.6, icon: "⚠️", color: "#1A73E8", invoiceCount: "34 Obat"  },
-    { label: "Stock On Hand",             value: "Rp 87.500.000",   change: 6.7,  icon: "📦", color: "#1A73E8", invoiceCount: "185 Obat" },
-    { label: "Over Stock",                value: "Rp 14.200.000",   change: -9.4, icon: "📈", color: "#1A73E8", invoiceCount: "28 Obat"  },
-    { label: "Under Stock",               value: "Rp 6.800.000",    change: 17.2, icon: "📉", color: "#1A73E8", invoiceCount: "19 Obat"  },
-    { label: "Potential Lost",            value: "Rp 2.100.000",    change:-18.3, icon: "💸", color: "#1A73E8", invoiceCount: "12 Obat"  },
+    { label: "Pareto A",                  value: "Rp 192.800.000",  change: 14.2, icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "124 Obat" },
+    { label: "Pareto B",                  value: "Rp 87.200.000",   change: 11.8, icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "87 Obat"  },
+    { label: "Pareto C",                  value: "Rp 37.600.000",   change: -4.3, icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "56 Obat"  },
+    { label: "Dibawah Pareto C (Stok Mati)", value: "Rp 12.800.000",change:-14.6, icon: <AlertTriangle size={20} />, color: "#1A73E8", invoiceCount: "34 Obat"  },
+    { label: "Stock On Hand",             value: "Rp 87.500.000",   change: 6.7,  icon: <Package size={20} />, color: "#1A73E8", invoiceCount: "185 Obat" },
+    { label: "Over Stock",                value: "Rp 14.200.000",   change: -9.4, icon: <TrendingUp size={20} />, color: "#1A73E8", invoiceCount: "28 Obat"  },
+    { label: "Under Stock",               value: "Rp 6.800.000",    change: 17.2, icon: <TrendingDown size={20} />, color: "#1A73E8", invoiceCount: "19 Obat"  },
+    { label: "Potential Lost",            value: "Rp 2.100.000",    change:-18.3, icon: <CircleDollarSign size={20} />, color: "#1A73E8", invoiceCount: "12 Obat"  },
   ],
 };
 
@@ -209,8 +211,8 @@ export const forecastChartData = {
 };
 
 export const forecastChartItems = [
-  { title: "Kategori Pareto",   dataKey: "paretoAnalysis",  color: "#2196F3", icon: "📊" },
-  { title: "Status Pengadaan",  dataKey: "statusPengadaan", color: "#FF9800", icon: "📦" },
+  { title: "Kategori Pareto",   dataKey: "paretoAnalysis",  color: "#2196F3", icon: <LineChart size={16} /> },
+  { title: "Status Pengadaan",  dataKey: "statusPengadaan", color: "#FF9800", icon: <Package size={16} /> },
 ];
 
 export const katlarisData = [
@@ -222,45 +224,47 @@ export const katlarisData = [
 ];
 
 // ---- CUSTOMER PAGE DATA ----
+import { Star, Users, UserPlus, Building2 } from 'lucide-react';
+
 export const customerStats = {
   tigaBulan: [
-    { label: "Loyal Customer",     value: "1.240 Pelanggan", change: 7.4,  icon: "⭐", color: "#1A73E8" },
-    { label: "Potensial Customer", value: "820 Pelanggan",   change: 9.2,  icon: "📈", color: "#1A73E8" },
-    { label: "Prospek Customer",   value: "560 Pelanggan",   change: 4.8,  icon: "👤", color: "#1A73E8" },
-    { label: "Belum Prospek",      value: "1.220 Pelanggan", change: -3.1, icon: "👥", color: "#1A73E8" },
-    { label: "Total Customer",     value: "3.840 Pelanggan", change: 9.4,  icon: "🏢", color: "#1A73E8" },
-    { label: "Pasien Baru",        value: "428 Pelanggan",   change: 14.2, icon: "🆕", color: "#1A73E8" },
-    { label: "Kunjungan Pasien",   value: "1.248 Pelanggan", change: 8.7,  icon: "🏥", color: "#1A73E8" },
+    { label: "Loyal Customer",     value: "1.240 Pelanggan", change: 7.4,  icon: <Star size={20} />, color: "#1A73E8" },
+    { label: "Potensial Customer", value: "820 Pelanggan",   change: 9.2,  icon: <TrendingUp size={20} />, color: "#1A73E8" },
+    { label: "Prospek Customer",   value: "560 Pelanggan",   change: 4.8,  icon: <UserPlus size={20} />, color: "#1A73E8" },
+    { label: "Belum Prospek",      value: "1.220 Pelanggan", change: -3.1, icon: <Users size={20} />, color: "#1A73E8" },
+    { label: "Total Customer",     value: "3.840 Pelanggan", change: 9.4,  icon: <Building2 size={20} />, color: "#1A73E8" },
+    { label: "Pasien Baru",        value: "428 Pelanggan",   change: 14.2, icon: <UserPlus size={20} />, color: "#1A73E8" },
+    { label: "Kunjungan Pasien",   value: "1.248 Pelanggan", change: 8.7,  icon: <Hospital size={20} />, color: "#1A73E8" },
   ],
   enamBulan: [
-    { label: "Loyal Customer",     value: "2.480 Pelanggan", change: 11.3, icon: "⭐", color: "#1A73E8" },
-    { label: "Potensial Customer", value: "1.640 Pelanggan", change: 13.8, icon: "📈", color: "#1A73E8" },
-    { label: "Prospek Customer",   value: "1.120 Pelanggan", change: 7.4,  icon: "👤", color: "#1A73E8" },
-    { label: "Belum Prospek",      value: "2.440 Pelanggan", change: -5.2, icon: "👥", color: "#1A73E8" },
-    { label: "Total Customer",     value: "7.680 Pelanggan", change: 11.7, icon: "🏢", color: "#1A73E8" },
-    { label: "Pasien Baru",        value: "856 Pelanggan",   change: 18.3, icon: "🆕", color: "#1A73E8" },
-    { label: "Kunjungan Pasien",   value: "2.496 Pelanggan", change: 12.4, icon: "🏥", color: "#1A73E8" },
+    { label: "Loyal Customer",     value: "2.480 Pelanggan", change: 11.3, icon: <Star size={20} />, color: "#1A73E8" },
+    { label: "Potensial Customer", value: "1.640 Pelanggan", change: 13.8, icon: <TrendingUp size={20} />, color: "#1A73E8" },
+    { label: "Prospek Customer",   value: "1.120 Pelanggan", change: 7.4,  icon: <UserPlus size={20} />, color: "#1A73E8" },
+    { label: "Belum Prospek",      value: "2.440 Pelanggan", change: -5.2, icon: <Users size={20} />, color: "#1A73E8" },
+    { label: "Total Customer",     value: "7.680 Pelanggan", change: 11.7, icon: <Building2 size={20} />, color: "#1A73E8" },
+    { label: "Pasien Baru",        value: "856 Pelanggan",   change: 18.3, icon: <UserPlus size={20} />, color: "#1A73E8" },
+    { label: "Kunjungan Pasien",   value: "2.496 Pelanggan", change: 12.4, icon: <Hospital size={20} />, color: "#1A73E8" },
   ],
   satTahun: [
-    { label: "Loyal Customer",     value: "4.960 Pelanggan", change: 18.7, icon: "⭐", color: "#1A73E8" },
-    { label: "Potensial Customer", value: "3.280 Pelanggan", change: 22.4, icon: "📈", color: "#1A73E8" },
-    { label: "Prospek Customer",   value: "2.240 Pelanggan", change: 14.2, icon: "👤", color: "#1A73E8" },
-    { label: "Belum Prospek",      value: "4.880 Pelanggan", change: -8.4, icon: "👥", color: "#1A73E8" },
-    { label: "Total Customer",     value: "15.360 Pelanggan",change: 21.4, icon: "🏢", color: "#1A73E8" },
-    { label: "Pasien Baru",        value: "1.720 Pelanggan", change: 25.8, icon: "🆕", color: "#1A73E8" },
-    { label: "Kunjungan Pasien",   value: "4.992 Pelanggan", change: 19.6, icon: "🏥", color: "#1A73E8" },
+    { label: "Loyal Customer",     value: "4.960 Pelanggan", change: 18.7, icon: <Star size={20} />, color: "#1A73E8" },
+    { label: "Potensial Customer", value: "3.280 Pelanggan", change: 22.4, icon: <TrendingUp size={20} />, color: "#1A73E8" },
+    { label: "Prospek Customer",   value: "2.240 Pelanggan", change: 14.2, icon: <UserPlus size={20} />, color: "#1A73E8" },
+    { label: "Belum Prospek",      value: "4.880 Pelanggan", change: -8.4, icon: <Users size={20} />, color: "#1A73E8" },
+    { label: "Total Customer",     value: "15.360 Pelanggan",change: 21.4, icon: <Building2 size={20} />, color: "#1A73E8" },
+    { label: "Pasien Baru",        value: "1.720 Pelanggan", change: 25.8, icon: <UserPlus size={20} />, color: "#1A73E8" },
+    { label: "Kunjungan Pasien",   value: "4.992 Pelanggan", change: 19.6, icon: <Hospital size={20} />, color: "#1A73E8" },
   ],
 };
 
 // Customer chart — data per periode
 export const customerChartItems = [
-  { title: "Loyal Customer",     dataKey: "loyalCustomer",     color: "#4CAF50", icon: "⭐" },
-  { title: "Potensial Customer", dataKey: "potensialCustomer", color: "#2196F3", icon: "📈" },
-  { title: "Prospek Customer",   dataKey: "prospekCustomer",   color: "#FF9800", icon: "👤" },
-  { title: "Belum Prospek",      dataKey: "belumProspek",      color: "#F44336", icon: "👥" },
-  { title: "Total Customer",     dataKey: "totalCustomer",     color: "#9C27B0", icon: "🏢" },
-  { title: "Pasien Baru",        dataKey: "pasienBaru",        color: "#607D8B", icon: "🆕" },
-  { title: "Kunjungan Pasien",   dataKey: "kunjunganPasien",   color: "#795548", icon: "🏥" },
+  { title: "Loyal Customer",     dataKey: "loyalCustomer",     color: "#4CAF50", icon: <Star size={16} /> },
+  { title: "Potensial Customer", dataKey: "potensialCustomer", color: "#2196F3", icon: <TrendingUp size={16} /> },
+  { title: "Prospek Customer",   dataKey: "prospekCustomer",   color: "#FF9800", icon: <UserPlus size={16} /> },
+  { title: "Belum Prospek",      dataKey: "belumProspek",      color: "#F44336", icon: <Users size={16} /> },
+  { title: "Total Customer",     dataKey: "totalCustomer",     color: "#9C27B0", icon: <Building2 size={16} /> },
+  { title: "Pasien Baru",        dataKey: "pasienBaru",        color: "#607D8B", icon: <UserPlus size={16} /> },
+  { title: "Kunjungan Pasien",   dataKey: "kunjunganPasien",   color: "#795548", icon: <Hospital size={16} /> },
 ];
 
 export const customerChartData: Record<string, { name: string; loyalCustomer: number; potensialCustomer: number; prospekCustomer: number; belumProspek: number; totalCustomer: number; pasienBaru: number; kunjunganPasien: number }[]> = {

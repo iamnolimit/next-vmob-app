@@ -1,11 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Segmented, SegmentedButton, Preloader } from 'konsta/react';
 import { forecastChartItems, katlarisData } from '@/lib/dummyData';
+import { Star, StarHalf, Sparkles, AlertTriangle, Package, TrendingUp, TrendingDown, CircleDollarSign } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import RankedList from '@/components/RankedList';
 import PageHeader from '@/components/PageHeader';
+import TabSelector from '@/components/TabSelector';
 import { useFetch } from '@/lib/useFetch';
 import { forecastPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
@@ -57,7 +58,7 @@ export default function ForecastPage() {
       label: 'Pareto A',
       value: formatRupiah(data.nominalParetoA || 0),
       invoiceCount: `${data.paretoA || 0} Obat`,
-      icon: '⭐',
+      icon: <Star size={20} />,
       color: '#1A73E8',
       change: data.paA || 0,
     },
@@ -65,7 +66,7 @@ export default function ForecastPage() {
       label: 'Pareto B',
       value: formatRupiah(data.nominalParetoB || 0),
       invoiceCount: `${data.paretoB || 0} Obat`,
-      icon: '🌟',
+      icon: <StarHalf size={20} />,
       color: '#1A73E8',
       change: data.paB || 0,
     },
@@ -73,7 +74,7 @@ export default function ForecastPage() {
       label: 'Pareto C',
       value: formatRupiah(data.nominalParetoC || 0),
       invoiceCount: `${data.paretoC || 0} Obat`,
-      icon: '✨',
+      icon: <Sparkles size={20} />,
       color: '#1A73E8',
       change: data.paC || 0,
     },
@@ -81,7 +82,7 @@ export default function ForecastPage() {
       label: 'Dibawah Pareto C (Stok Mati)',
       value: formatRupiah(data.nominalParetoMin || 0),
       invoiceCount: `${data.paretoMin || 0} Obat`,
-      icon: '⚠️',
+      icon: <AlertTriangle size={20} />,
       color: '#1A73E8',
       change: data.paMin || 0,
     },
@@ -89,7 +90,7 @@ export default function ForecastPage() {
       label: 'Stock On Hand',
       value: formatRupiah(data.pengadaan1 || 0),
       invoiceCount: `${data.status1 || 0} Obat`,
-      icon: '📦',
+      icon: <Package size={20} />,
       color: '#1A73E8',
       change: data.pStatus1 || 0,
     },
@@ -97,7 +98,7 @@ export default function ForecastPage() {
       label: 'Over Stock',
       value: formatRupiah(data.pengadaan2 || 0),
       invoiceCount: `${data.status2 || 0} Obat`,
-      icon: '📈',
+      icon: <TrendingUp size={20} />,
       color: '#1A73E8',
       change: data.pStatus2 || 0,
     },
@@ -105,7 +106,7 @@ export default function ForecastPage() {
       label: 'Under Stock',
       value: formatRupiah(data.pengadaan3 || 0),
       invoiceCount: `${data.status3 || 0} Obat`,
-      icon: '📉',
+      icon: <TrendingDown size={20} />,
       color: '#1A73E8',
       change: data.pStatus3 || 0,
     },
@@ -113,7 +114,7 @@ export default function ForecastPage() {
       label: 'Potential Lost',
       value: formatRupiah(data.pengadaan4 || 0),
       invoiceCount: `${data.status4 || 0} Obat`,
-      icon: '💸',
+      icon: <CircleDollarSign size={20} />,
       color: '#1A73E8',
       change: data.pStatus4 || 0,
     },
@@ -149,46 +150,46 @@ export default function ForecastPage() {
         title="Forecast"
         subtitle={`Proyeksi ${dateLabels[activeTab]}`}
         subnavbar={
-          <Segmented strong>
-            {tabs.map((tab) => (
-              <SegmentedButton
-                key={tab.value}
-                active={activeTab === tab.value}
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </SegmentedButton>
-            ))}
-          </Segmented>
+          <TabSelector 
+            tabs={tabs} 
+            activeTab={activeTab} 
+            onChange={setActiveTab} 
+          />
         }
       />
 
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            <Preloader />
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="pb-4">
             <div className="mt-4">
+              <ChartCarousel
+                data={paretoChartData}
+                dataByChart={[
+                  paretoChartData,
+                  statusChartData,
+                ]}
+                items={forecastChartItems}
+                title="Analisis Periode"
+              />
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-4 px-4">
               {stats.map((stat, i) => (
-                <StatCard key={i} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
+                <div key={i} className="mx-0 mb-0">
+                  <StatCard label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
+                </div>
               ))}
             </div>
 
-            <ChartCarousel
-              data={paretoChartData}
-              dataByChart={[
-                paretoChartData,
-                statusChartData,
-              ]}
-              items={forecastChartItems}
-              title="Analisis Periode"
-            />
-
-            <RankedList title="Kategori Obat Terlaris" icon="📊" color="#1d4ed8"
-              items={katlarisDataApi.map((item: any, i: number) => ({ rank: i + 1, name: item.name, persen: item.persen, nilai: item.nilai }))}
-              type="katlaris" />
+            <div className="mt-6">
+              <RankedList title="Kategori Obat Terlaris" icon="📊" color="#1d4ed8"
+                items={katlarisDataApi.map((item: any, i: number) => ({ rank: i + 1, name: item.name, persen: item.persen, nilai: item.nilai }))}
+                type="katlaris" />
+            </div>
           </div>
         )}
       </div>
