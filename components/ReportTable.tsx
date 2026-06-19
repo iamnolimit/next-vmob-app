@@ -1,24 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/sidebarContext';
 import { useAuth } from '@/lib/authContext';
+import { useCabangOptions } from '@/lib/useCabangOptions';
 import DatePickerInput from './DatePickerInput';
 import SelectInput from './SelectInput';
-import { exportToExcel, exportToPdf } from '@/lib/exportUtils';
 
-const ID_MONTHS: Record<string, number> = {
-  Jan:1, Feb:2, Mar:3, Apr:4, Mei:5, Jun:6, Jul:7, Agt:8, Sep:9, Okt:10, Nov:11, Des:12,
-};
-
-function parseIdDate(s: string): string | null {
-  if (!s) return null;
-  const parts = s.trim().split(/\s+/);
-  if (parts.length < 3) return null;
-  const mNum = ID_MONTHS[parts[1]];
-  if (!mNum) return null;
-  return `${parts[2]}-${String(mNum).padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-}
 
 export interface Column {
   key: string;
@@ -36,6 +24,7 @@ export interface IntervalOption {
 export interface CabangOption {
   label: string;
   value: string;
+  reg?: string;
 }
 
 export interface GudangOption {
@@ -61,8 +50,10 @@ interface ReportTableProps {
   gudangOptions?: GudangOption[];
   /** Field name in data row to apply gudang filter against */
   gudangField?: string;
-  /** Callback to fetch data from API */
-  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; gudang: string; offset: number; limit: number }) => void;
+  /** Callback to fetch data from API (always resets to offset 0) */
+  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; cabangReg: string; gudang: string; offset: number; limit: number }) => void;
+  /** Callback to load the next page (append mode) */
+  onLoadMore?: () => void;
   loading?: boolean;
   error?: string | null;
   /** Whether there is more data to load */
@@ -99,21 +90,38 @@ export default function ReportTable({
   gudangOptions,
   gudangField,
   onFetchData,
+  onLoadMore,
   loading,
   error,
   hasMore = false,
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
-  const [appliedSearch, setAppliedSearch] = useState('');
-  const [showFilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(true);
   const [startDate, setStartDate] = useState(toISO(firstOfMonth));
   const [endDate, setEndDate] = useState(toISO(today));
   const [selectedInterval, setSelectedInterval] = useState<string | number>(
     intervalOptions?.[0]?.value ?? 'all'
   );
+  const { user } = useAuth();
+  // Fetch cabang from API; fall back to prop if provided
+  const { cabangOptions: fetchedCabangOptions } = useCabangOptions();
+  const resolvedCabangOptions = cabangOptions ?? fetchedCabangOptions;
+
+  // Initialize from prop or user.app_id (available immediately from auth)
   const [selectedCabang, setSelectedCabang] = useState<string>(
     cabangOptions?.[0]?.value ?? ''
   );
+  const [selectedCabangReg, setSelectedCabangReg] = useState<string>(
+    cabangOptions?.[0]?.reg ?? ''
+  );
+
+  // As soon as user is available, set selectedCabang so initial fetch has a valid 'a'
+  const initialCabangSetRef = useRef(false);
+  if (!initialCabangSetRef.current && user?.app_id && !selectedCabang) {
+    initialCabangSetRef.current = true;
+    setSelectedCabang(user.app_id);
+    setSelectedCabangReg(user.app_reg ?? '');
+  }
   const [selectedGudang, setSelectedGudang] = useState<string>(
     gudangOptions?.[0]?.value ?? ''
   );
@@ -123,8 +131,14 @@ export default function ReportTable({
 
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [offset, setOffset] = useState(0);
   const limit = 50;
+
+  // Track whether we have any data yet (to distinguish initial load vs load-more)
+  const hasDataRef = useRef(false);
+  // Ref to the scrollable container so we can preserve scroll position
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // Saved scroll position before load-more appends data
+  const savedScrollTopRef = useRef<number>(0);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -135,100 +149,86 @@ export default function ReportTable({
     }
   };
 
-  const [showExportMenu, setShowExportMenu] = useState(false);
-
   const router = useRouter();
   const { openSidebar } = useSidebar();
-  const { user } = useAuth();
-  const namaKlinik = user?.cabang ?? 'Vmedis Mobile';
 
-  // Initial fetch
+  // When fetched cabang options arrive, set default to the one matching user.app_id
   useEffect(() => {
+    if (cabangOptions) return; // prop takes priority
+    if (fetchedCabangOptions.length === 0) return;
+    const match = fetchedCabangOptions.find((c) => c.value === user?.app_id)
+      ?? fetchedCabangOptions[0];
+    setSelectedCabang(match.value);
+    setSelectedCabangReg(match.reg ?? user?.app_reg ?? '');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchedCabangOptions]);
+
+  // Initial fetch — wait until we have a valid cabang (user.app_id)
+  const didInitialFetchRef = useRef(false);
+  useEffect(() => {
+    if (didInitialFetchRef.current) return;
+    const cabang = selectedCabang || user?.app_id || '';
+    if (!cabang) return; // wait for user to load
+    didInitialFetchRef.current = true;
     if (onFetchData) {
       onFetchData({
         start: startDate,
         end: endDate,
         search: '',
         interval: selectedInterval,
-        cabang: selectedCabang,
+        cabang,
+        cabangReg: selectedCabangReg || user?.app_reg || '',
         gudang: selectedGudang,
         offset: 0,
         limit,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.app_id, selectedCabang]);
 
   const handleLoadMore = () => {
     if (loading || !hasMore) return;
-    const newOffset = offset + limit;
-    setOffset(newOffset);
-    if (onFetchData) {
-      onFetchData({
-        start: startDate,
-        end: endDate,
-        search: appliedSearch,
-        interval: selectedInterval,
-        cabang: selectedCabang,
-        gudang: selectedGudang,
-        offset: newOffset,
-        limit,
+    // Save current scroll position before appending data
+    if (scrollContainerRef.current) {
+      savedScrollTopRef.current = scrollContainerRef.current.scrollTop;
+    }
+    if (onLoadMore) {
+      onLoadMore();
+    }
+  };
+
+  // After data changes, update hasDataRef and restore scroll position on append
+  useEffect(() => {
+    if (data.length > 0) {
+      hasDataRef.current = true;
+    } else {
+      // Fresh refetch reset data to empty — reset the flag so initial spinner shows
+      hasDataRef.current = false;
+    }
+    // Only restore scroll if we were appending (savedScrollTop > 0)
+    if (savedScrollTopRef.current > 0 && scrollContainerRef.current) {
+      const saved = savedScrollTopRef.current;
+      savedScrollTopRef.current = 0; // clear so it doesn't re-apply
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = saved;
+        }
       });
     }
-  };
+  }, [data]);
 
-  const exportFilename = title.replace(/\s+/g, '_').toLowerCase();
-
-  const getExportData = () =>
-    sorted.map((row) =>
-      Object.fromEntries(
-        columns.map((c) => [c.key, c.render ? String(c.render(row) ?? '') : row[c.key]])
-      )
-    );
-
-  const handleExportExcel = async () => {
-    if (sorted.length === 0) {
-      alert('Tidak ada data yang bisa dicetak!');
-      setShowExportMenu(false);
-      return;
-    }
-    await exportToExcel(
-      exportFilename,
-      columns.map((c) => ({ label: c.label, key: c.key, align: c.align })),
-      getExportData(),
-      title,
-      namaKlinik,
-    );
-    setShowExportMenu(false);
-  };
-
-  const handleExportPdf = async () => {
-    if (sorted.length === 0) {
-      alert('Tidak ada data yang bisa dicetak!');
-      setShowExportMenu(false);
-      return;
-    }
-    const subtitle = appliedFilter
-      ? `Periode: ${fmtDisplay(appliedFilter.start)} – ${fmtDisplay(appliedFilter.end)}`
-      : undefined;
-    await exportToPdf(
-      exportFilename,
-      title,
-      columns.map((c) => ({ label: c.label, key: c.key, align: c.align })),
-      getExportData(),
-      namaKlinik,
-      subtitle,
-    );
-    setShowExportMenu(false);
+  // Update both cabang value and its reg together when user changes selection
+  const handleCabangChange = (value: string) => {
+    const found = resolvedCabangOptions.find((c) => c.value === value);
+    setSelectedCabang(value);
+    setSelectedCabangReg(found?.reg ?? user?.app_reg ?? '');
   };
 
   const applyFilter = () => {
     setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
-    setAppliedSearch(search);
     setShowFilter(false);
-    setOffset(0);
     if (onFetchData) {
-      onFetchData({ start: startDate, end: endDate, search, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang, offset: 0, limit });
+      onFetchData({ start: startDate, end: endDate, search, interval: selectedInterval, cabang: selectedCabang, cabangReg: selectedCabangReg, gudang: selectedGudang, offset: 0, limit });
     }
   };
 
@@ -236,63 +236,36 @@ export default function ReportTable({
     const defaultStart = toISO(firstOfMonth);
     const defaultEnd = toISO(today);
     const defaultInterval = intervalOptions?.[0]?.value ?? 'all';
-    const defaultCabang = cabangOptions?.[0]?.value ?? '';
+    const defaultCabangObj = resolvedCabangOptions.find((c) => c.value === user?.app_id)
+      ?? resolvedCabangOptions[0];
+    const defaultCabang = defaultCabangObj?.value ?? user?.app_id ?? '';
+    const defaultCabangReg = defaultCabangObj?.reg ?? user?.app_reg ?? '';
     const defaultGudang = gudangOptions?.[0]?.value ?? '';
 
     setStartDate(defaultStart);
     setEndDate(defaultEnd);
     setSelectedInterval(defaultInterval);
     setSelectedCabang(defaultCabang);
+    setSelectedCabangReg(defaultCabangReg);
     setSelectedGudang(defaultGudang);
     setSortKey(null);
     setSortDir('asc');
     setAppliedFilter(null);
     setSearch('');
-    setAppliedSearch('');
-    setOffset(0);
-
     if (onFetchData) {
-      onFetchData({ start: defaultStart, end: defaultEnd, search: '', interval: defaultInterval, cabang: defaultCabang, gudang: defaultGudang, offset: 0, limit });
+      onFetchData({ start: defaultStart, end: defaultEnd, search: '', interval: defaultInterval, cabang: defaultCabang, cabangReg: defaultCabangReg, gudang: defaultGudang, offset: 0, limit });
     }
   };
 
-  // ── Filtering ──────────────────────────────────────────────────────────
-  let filtered: Record<string, unknown>[] = data;
-
-  // Text search (applied via Terapkan Filter)
-  if (appliedSearch.trim() && searchFields.length > 0) {
-    filtered = filtered.filter((row) =>
-      searchFields.some((f) =>
-        String(row[f] ?? '').toLowerCase().includes(appliedSearch.toLowerCase())
-      )
-    );
-  }
-
-  // Date range filter
-  if (!hideDateFilter && appliedFilter && dateField) {
-    const { start, end } = appliedFilter;
-    filtered = filtered.filter((row) => {
-      const iso = parseIdDate(String(row[dateField] ?? ''));
-      if (!iso) return true;
-      return iso >= start && iso <= end;
-    });
-  }
-
-  // Gudang filter
-  if (appliedFilter?.gudang && appliedFilter.gudang !== '' && gudangField) {
-    const gv = appliedFilter.gudang;
-    filtered = filtered.filter((row) => String(row[gudangField] ?? '') === gv);
-  }
-
-  // ── Sorting ─────────────────────────────────────────────────────────────
+  // ── Sorting (client-side only; all filtering is done server-side) ──────
   const sorted = sortKey
-    ? [...filtered].sort((a, b) => {
+    ? [...data].sort((a, b) => {
         const av = String(a[sortKey] ?? '');
         const bv = String(b[sortKey] ?? '');
         const cmp = av.localeCompare(bv, 'id', { numeric: true });
         return sortDir === 'asc' ? cmp : -cmp;
       })
-    : filtered;
+    : data;
 
   const activeIntervalLabel = intervalOptions?.find(
     (o) => o.value === (appliedFilter?.interval ?? selectedInterval)
@@ -302,7 +275,7 @@ export default function ReportTable({
     <div className="flex flex-col h-full bg-gray-50">
 
       {/* ── Header ── */}
-      <div className="relative z-10 mb-4">
+      <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] shadow-md pb-2">
         <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
           <div className="flex-shrink-0 self-start">
             <button
@@ -315,69 +288,11 @@ export default function ReportTable({
             </button>
           </div>
           <div className="flex-1 flex flex-col justify-center min-w-0">
-            <h1 className="text-[22px] font-bold text-gray-900 tracking-tight leading-tight">
+            <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">
               {title}
             </h1>
           </div>
           <div className="flex items-center justify-end gap-1">
-            {/* Export button */}
-            <button
-              onClick={() => setShowExportMenu(true)}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform text-gray-700"
-              title="Export"
-            >
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3v12M7 8l5-5 5 5" />
-                <path d="M5 20h14" />
-              </svg>
-            </button>
-
-            {/* Export bottom sheet */}
-            {showExportMenu && (
-              <div
-                className="fixed inset-0 z-50 flex flex-col justify-end"
-                style={{ background: 'rgba(0,0,0,0.4)' }}
-                onClick={() => setShowExportMenu(false)}
-              >
-                <div className="bg-white rounded-t-3xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex justify-center pt-3 pb-1">
-                    <div className="w-10 h-1 rounded-full bg-gray-300" />
-                  </div>
-                  <div className="flex items-center justify-between px-5 py-2 border-b border-gray-100">
-                    <button onClick={() => setShowExportMenu(false)} className="text-sm font-medium text-gray-500 py-1">Batal</button>
-                    <span className="text-sm font-bold text-gray-900">Export Laporan</span>
-                    <div className="w-12" />
-                  </div>
-                  <div className="pb-8">
-                    <button
-                      onClick={handleExportExcel}
-                      className="w-full flex items-center gap-4 px-5 py-4 text-left border-b border-gray-100 active:bg-gray-50"
-                    >
-                      <div className="w-10 h-10 rounded-2xl bg-green-50 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">📊</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">Export Excel</p>
-                        <p className="text-xs text-gray-400 mt-0.5">Format .xlsx · Microsoft Excel</p>
-                      </div>
-                    </button>
-                    <button
-                      onClick={handleExportPdf}
-                      className="w-full flex items-center gap-4 px-5 py-4 text-left active:bg-gray-50"
-                    >
-                      <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">📄</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">Export PDF</p>
-                        <p className="text-xs text-gray-400 mt-0.5">Format .pdf · Adobe PDF</p>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <button
               onClick={openSidebar}
               className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform"
@@ -393,58 +308,100 @@ export default function ReportTable({
       </div>
 
       {/* ── Filter Panel ── */}
-      <div className="flex-shrink-0 bg-white border-b border-gray-200">
+      <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
 
         {/* Toggle row */}
         <button
           onClick={() => setShowFilter((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-2.5 active:bg-gray-50"
+          className="w-full flex items-center justify-between px-4 py-3 active:bg-blue-50/50 transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <span className="text-blue-600">🔽</span>
-            <span className="text-sm font-semibold text-blue-600">Filter &amp; Pencarian</span>
+          <div className="flex items-center gap-2.5">
+            {/* Sliders icon */}
+            <div className="w-7 h-7 rounded-lg bg-[#035afc]/10 flex items-center justify-center flex-shrink-0">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+                <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none" />
+                <circle cx="15" cy="12" r="2" fill="currentColor" stroke="none" />
+                <circle cx="9" cy="18" r="2" fill="currentColor" stroke="none" />
+              </svg>
+            </div>
+            <span className="text-sm font-semibold text-[#035afc]">Filter &amp; Pencarian</span>
             {appliedFilter && (
-              <span className="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0" />
+              <span className="inline-flex items-center gap-1 bg-[#035afc] text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
+                Aktif
+              </span>
             )}
           </div>
-          <span
-            className="text-blue-600 text-lg leading-none inline-block transition-transform duration-200"
+          {/* Chevron icon */}
+          <svg
+            viewBox="0 0 24 24"
+            className="w-4 h-4 text-[#035afc] transition-transform duration-200 flex-shrink-0"
             style={{ transform: showFilter ? 'rotate(180deg)' : 'none' }}
+            fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
           >
-            ▾
-          </span>
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </button>
 
         {/* Active filter chips */}
         {appliedFilter && !showFilter && (
-          <div className="px-4 pb-2 flex items-center gap-1.5 flex-wrap">
+          <div className="px-4 pb-3 flex items-center gap-1.5 flex-wrap">
             {!hideDateFilter && (
-              <span className="text-[11px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full">
-                📅 {fmtDisplay(appliedFilter.start)} – {fmtDisplay(appliedFilter.end)}
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                {fmtDisplay(appliedFilter.start)} – {fmtDisplay(appliedFilter.end)}
               </span>
             )}
             {intervalOptions && (
-              <span className="text-[11px] bg-purple-100 text-purple-700 font-medium px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <polyline points="12 7 12 12 15 15" />
+                </svg>
                 {intervalTitle}: {activeIntervalLabel}
               </span>
             )}
             {cabangOptions && appliedFilter.cabang && (
-              <span className="text-[11px] bg-green-100 text-green-700 font-medium px-2 py-0.5 rounded-full">
-                🏥 {cabangOptions.find(c => c.value === appliedFilter.cabang)?.label}
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                {cabangOptions.find(c => c.value === appliedFilter.cabang)?.label}
               </span>
             )}
             {gudangOptions && appliedFilter.gudang && appliedFilter.gudang !== '' && (
-              <span className="text-[11px] bg-orange-100 text-orange-700 font-medium px-2 py-0.5 rounded-full">
-                🏪 {gudangOptions.find(g => g.value === appliedFilter.gudang)?.label}
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                </svg>
+                {gudangOptions.find(g => g.value === appliedFilter.gudang)?.label}
               </span>
             )}
             {sortKey && (
-              <span className="text-[11px] bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded-full">
-                ⇅ {columns.find(c => c.key === sortKey)?.label} {sortDir === 'asc' ? '▲' : '▼'}
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+                {columns.find(c => c.key === sortKey)?.label} {sortDir === 'asc' ? '↑' : '↓'}
               </span>
             )}
-            <button onClick={resetFilter} className="text-[11px] text-red-500 font-semibold px-1">
-              × Reset
+            <button
+              onClick={resetFilter}
+              className="inline-flex items-center gap-1 text-[11px] text-[#035afc] font-semibold px-2.5 py-1 rounded-full border border-[#035afc]/30 active:bg-[#035afc]/10 transition-colors"
+            >
+              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+              Reset
             </button>
           </div>
         )}
@@ -457,29 +414,53 @@ export default function ReportTable({
           <div className="px-4 pb-4 pt-1 space-y-4">
 
             {/* Cabang select */}
-            {cabangOptions && cabangOptions.length > 0 && (
-              <SelectInput
-                label="Cabang / Klinik"
-                value={selectedCabang}
-                onChange={setSelectedCabang}
-                options={cabangOptions}
-              />
+            {resolvedCabangOptions.length > 1 && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                  Cabang / Klinik
+                </p>
+                <SelectInput
+                  label=""
+                  value={selectedCabang}
+                  onChange={handleCabangChange}
+                  options={resolvedCabangOptions}
+                />
+              </div>
             )}
 
             {/* Gudang select */}
             {gudangOptions && gudangOptions.length > 0 && (
-              <SelectInput
-                label="Gudang"
-                value={selectedGudang}
-                onChange={setSelectedGudang}
-                options={gudangOptions}
-              />
+              <div>
+                <p className="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                  </svg>
+                  Gudang
+                </p>
+                <SelectInput
+                  label=""
+                  value={selectedGudang}
+                  onChange={setSelectedGudang}
+                  options={gudangOptions}
+                />
+              </div>
             )}
 
             {/* Interval pills */}
             {intervalOptions && intervalOptions.length > 0 && (
               <div>
-                <p className="text-xs font-semibold text-gray-500 mb-2">{intervalTitle}</p>
+                <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <polyline points="12 7 12 12 15 15" />
+                  </svg>
+                  {intervalTitle}
+                </p>
                 <div className="flex flex-wrap gap-1.5">
                   {intervalOptions.map((opt) => (
                     <button
@@ -487,8 +468,8 @@ export default function ReportTable({
                       onClick={() => setSelectedInterval(opt.value)}
                       className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                         selectedInterval === opt.value
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'bg-gray-100 text-gray-700 active:bg-gray-200'
+                          ? 'bg-[#035afc] text-white shadow-sm'
+                          : 'bg-gray-100 text-gray-600 active:bg-gray-200'
                       }`}
                     >
                       {opt.label}
@@ -501,7 +482,15 @@ export default function ReportTable({
             {/* Date range pickers */}
             {!hideDateFilter && (
               <div>
-                <p className="text-xs font-semibold text-gray-500 mb-2">Rentang Tanggal</p>
+                <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  Rentang Tanggal
+                </p>
                 <div className="flex gap-3">
                   <DatePickerInput
                     label="Tanggal Awal"
@@ -516,49 +505,40 @@ export default function ReportTable({
                     minDate={startDate}
                   />
                 </div>
-
-                {/* Quick presets */}
-                <div className="mt-2.5">
-                  <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide mb-1.5">
-                    Preset Cepat
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { label: 'Hari Ini', fn: () => { const d = toISO(new Date()); setStartDate(d); setEndDate(d); } },
-                      { label: '7 Hari', fn: () => { const e = new Date(); const s = new Date(); s.setDate(s.getDate()-6); setStartDate(toISO(s)); setEndDate(toISO(e)); } },
-                      { label: '30 Hari', fn: () => { const e = new Date(); const s = new Date(); s.setDate(s.getDate()-29); setStartDate(toISO(s)); setEndDate(toISO(e)); } },
-                      { label: 'Bulan Ini', fn: () => { const e = new Date(); const s = new Date(e.getFullYear(), e.getMonth(), 1); setStartDate(toISO(s)); setEndDate(toISO(e)); } },
-                      { label: 'Bulan Lalu', fn: () => { const now = new Date(); const s = new Date(now.getFullYear(), now.getMonth()-1, 1); const e = new Date(now.getFullYear(), now.getMonth(), 0); setStartDate(toISO(s)); setEndDate(toISO(e)); } },
-                    ].map((p) => (
-                      <button
-                        key={p.label}
-                        onClick={p.fn}
-                        className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 active:bg-gray-200 border border-gray-200"
-                      >
-                        {p.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
 
             {/* Search */}
             {searchFields.length > 0 && (
               <div>
-                <p className="text-xs font-semibold text-gray-500 mb-2">Pencarian</p>
+                <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  Pencarian
+                </p>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                  <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#035afc]/50 pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
                   <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder={searchPlaceholder}
-                    className="w-full pl-9 pr-9 py-2.5 bg-gray-100 rounded-xl text-sm outline-none"
+                    className="w-full pl-9 pr-9 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#035afc]/40 focus:bg-white transition-colors"
                   />
                   {search && (
-                    <button onClick={() => setSearch('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">✕</button>
+                    <button
+                      onClick={() => setSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-gray-300/70 text-gray-500 active:bg-gray-300 transition-colors"
+                    >
+                      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </svg>
+                    </button>
                   )}
                 </div>
               </div>
@@ -568,15 +548,22 @@ export default function ReportTable({
             <div className="flex gap-2.5 pt-1">
               <button
                 onClick={resetFilter}
-                className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700 active:bg-gray-200"
+                className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 active:bg-gray-200 transition-colors flex items-center justify-center gap-1.5"
               >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
                 Reset
               </button>
               <button
                 onClick={applyFilter}
-                className="flex-1 py-3 rounded-xl text-sm font-bold bg-blue-600 text-white shadow-md active:bg-blue-700"
+                className="flex-1 py-3 rounded-xl text-sm font-bold bg-[#035afc] text-white shadow-md active:bg-[#024de0] transition-colors flex items-center justify-center gap-1.5"
               >
-                Terapkan Filter
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Terapkan
               </button>
             </div>
           </div>
@@ -586,11 +573,12 @@ export default function ReportTable({
 
       {/* ── Table ── */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div 
+        <div
+          ref={scrollContainerRef}
           className="flex-1 overflow-auto"
           onScroll={(e) => {
             const target = e.target as HTMLDivElement;
-            if (target.scrollHeight - target.scrollTop <= target.clientHeight + 100) {
+            if (target.scrollHeight - target.scrollTop <= target.clientHeight + 150) {
               handleLoadMore();
             }
           }}
@@ -609,38 +597,49 @@ export default function ReportTable({
                     style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left' }}
                   >
                     {col.label}
-                    <span className="ml-1 text-[9px] opacity-70">
-                      {sortKey === col.key ? (sortDir === 'asc' ? '▲' : '▼') : '⇅'}
+                    <span className="ml-1 inline-block opacity-50" style={{ fontSize: 8 }}>
+                      {sortKey === col.key ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
                     </span>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {loading && !hasDataRef.current ? (
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
                     <div className="flex flex-col items-center gap-2 text-gray-400">
-                      <span className="text-4xl animate-spin">⏳</span>
+                      <svg className="w-8 h-8 animate-spin text-[#035afc]" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      </svg>
                       <span className="text-sm">Memuat data...</span>
                     </div>
                   </td>
                 </tr>
-              ) : error ? (
+              ) : error && !hasDataRef.current ? (
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
-                    <div className="flex flex-col items-center gap-2 text-red-400">
-                      <span className="text-4xl">⚠️</span>
+                    <div className="flex flex-col items-center gap-3 text-red-400">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                      </svg>
                       <span className="text-sm">{error}</span>
                     </div>
                   </td>
                 </tr>
-              ) : sorted.length === 0 ? (
+              ) : sorted.length === 0 && !loading ? (
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
-                    <div className="flex flex-col items-center gap-2 text-gray-400">
-                      <span className="text-4xl">📋</span>
-                      <span className="text-sm">Tidak ada data</span>
+                    <div className="flex flex-col items-center gap-3 text-gray-300">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="9" y1="21" x2="9" y2="9" />
+                      </svg>
+                      <span className="text-sm text-gray-400">Tidak ada data</span>
                     </div>
                   </td>
                 </tr>
@@ -660,13 +659,26 @@ export default function ReportTable({
                       ))}
                     </tr>
                   ))}
-                  {loading && hasMore && (
+                  {/* Load-more row — always visible when hasMore, shows spinner or button */}
+                  {hasMore && (
                     <tr>
-                      <td colSpan={columns.length} className="text-center py-4">
-                        <div className="flex justify-center items-center gap-2 text-gray-400">
-                          <span className="animate-spin">⏳</span>
-                          <span className="text-xs">Memuat data selanjutnya...</span>
-                        </div>
+                      <td colSpan={columns.length} className="text-center py-5">
+                        {loading ? (
+                          <div className="flex justify-center items-center gap-2">
+                            <svg className="w-5 h-5 animate-spin text-[#035afc]" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                            </svg>
+                            <span className="text-xs text-[#035afc] font-semibold">Memuat data selanjutnya...</span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={handleLoadMore}
+                            className="text-xs text-[#035afc] font-semibold px-5 py-2.5 rounded-full border border-[#035afc]/30 bg-blue-50 active:bg-blue-100"
+                          >
+                            Muat 50 data berikutnya
+                          </button>
+                        )}
                       </td>
                     </tr>
                   )}

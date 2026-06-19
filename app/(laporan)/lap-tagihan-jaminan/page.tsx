@@ -22,14 +22,12 @@ export default function LapTagihanJaminanPage() {
     }));
   };
 
-  const { data, loading, error, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: '/laporan-tagihan-jaminan-pasien/index',
-    apiVersion: 'api5',
+    apiVersion: 'api7',
     apiParams: {
       filter: '',
       sorting: '',
-      limit: 10,
-      offset: 0,
       reg: 'db',
       cari: 4,
       device: 'mobile',
@@ -54,13 +52,13 @@ export default function LapTagihanJaminanPage() {
       data={data}
       loading={loading}
       error={error}
+      hasMore={hasMore}
+      onLoadMore={loadMore}
       onFetchData={(params) => {
         refetch({
           tanggalawal: params.start || '',
           tanggalakhir: params.end || '',
           filter: params.search || '',
-          offset: 0,
-          limit: 10,
         });
       }}
       totalLabel="Total Biaya"

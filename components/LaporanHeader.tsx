@@ -60,7 +60,7 @@ export default function LaporanHeader({ title, subtitle, onExport }: LaporanHead
     subtitle ?? (user ? `Halo, ${user.nama.split(' ')[0]} 👋` : undefined);
 
   return (
-    <div className="relative z-10 mb-4">
+    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] shadow-md pb-2">
       <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
         <div className="flex-shrink-0 self-start">
           <BackBtn onClick={() => router.push('/dashboard')} />
@@ -68,11 +68,11 @@ export default function LaporanHeader({ title, subtitle, onExport }: LaporanHead
 
         <div className="flex-1 flex flex-col justify-center min-w-0">
           {resolvedSubtitle && (
-            <p className="text-[14px] font-medium text-gray-500 mb-0.5">
+            <p className="text-[14px] font-medium text-blue-100 mb-0.5">
               {resolvedSubtitle}
             </p>
           )}
-          <h1 className="text-[22px] font-bold text-gray-900 tracking-tight leading-tight">
+          <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">
             {title}
           </h1>
         </div>

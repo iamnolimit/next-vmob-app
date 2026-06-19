@@ -179,7 +179,7 @@ export default function LapLabaRugiPage() {
       <LaporanHeader title="Laporan Laba Rugi" onExport={() => setShowExportMenu(true)} />
 
       {/* Filter Panel */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="bg-white border-b border-gray-200 flex-shrink-0 mt-4">
         <button
           className="w-full flex items-center justify-between px-4 py-2.5 active:bg-gray-50"
           onClick={() => setShowFilter(!showFilter)}

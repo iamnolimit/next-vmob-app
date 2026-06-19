@@ -34,34 +34,38 @@ export default function LapPergantianShiftPage() {
     }));
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'aplaporangantishift/index',
     apiVersion: 'api7',
     apiParams: {
       cari: '4',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       filter: '',
       tgldirect: true,
     },
     apiNormalizer,
   });
 
+  const fmtDateTime = (isoDate: string, isEnd: boolean) => {
+    if (!isoDate) return '';
+    const [y, m, d] = isoDate.split('-');
+    return `${y}-${m}-${d} ${isEnd ? '23:59:59' : '00:00:00'}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const formatDateTime = (isoDate: string, isEnd: boolean) => {
-      if (!isoDate) return '';
-      const [y, m, d] = isoDate.split('-');
-      return `${y}-${m}-${d} ${isEnd ? '23:59:59' : '00:00:00'}`;
-    };
-
     refetch({
-      tglAwal: formatDateTime(filters.start, false),
-      tglAkhir: formatDateTime(filters.end, true),
+      tglAwal: fmtDateTime(filters.start, false),
+      tglAkhir: fmtDateTime(filters.end, true),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   const total = data.reduce((s, r) => s + (r.saldoKasir as number), 0);
 
@@ -77,6 +81,10 @@ export default function LapPergantianShiftPage() {
           render: (r) => formatNumber(r.saldoKasir as number) },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       totalLabel="Total Saldo Kasir"
       totalValue={formatRupiah(total)}
       searchFields={['kasir']}

@@ -52,14 +52,14 @@ export default function CustomerPage() {
       label: 'Pasien Baru',
       value: `${datapasienbaru.count || 0} Orang`,
       icon: <UserPlus size={20} />,
-      color: '#4CAF50',
+      color: '#035afc',
       change: datapasienbaru.peningkatan || 0,
     },
     {
       label: 'Kunjungan Pasien',
       value: `${datakunjungan.count || 0} Orang`,
       icon: <Users size={20} />,
-      color: '#2196F3',
+      color: '#035afc',
       change: datakunjungan.peningkatan || 0,
     },
   ];

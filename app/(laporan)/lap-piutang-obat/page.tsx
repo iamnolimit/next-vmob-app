@@ -29,8 +29,8 @@ export default function LapPiutangObatPage() {
     return `${year}-${month}-${day}`;
   };
 
-  const { data, loading, error, refetch } = useReportData({
-    apiEndpoint: '/appiutang-obat/index',
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+    apiEndpoint: '/appiutang-obat/index-v2',
     apiVersion: 'api5',
     apiParams: {
       date: getTodayWIB(),
@@ -38,8 +38,6 @@ export default function LapPiutangObatPage() {
       tanggalakhir: '',
       carimobile: '',
       sorting: '',
-      limit: 20,
-      offset: 0,
       deadline: '',
       reg: 'db',
       cari: 4,
@@ -64,13 +62,13 @@ export default function LapPiutangObatPage() {
       data={data}
       loading={loading}
       error={error}
+      hasMore={hasMore}
+      onLoadMore={loadMore}
       onFetchData={(params) => {
         refetch({
           tanggalawal: params.start || '',
           tanggalakhir: params.end || '',
           carimobile: params.search || '',
-          offset: 0,
-          limit: 20,
           deadline: params.interval !== 'all' ? params.interval : '',
         });
       }}

@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { cabangOptions, gudangOptions } from '@/lib/dummyData';
+import { gudangOptions } from '@/lib/dummyData';
 
 export default function LapObatStokHabisPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,17 +27,15 @@ export default function LapObatStokHabisPage() {
     });
   }, []);
 
-  const { data, refetch } = useReportData({
-    apiEndpoint: 'ap-lapstok-batch/kartu3-v2',
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+    apiEndpoint: 'my-data-obat/index-mob-v2',
     apiVersion: 'api5',
     apiParams: {
       gudid: 1,
       cari: '4',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       reg: 'db',
-      namakodemobile: '',
+      obatnama: '',
       obatstatus: 1,
       obathabisnotif: 1,
     },
@@ -47,9 +45,15 @@ export default function LapObatStokHabisPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
     refetch({
-      namakodemobile: filters.search,
+      obatnama: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   return (
     <ReportTable
@@ -62,10 +66,13 @@ export default function LapObatStokHabisPage() {
         { key: 'stokNyata', label: 'Stok Nyata', align: 'right', width: 120 },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       searchFields={['namaObat', 'gudang']}
       searchPlaceholder="Nama obat / gudang"
       hideDateFilter
-      cabangOptions={cabangOptions}
       gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}

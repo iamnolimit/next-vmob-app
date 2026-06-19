@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { cabangOptions, gudangOptions } from '@/lib/dummyData';
+import { gudangOptions } from '@/lib/dummyData';
 
 export default function LapObatExpiredPage() {
   const formatExpiredDate = (dateString: string) => {
@@ -53,41 +53,46 @@ export default function LapObatExpiredPage() {
     return `${year}-${month}-${day}`;
   };
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'ap-obatexpired-batch/index-v2',
     apiVersion: 'api7',
     apiParams: {
-      gudid: 1,
-      cari: '4',
+      date: getTodayWIB(),
       sorting: '',
-      limit: 1000,
-      offset: 0,
-      reg: 'db',
-      namakodemobile: '',
-      tgl: getTodayWIB(),
-      interval: 1,
+      gudid: 1,
+      carimobile: '',
+      custombatch: true,
+      mn_jenis: 3,
+      cari: 1,
     },
     apiNormalizer,
   });
 
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
-
+    const cari = filters.interval ?? 1;
     refetch({
-      namakodemobile: filters.search,
-      interval: filters.interval || 1,
-      ...(filters.interval === 5 && {
-        tglAwal: formatDate(filters.start),
-        tglAkhir: formatDate(filters.end),
+      carimobile: filters.search,
+      cari,
+      a: filters.cabang,
+      reg: filters.cabangReg,
+      ...(cari === 5 && {
+        tglAwal: fmtDate(filters.start),
+        tglAkhir: fmtDate(filters.end),
       }),
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   return (
     <ReportTable
@@ -100,6 +105,10 @@ export default function LapObatExpiredPage() {
         { key: 'tanggalExpired', label: 'Tgl Expired', align: 'center', width: 110 },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       searchFields={['namaObat', 'gudang']}
       searchPlaceholder="Nama obat / Batch / gudang"
       intervalOptions={[
@@ -110,7 +119,6 @@ export default function LapObatExpiredPage() {
         { label: 'Tanggal', value: 5 },
       ]}
       intervalTitle="Periode Expired"
-      cabangOptions={cabangOptions}
       gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}

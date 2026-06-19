@@ -49,7 +49,7 @@ function BottomNav() {
               className="flex flex-col items-center justify-center flex-1 h-14"
             >
               <div className={`flex flex-col items-center justify-center w-full max-w-[5rem] h-full rounded-full transition-all duration-300 ${
-                isActive ? 'bg-[#0362fc]/10 text-[#0362fc]' : 'bg-transparent text-gray-500'
+                isActive ? 'bg-[#035afc]/10 text-[#035afc]' : 'bg-transparent text-gray-500'
               }`}>
                 <span
                   className={`mb-1 transition-all duration-300 flex justify-center ${
@@ -60,7 +60,7 @@ function BottomNav() {
                 </span>
                 <span
                   className={`text-[10px] font-bold tracking-wide transition-colors duration-300 ${
-                    isActive ? 'text-[#0362fc]' : 'text-gray-500'
+                    isActive ? 'text-[#035afc]' : 'text-gray-500'
                   }`}
                 >
                   {tab.label}

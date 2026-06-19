@@ -26,14 +26,12 @@ export default function LapPembayaranKasirPage() {
     }));
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'kln-lap-bayar-kasir/index',
     apiVersion: 'api7',
     apiParams: {
       filter: '',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       reg: 'db',
       cari: 4,
       device: 'mobile',
@@ -41,21 +39,27 @@ export default function LapPembayaranKasirPage() {
     apiNormalizer,
   });
 
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
-
     refetch({
-      tanggalawal: formatDate(filters.start),
-      tanggalakhir: formatDate(filters.end),
+      tanggalawal: fmtDate(filters.start),
+      tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   const total = data.reduce((s, r) => s + (r.total as number), 0);
 
@@ -72,6 +76,10 @@ export default function LapPembayaranKasirPage() {
           render: (r) => formatNumber(r.total as number) },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       totalLabel="Total Pembayaran"
       totalValue={formatRupiah(total)}
       searchFields={['pasien', 'noFaktur', 'dokter']}

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useFetch } from './useFetch';
+import { useState, useCallback, useRef } from 'react';
+import { fetchApi } from './api';
 import { useAuth } from './authContext';
 
 interface UseReportDataProps {
@@ -9,6 +9,7 @@ interface UseReportDataProps {
   apiParams?: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   apiNormalizer: (data: any, offset?: number) => any[];
+  pageSize?: number;
 }
 
 export function useReportData({
@@ -16,31 +17,76 @@ export function useReportData({
   apiVersion = 'api5',
   apiParams = {},
   apiNormalizer,
+  pageSize = 50,
 }: UseReportDataProps) {
   const { user } = useAuth();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  // Track the current offset so load-more knows where to continue
+  const currentOffsetRef = useRef(0);
+  // Store last filter params so loadMore can reuse them
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lastFilterParamsRef = useRef<Record<string, any>>({});
 
-  const { data: apiData, loading, error, refetch } = useFetch({
-    endpoint: apiEndpoint,
-    apiVersion,
-    params: user ? { a: user.app_id, reg: user.app_reg, ...apiParams } : {},
-    isMutation: false,
-  });
+  const fetchPage = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (extraParams: Record<string, any> = {}, append = false) => {
+      if (!user) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const offset = append ? currentOffsetRef.current : 0;
+        // On fresh fetch, save the filter params for use by loadMore
+        if (!append) {
+          lastFilterParamsRef.current = extraParams;
+        }
+        const mergedParams = {
+          a: user.app_id,
+          reg: user.app_reg,
+          ...apiParams,
+          limit: pageSize,
+          offset,
+          ...lastFilterParamsRef.current,
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: any = await fetchApi(apiEndpoint, mergedParams, user, apiVersion);
+        const normalized = apiNormalizer(result, offset);
+        if (append) {
+          setData((prev) => [...prev, ...normalized]);
+        } else {
+          setData(normalized);
+          currentOffsetRef.current = 0;
+        }
+        // If we got fewer rows than pageSize, there's no more data
+        setHasMore(normalized.length >= pageSize);
+        if (!append) {
+          currentOffsetRef.current = normalized.length;
+        } else {
+          currentOffsetRef.current = offset + normalized.length;
+        }
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user, apiEndpoint, apiVersion, pageSize]
+  );
 
-  useEffect(() => {
-    if (user) {
-      refetch({ a: user.app_id, reg: user.app_reg, ...apiParams });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  // refetch: reset data and fetch from offset 0
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const refetch = useCallback((extraParams: Record<string, any> = {}) => {
+    return fetchPage(extraParams, false);
+  }, [fetchPage]);
 
-  useEffect(() => {
-    if (apiData) {
-      const normalized = apiNormalizer(apiData);
-      setData(normalized);
-    }
-  }, [apiData, apiNormalizer]);
+  // loadMore: append next page using the same filter params as the last refetch
+  const loadMore = useCallback(() => {
+    return fetchPage({}, true);
+  }, [fetchPage]);
 
-  return { data, loading, error, refetch };
+  return { data, loading, error, hasMore, refetch, loadMore };
 }

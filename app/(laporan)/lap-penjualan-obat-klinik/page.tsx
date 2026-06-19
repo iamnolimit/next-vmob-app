@@ -27,34 +27,38 @@ export default function LapPenjualanObatKlinikPage() {
     }));
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'ki-penjualanobatklinik/index',
-    apiVersion: 'api5',
+    apiVersion: 'api7',
     apiParams: {
       cari: '4',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       device: 'mobile',
     },
     apiNormalizer,
   });
 
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
-
     refetch({
-      tanggalawal: formatDate(filters.start),
-      tanggalakhir: formatDate(filters.end),
+      tanggalawal: fmtDate(filters.start),
+      tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   const total = data.reduce((s, r) => s + (r.total as number), 0);
 
@@ -70,6 +74,10 @@ export default function LapPenjualanObatKlinikPage() {
           render: (r) => formatNumber(r.total as number) },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       totalLabel="Total Penjualan"
       totalValue={formatRupiah(total)}
       searchFields={['pasien', 'noFaktur', 'dokter']}

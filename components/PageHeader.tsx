@@ -84,7 +84,7 @@ export default function PageHeader({
     subtitle ?? (user ? `Halo, ${user.nama.split(' ')[0]} 👋` : undefined);
 
   return (
-    <div className="relative z-10 mb-4">
+    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] shadow-md pb-2">
       {/* Clean, modern header without the heavy background */}
       <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
         {/* Left slot: Menu or Back button */}
@@ -99,11 +99,11 @@ export default function PageHeader({
         {/* Center slot: Title & Subtitle */}
         <div className="flex-1 flex flex-col justify-center min-w-0">
           {resolvedSubtitle && (
-            <p className="text-[14px] font-medium text-gray-500 mb-0.5">
+            <p className="text-[14px] font-medium text-blue-100 mb-0.5">
               {resolvedSubtitle}
             </p>
           )}
-          <h1 className="text-[22px] font-bold text-gray-900 tracking-tight leading-tight">
+          <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">
             {title}
           </h1>
         </div>
@@ -118,7 +118,7 @@ export default function PageHeader({
 
       {/* Subnavbar (segmented tabs) */}
       {subnavbar && (
-        <div className="px-2">
+        <div className="px-2 mt-2">
           {subnavbar}
         </div>
       )}

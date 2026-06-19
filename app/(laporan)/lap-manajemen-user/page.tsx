@@ -71,7 +71,7 @@ export default function LapManajemenUserPage() {
     <div className="flex flex-col h-full">
       <LaporanHeader title="Manajemen User" />
 
-      <div className="px-4 py-2.5 bg-white border-b border-gray-100 flex-shrink-0">
+      <div className="px-4 py-2.5 bg-white border-b border-gray-100 flex-shrink-0 mt-4">
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}

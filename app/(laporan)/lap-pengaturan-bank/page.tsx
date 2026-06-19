@@ -44,7 +44,7 @@ export default function LapPengaturanBankPage() {
     <div className="flex flex-col h-full">
       <LaporanHeader title="Pengaturan Bank" />
 
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="flex-1 overflow-y-auto bg-gray-50 pt-4">
         <div className="px-4 pt-3 flex justify-end">
           <button onClick={() => setShowForm(true)} className="text-sm font-semibold text-blue-600 bg-blue-50 px-4 py-2 rounded-xl">
             + Tambah Rekening

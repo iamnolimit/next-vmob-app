@@ -86,7 +86,7 @@ function MenuItem({
       onClick={onClick}
       className={`w-[calc(100%-1rem)] mx-2 flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 ${
         active 
-          ? 'bg-[#0362fc]/10 text-[#0362fc] shadow-sm' 
+          ? 'bg-[#035afc]/10 text-[#035afc] shadow-sm' 
           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
       }`}
     >

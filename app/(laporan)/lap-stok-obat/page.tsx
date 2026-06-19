@@ -30,14 +30,12 @@ export default function LapStokObatPage() {
     });
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'ap-lapstok-batch/kartu3-v2',
     apiVersion: 'api5',
     apiParams: {
       filter: '',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       reg: 'db',
       cari: 4,
       device: 'mobile',
@@ -49,8 +47,14 @@ export default function LapStokObatPage() {
   const handleFetchData = useCallback((filters: any) => {
     refetch({
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   return (
     <ReportTable
@@ -63,6 +67,10 @@ export default function LapStokObatPage() {
         { key: 'stok', label: 'Stok', align: 'right', width: 120 },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       searchFields={['namaObat', 'kodeObat', 'gudang']}
       searchPlaceholder="Kode Obat / Nama obat"
       hideDateFilter

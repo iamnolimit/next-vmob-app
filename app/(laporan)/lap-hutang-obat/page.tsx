@@ -29,7 +29,7 @@ export default function LapHutangObatPage() {
     return `${day}-${month}-${year}`;
   };
 
-  const { data, loading, error, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: '/hutang-obat/index',
     apiVersion: 'api5',
     apiParams: {
@@ -38,8 +38,6 @@ export default function LapHutangObatPage() {
       tanggalakhir: '',
       carimobile: '',
       sorting: '',
-      limit: 20,
-      offset: 0,
       deadline: '',
       reg: 'db',
     },
@@ -63,13 +61,13 @@ export default function LapHutangObatPage() {
       data={data}
       loading={loading}
       error={error}
+      hasMore={hasMore}
+      onLoadMore={loadMore}
       onFetchData={(params) => {
         refetch({
           tanggalawal: params.start || '',
           tanggalakhir: params.end || '',
           carimobile: params.search || '',
-          offset: 0,
-          limit: 20,
           deadline: params.interval !== 'all' ? params.interval : '',
         });
       }}

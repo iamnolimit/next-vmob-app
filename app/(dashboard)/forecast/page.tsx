@@ -59,7 +59,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoA || 0),
       invoiceCount: `${data.paretoA || 0} Obat`,
       icon: <Star size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.paA || 0,
     },
     {
@@ -67,7 +67,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoB || 0),
       invoiceCount: `${data.paretoB || 0} Obat`,
       icon: <StarHalf size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.paB || 0,
     },
     {
@@ -75,7 +75,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoC || 0),
       invoiceCount: `${data.paretoC || 0} Obat`,
       icon: <Sparkles size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.paC || 0,
     },
     {
@@ -83,7 +83,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoMin || 0),
       invoiceCount: `${data.paretoMin || 0} Obat`,
       icon: <AlertTriangle size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.paMin || 0,
     },
     {
@@ -91,7 +91,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan1 || 0),
       invoiceCount: `${data.status1 || 0} Obat`,
       icon: <Package size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.pStatus1 || 0,
     },
     {
@@ -99,7 +99,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan2 || 0),
       invoiceCount: `${data.status2 || 0} Obat`,
       icon: <TrendingUp size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.pStatus2 || 0,
     },
     {
@@ -107,7 +107,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan3 || 0),
       invoiceCount: `${data.status3 || 0} Obat`,
       icon: <TrendingDown size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.pStatus3 || 0,
     },
     {
@@ -115,7 +115,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan4 || 0),
       invoiceCount: `${data.status4 || 0} Obat`,
       icon: <CircleDollarSign size={20} />,
-      color: '#1A73E8',
+      color: '#035afc',
       change: data.pStatus4 || 0,
     },
   ];

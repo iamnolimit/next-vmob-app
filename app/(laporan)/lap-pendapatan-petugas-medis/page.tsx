@@ -28,14 +28,12 @@ export default function LapPendapatanPetugasMedisPage() {
     });
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'laporan-pendapatan-petugas-medis/index',
     apiVersion: 'api7',
     apiParams: {
       filter: '',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       reg: 'db',
       cari: 4,
       device: 'mobile',
@@ -43,21 +41,25 @@ export default function LapPendapatanPetugasMedisPage() {
     apiNormalizer,
   });
 
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
-
     refetch({
-      tanggalawal: formatDate(filters.start),
-      tanggalakhir: formatDate(filters.end),
+      tglAwal: fmtDate(filters.start),
+      tglAkhir: fmtDate(filters.end),
       filter: filters.search,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   const total = data.reduce((s, r) => s + (r.feeDokter as number), 0);
 
@@ -73,6 +75,10 @@ export default function LapPendapatanPetugasMedisPage() {
           render: (r) => formatRupiah(r.feeDokter as number) },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       totalLabel="Total Pendapatan Dokter"
       totalValue={formatRupiah(total)}
       searchFields={['dokter', 'noFaktur', 'pemeriksaan']}

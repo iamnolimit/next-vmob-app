@@ -10,10 +10,11 @@ export async function fetchApi(
     throw new Error('User not authenticated');
   }
 
+  // Allow params to override a/reg (e.g. when switching cabang)
   const requestParams = {
-    ...params,
     a: user.app_id,
     reg: user.app_reg,
+    ...params,
   };
 
   const response = await fetch('/api/proxy', {

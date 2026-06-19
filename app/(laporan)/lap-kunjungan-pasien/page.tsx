@@ -28,34 +28,35 @@ export default function LapKunjunganPasienPage() {
     }));
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'kunjungan/index',
-    apiVersion: 'api5',
+    apiVersion: 'api7',
     apiParams: {
       filter: '',
       sorting: '',
-      limit: 1000, // Fetch all for client-side filtering
-      offset: 0,
       cari: 4,
     },
     apiNormalizer,
   });
 
-  const handleFetchData = useCallback((filters: any) => {
-    // Format date to DD MMM YYYY
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
 
+  const handleFetchData = useCallback((filters: any) => {
     refetch({
-      tanggalawal: formatDate(filters.start),
-      tanggalakhir: formatDate(filters.end),
+      tanggalawal: fmtDate(filters.start),
+      tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   return (
     <ReportTable
@@ -68,6 +69,10 @@ export default function LapKunjunganPasienPage() {
         { key: 'dokter', label: 'Dokter', width: 140 },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       totalLabel="Total Kunjungan"
       totalValue={`${data.length} Kunjungan`}
       searchFields={['nama', 'poli', 'dokter', 'noRM']}

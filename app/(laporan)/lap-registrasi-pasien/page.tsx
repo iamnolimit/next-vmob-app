@@ -20,14 +20,12 @@ export default function LapRegistrasiPasienPage() {
     }));
   }, []);
 
-  const { data, refetch } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
     apiEndpoint: 'laporanmasterpasien/index',
     apiVersion: 'api5',
     apiParams: {
       filter: '',
       sorting: '',
-      limit: 1000,
-      offset: 0,
       reg: 'db',
       pasaktif: 1,
       cari: 4,
@@ -35,21 +33,27 @@ export default function LapRegistrasiPasienPage() {
     apiNormalizer,
   });
 
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
-
     refetch({
-      tglAwal: formatDate(filters.start),
-      tglAkhir: formatDate(filters.end),
+      tglAwal: fmtDate(filters.start),
+      tglAkhir: fmtDate(filters.end),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
 
   return (
     <ReportTable
@@ -62,6 +66,10 @@ export default function LapRegistrasiPasienPage() {
         { key: 'alamat', label: 'Alamat', width: 200 },
       ]}
       data={data}
+      loading={loading}
+      error={error}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
       totalLabel="Total Registrasi"
       totalValue={`${data.length} Pasien`}
       searchFields={['noRM', 'pasien', 'alamat']}

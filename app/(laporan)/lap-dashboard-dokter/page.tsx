@@ -45,7 +45,7 @@ export default function LapDashboardDokterPage() {
         subtitle={`${user?.nama || 'Dokter'} · ${user?.cabang || ''}`}
       />
 
-      <div className="flex-1 overflow-y-auto bg-gray-50 px-4 pb-24 space-y-4">
+      <div className="flex-1 overflow-y-auto bg-gray-50 px-4 pt-4 pb-24 space-y-4">
         <p className="text-xs text-gray-400 text-center">{today}</p>
 
         {loading && <p className="text-center text-sm text-gray-500">Memuat data...</p>}
