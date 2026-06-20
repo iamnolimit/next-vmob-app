@@ -18,31 +18,30 @@ export async function fetchApi(
     ...params,
   };
 
-  // Since Next.js is using output: 'export', API routes don't work in production/Capacitor.
-  // We need to call the API directly.
-  const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
-  const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
-  
-  const baseUrl = apiVersion === 'api5' ? BASE_URL_API5 : BASE_URL_API7;
-  const apiUrl = `${baseUrl}${endpoint}`;
+  // Use absolute URL in Capacitor, relative in browser
+  const baseUrl = typeof window !== 'undefined' && window.location.origin.includes('localhost') 
+    ? '' 
+    : 'https://cheery-dragon-8e5b5a.netlify.app';
 
-  const response = await fetch(apiUrl, {
+  const response = await fetch(`${baseUrl}/api/proxy`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
+      'Target-URL': encodeURIComponent(endpoint),
+      'Target-Version': encodeURIComponent(apiVersion),
+      'Target-Options': encodeURIComponent(JSON.stringify({ method: 'POST' }))
     },
-    body: qs.stringify(requestParams || {}),
+    body: JSON.stringify({
+      params: requestParams,
+    }),
   });
 
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);
   }
 
-  const contentType = response.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    const json = await response.json();
-    return json?.data ?? json;
-  } else {
-    throw new Error('Invalid response from API');
-  }
+  const json = await response.json();
+
+  // Proxy wraps response in { data: ... }
+  return json?.data ?? json;
 }

@@ -1,12 +1,9 @@
 import qs from 'qs';
 import { NextResponse } from 'next/server';
 
-// main
-// const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api7lb.vmedis.com/';
-// const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedis.com/';
-// mr
 const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
 const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
+
 function getBaseUrl(apiVersion: string): string {
   switch (apiVersion) {
     case 'api5':
@@ -32,11 +29,29 @@ export async function OPTIONS(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { endpoint, apiVersion = 'api7', params } = body;
+    const requestBody = await request.json();
+
+    // Extract headers (matching vmedis-react-app-v3 middleware style)
+    const targetVersion = decodeURIComponent(request.headers.get('Target-Version') ?? '');
+    const targetUrl = decodeURIComponent(request.headers.get('Target-URL') ?? '');
+    const targetOptionsStr = decodeURIComponent(request.headers.get('Target-Options') ?? '{}');
+
+    // Fallback to body params if headers are not provided (for backward compatibility with our current auth.ts)
+    const endpoint = targetUrl || requestBody.endpoint;
+    const apiVersion = targetVersion || requestBody.apiVersion || 'api7';
+    const params = requestBody.params || requestBody;
+    
+    let options = { method: 'POST' };
+    try {
+      if (targetOptionsStr && targetOptionsStr !== '{}') {
+        options = JSON.parse(targetOptionsStr);
+      }
+    } catch (e) {
+      // ignore parse error
+    }
 
     if (!endpoint) {
-      return NextResponse.json({ error: 'Missing endpoint' }, { 
+      return NextResponse.json({ error: 'Missing endpoint or Target-URL header' }, { 
         status: 400,
         headers: corsHeaders
       });
@@ -45,13 +60,18 @@ export async function POST(request: Request) {
     const baseUrl = getBaseUrl(apiVersion);
     const apiUrl = `${baseUrl}${endpoint}`;
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
+    const fetchOptions: RequestInit = {
+      method: options.method || 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: qs.stringify(params || {}),
-    });
+    };
+
+    if (options.method !== 'GET') {
+      fetchOptions.body = qs.stringify(params || {});
+    }
+
+    const response = await fetch(apiUrl, fetchOptions);
 
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
