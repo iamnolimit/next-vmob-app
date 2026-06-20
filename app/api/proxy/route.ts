@@ -17,13 +17,27 @@ function getBaseUrl(apiVersion: string): string {
   }
 }
 
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { endpoint, apiVersion = 'api7', params } = body;
 
     if (!endpoint) {
-      return NextResponse.json({ error: 'Missing endpoint' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing endpoint' }, { 
+        status: 400,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      });
     }
 
     const baseUrl = getBaseUrl(apiVersion);
@@ -43,18 +57,27 @@ export async function POST(request: Request) {
       if (response.status !== 200) {
         console.error('API Error Response:', response.status, data);
       }
-      return NextResponse.json({ data }, { status: response.status });
+      return NextResponse.json({ data }, { 
+        status: response.status,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      });
     } else {
       const text = await response.text();
       console.error('Non-JSON response from API:', text.substring(0, 200));
       return NextResponse.json(
         { error: 'Invalid response from API', details: text.substring(0, 200) },
-        { status: response.status }
+        { 
+          status: response.status,
+          headers: { 'Access-Control-Allow-Origin': '*' }
+        }
       );
     }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Internal Server Error';
     console.error('Proxy Error:', error);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { 
+      status: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    });
   }
 }
