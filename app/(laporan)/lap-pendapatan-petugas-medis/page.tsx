@@ -54,6 +54,8 @@ export default function LapPendapatanPetugasMedisPage() {
       tglAwal: fmtDate(filters.start),
       tglAkhir: fmtDate(filters.end),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
 

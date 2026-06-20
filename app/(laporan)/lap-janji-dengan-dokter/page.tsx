@@ -46,6 +46,8 @@ export default function LapJanjiDenganDokterPage() {
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
 

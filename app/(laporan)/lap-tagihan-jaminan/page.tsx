@@ -59,6 +59,8 @@ export default function LapTagihanJaminanPage() {
           tanggalawal: params.start || '',
           tanggalakhir: params.end || '',
           filter: params.search || '',
+          a: params.cabang,
+          reg: params.cabangReg,
         });
       }}
       totalLabel="Total Biaya"

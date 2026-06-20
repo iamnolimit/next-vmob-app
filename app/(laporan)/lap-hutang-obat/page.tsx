@@ -69,6 +69,8 @@ export default function LapHutangObatPage() {
           tanggalakhir: params.end || '',
           carimobile: params.search || '',
           deadline: params.interval !== 'all' ? params.interval : '',
+          a: params.cabang,
+          reg: params.cabangReg,
         });
       }}
       totalLabel="Total Kekurangan"
