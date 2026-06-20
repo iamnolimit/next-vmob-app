@@ -93,7 +93,12 @@ export function clearUser() {
 }
 
 async function callProxy(endpoint: string, params: Record<string, unknown>, apiVersion = 'api7') {
-  const response = await fetch('/api/proxy', {
+  // Use absolute URL in Capacitor, relative in browser
+  const baseUrl = typeof window !== 'undefined' && window.location.origin.includes('localhost') 
+    ? '' 
+    : 'https://next-vmob-app.vercel.app';
+    
+  const response = await fetch(`${baseUrl}/api/proxy`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ endpoint, apiVersion, params }),
