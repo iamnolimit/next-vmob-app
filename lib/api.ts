@@ -20,7 +20,7 @@ export async function fetchApi(
   // Use absolute URL in Capacitor, relative in browser
   const baseUrl = typeof window !== 'undefined' && window.location.origin.includes('localhost') 
     ? '' 
-    : 'https://next-vmob-app.vercel.app';
+    : 'https://cheery-dragon-8e5b5a.netlify.app';
 
   const response = await fetch(`${baseUrl}/api/proxy`, {
     method: 'POST',
