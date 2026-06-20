@@ -2,6 +2,8 @@
 
 import dayjs from 'dayjs';
 
+import qs from 'qs';
+
 export interface UserProfile {
   id: string;
   app_id: string;
@@ -93,22 +95,31 @@ export function clearUser() {
 }
 
 async function callProxy(endpoint: string, params: Record<string, unknown>, apiVersion = 'api7') {
-  // Use absolute URL in Capacitor, relative in browser
-  const baseUrl = typeof window !== 'undefined' && window.location.origin.includes('localhost') 
-    ? '' 
-    : 'https://cheery-dragon-8e5b5a.netlify.app';
-    
-  const response = await fetch(`${baseUrl}/api/proxy`, {
+  // Since Next.js is using output: 'export', API routes don't work in production/Capacitor.
+  // We need to call the API directly.
+  const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
+  const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
+  
+  const baseUrl = apiVersion === 'api5' ? BASE_URL_API5 : BASE_URL_API7;
+  const apiUrl = `${baseUrl}${endpoint}`;
+
+  const response = await fetch(apiUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ endpoint, apiVersion, params }),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: qs.stringify(params || {}),
   });
+
   if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error || `Request failed: ${response.status}`);
+    throw new Error(`Request failed: ${response.status}`);
   }
-  const json = await response.json();
-  return json?.data ?? json;
+  
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    const json = await response.json();
+    return json?.data ?? json;
+  } else {
+    throw new Error('Invalid response from API');
+  }
 }
 
 export async function login(
