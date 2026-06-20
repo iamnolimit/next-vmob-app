@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { getStatsRoute } from '@/lib/routeConnector';
 import { ChevronRight } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 interface StatCardProps {
   label: string;
@@ -15,10 +16,11 @@ interface StatCardProps {
 
 export default function StatCard({ label, value, change, icon, color = '#1d4ed8', invoiceCount }: StatCardProps) {
   const router = useRouter();
-  const isPositive   = change !== undefined && change >= 0;
-  const changeColor  = change === undefined ? '' : isPositive ? '#10b981' : '#ef4444';
-  const changeBg     = change === undefined ? '' : isPositive ? '#d1fae5' : '#fee2e2';
-  const changeSymbol = change === undefined ? '' : isPositive ? '↑' : '↓';
+  const isZero       = change === 0;
+  const isPositive   = change !== undefined && change > 0;
+  const changeColor  = change === undefined ? '' : isZero ? 'var(--primary-accent)' : isPositive ? '#10b981' : '#ef4444';
+  const changeBg     = change === undefined ? '' : isZero ? 'rgba(18, 124, 255, 0.1)' : isPositive ? '#d1fae5' : '#fee2e2';
+  const changeSymbol = change === undefined ? '' : isZero ? <Icon icon="material-symbols:sync-alt" className="inline-block mr-0.5" /> : isPositive ? '↑' : '↓';
 
   const route = getStatsRoute(label);
   const isClickable = !!route;
