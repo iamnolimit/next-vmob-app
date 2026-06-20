@@ -1,41 +1,31 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 
-// We import the CSS in globals.css override below
 import 'react-datepicker/dist/react-datepicker.css';
 
-interface DatePickerInputProps {
+interface YearPickerInputProps {
   label: string;
-  value: string; // ISO date string YYYY-MM-DD
+  value: string; // ISO year string YYYY
   onChange: (iso: string) => void;
-  minDate?: string;
-  maxDate?: string;
 }
 
-export default function DatePickerInput({
+export default function YearPickerInput({
   label,
   value,
   onChange,
-  minDate,
-  maxDate,
-}: DatePickerInputProps) {
+}: YearPickerInputProps) {
   const [open, setOpen] = useState(false);
-  const selected = value ? parseISO(value) : new Date();
+  // parseISO needs a full date, so we append -01-01
+  const selected = value ? parseISO(`${value}-01-01`) : new Date();
 
-  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-  const displayDate = value
-    ? (() => {
-        const [y, m, d] = value.split('-');
-        return `${d} ${months[Number(m) - 1]} ${y}`;
-      })()
-    : 'Pilih tanggal';
+  const displayDate = value || 'Pilih tahun';
 
   const handleChange = (date: Date | null) => {
     if (date) {
-      onChange(format(date, 'yyyy-MM-dd'));
+      onChange(format(date, 'yyyy'));
     }
     setOpen(false);
   };
@@ -84,10 +74,7 @@ export default function DatePickerInput({
               </button>
               <span className="text-sm font-bold text-gray-900">{label}</span>
               <button
-                onClick={() => {
-                  // apply current selection (already handled by handleChange)
-                  setOpen(false);
-                }}
+                onClick={() => setOpen(false)}
                 className="text-sm font-semibold text-blue-600 py-1"
               >
                 Selesai
@@ -101,9 +88,31 @@ export default function DatePickerInput({
                 onChange={handleChange}
                 inline
                 locale={id}
-                minDate={minDate ? parseISO(minDate) : undefined}
-                maxDate={maxDate ? parseISO(maxDate) : undefined}
+                showYearPicker
+                dateFormat="yyyy"
                 calendarClassName="vmob-cal"
+                renderCustomHeader={({ date, decreaseYear, increaseYear }) => {
+                  // ReactDatePicker's showYearPicker displays 12 years at a time.
+                  // The range starts at (currentYear - (currentYear % 12) + 1) to match the actual rendered years
+                  // However, react-datepicker's internal logic for the year picker grid starts at year - (year % 12) + 1
+                  // Let's calculate the exact start year of the current view
+                  const currentYear = date.getFullYear();
+                  const startYear = currentYear - (currentYear % 12) + 1;
+                  const endYear = startYear + 11;
+                  return (
+                    <div className="flex items-center justify-between px-4 py-2">
+                      <button onClick={decreaseYear} className="text-blue-600 font-bold text-lg px-2 py-1">
+                        &lt;
+                      </button>
+                      <span className="text-lg font-bold text-gray-900">
+                        {startYear} - {endYear}
+                      </span>
+                      <button onClick={increaseYear} className="text-blue-600 font-bold text-lg px-2 py-1">
+                        &gt;
+                      </button>
+                    </div>
+                  );
+                }}
               />
             </div>
           </div>

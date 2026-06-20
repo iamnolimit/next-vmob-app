@@ -1,10 +1,13 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import LiquidPullToRefresh from './LiquidPullToRefresh';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/sidebarContext';
 import { useAuth } from '@/lib/authContext';
 import { useCabangOptions } from '@/lib/useCabangOptions';
 import DatePickerInput from './DatePickerInput';
+import MonthPickerInput from './MonthPickerInput';
+import YearPickerInput from './YearPickerInput';
 import SelectInput from './SelectInput';
 
 
@@ -97,8 +100,14 @@ export default function ReportTable({
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [showFilter, setShowFilter] = useState(true);
-  const [startDate, setStartDate] = useState(toISO(firstOfMonth));
+  const [startDate, setStartDate] = useState(toISO(today));
   const [endDate, setEndDate] = useState(toISO(today));
+  const [dateFilterType, setDateFilterType] = useState<'tanggal' | 'bulan' | 'tahun'>('tanggal');
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const [selectedYear, setSelectedYear] = useState<string>(() => new Date().getFullYear().toString());
   const [selectedInterval, setSelectedInterval] = useState<string | number>(
     intervalOptions?.[0]?.value ?? 'all'
   );
@@ -168,7 +177,8 @@ export default function ReportTable({
   useEffect(() => {
     if (didInitialFetchRef.current) return;
     const cabang = selectedCabang || user?.app_id || '';
-    if (!cabang) return; // wait for user to load
+    const cabangReg = selectedCabangReg || user?.app_reg || '';
+    if (!cabang || !cabangReg) return; // wait for user to load
     didInitialFetchRef.current = true;
     if (onFetchData) {
       onFetchData({
@@ -177,14 +187,14 @@ export default function ReportTable({
         search: '',
         interval: selectedInterval,
         cabang,
-        cabangReg: selectedCabangReg || user?.app_reg || '',
+        cabangReg,
         gudang: selectedGudang,
         offset: 0,
         limit,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.app_id, selectedCabang]);
+  }, [user?.app_id, user?.app_reg, selectedCabang, selectedCabangReg]);
 
   const handleLoadMore = () => {
     if (loading || !hasMore) return;
@@ -225,10 +235,23 @@ export default function ReportTable({
   };
 
   const applyFilter = () => {
-    setAppliedFilter({ start: startDate, end: endDate, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
+    let finalStart = startDate;
+    let finalEnd = endDate;
+
+    if (dateFilterType === 'bulan') {
+      const [y, m] = selectedMonth.split('-');
+      finalStart = `${y}-${m}-01`;
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      finalEnd = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
+    } else if (dateFilterType === 'tahun') {
+      finalStart = `${selectedYear}-01-01`;
+      finalEnd = `${selectedYear}-12-31`;
+    }
+
+    setAppliedFilter({ start: finalStart, end: finalEnd, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
     setShowFilter(false);
     if (onFetchData) {
-      onFetchData({ start: startDate, end: endDate, search, interval: selectedInterval, cabang: selectedCabang, cabangReg: selectedCabangReg, gudang: selectedGudang, offset: 0, limit });
+      onFetchData({ start: finalStart, end: finalEnd, search, interval: selectedInterval, cabang: selectedCabang, cabangReg: selectedCabangReg, gudang: selectedGudang, offset: 0, limit });
     }
   };
 
@@ -244,6 +267,10 @@ export default function ReportTable({
 
     setStartDate(defaultStart);
     setEndDate(defaultEnd);
+    setDateFilterType('tanggal');
+    const d = new Date();
+    setSelectedMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+    setSelectedYear(d.getFullYear().toString());
     setSelectedInterval(defaultInterval);
     setSelectedCabang(defaultCabang);
     setSelectedCabangReg(defaultCabangReg);
@@ -267,15 +294,30 @@ export default function ReportTable({
       })
     : data;
 
+  const handleRefresh = async () => {
+    if (onFetchData) {
+      await onFetchData({
+        start: appliedFilter?.start || startDate,
+        end: appliedFilter?.end || endDate,
+        search,
+        cabang: appliedFilter?.cabang || selectedCabang,
+        cabangReg: selectedCabangReg,
+        gudang: appliedFilter?.gudang || selectedGudang,
+        interval: appliedFilter?.interval || selectedInterval,
+        offset: 0,
+        limit
+      });
+    }
+  };
+
   const activeIntervalLabel = intervalOptions?.find(
     (o) => o.value === (appliedFilter?.interval ?? selectedInterval)
   )?.label;
 
-  return (
-    <div className="flex flex-col h-full bg-gray-50">
-
+  const headerNode = (
+    <>
       {/* ── Header ── */}
-      <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] shadow-md pb-2">
+      <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] pb-2">
         <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
           <div className="flex-shrink-0 self-start">
             <button
@@ -306,7 +348,11 @@ export default function ReportTable({
           </div>
         </div>
       </div>
+    </>
+  );
 
+  const filterPanel = (
+    <>
       {/* ── Filter Panel ── */}
       <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
 
@@ -482,29 +528,69 @@ export default function ReportTable({
             {/* Date range pickers */}
             {!hideDateFilter && (
               <div>
-                <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  Rentang Tanggal
-                </p>
-                <div className="flex gap-3">
-                  <DatePickerInput
-                    label="Tanggal Awal"
-                    value={startDate}
-                    onChange={setStartDate}
-                    maxDate={endDate}
-                  />
-                  <DatePickerInput
-                    label="Tanggal Akhir"
-                    value={endDate}
-                    onChange={setEndDate}
-                    minDate={startDate}
-                  />
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-500 flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    Filter Waktu
+                  </p>
+                  <div className="flex bg-gray-100 rounded-lg p-0.5">
+                    {(['tanggal', 'bulan', 'tahun'] as const).map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => setDateFilterType(type)}
+                        className={`px-2.5 py-1 text-[10px] font-bold rounded-md capitalize transition-colors ${
+                          dateFilterType === type
+                            ? 'bg-white text-[#035afc] shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {dateFilterType === 'tanggal' && (
+                  <div className="flex gap-3">
+                    <DatePickerInput
+                      label="Tanggal Awal"
+                      value={startDate}
+                      onChange={setStartDate}
+                      maxDate={endDate}
+                    />
+                    <DatePickerInput
+                      label="Tanggal Akhir"
+                      value={endDate}
+                      onChange={setEndDate}
+                      minDate={startDate}
+                    />
+                  </div>
+                )}
+
+                {dateFilterType === 'bulan' && (
+                  <div className="flex gap-3">
+                    <MonthPickerInput
+                      label="Pilih Bulan"
+                      value={selectedMonth}
+                      onChange={setSelectedMonth}
+                    />
+                  </div>
+                )}
+
+                {dateFilterType === 'tahun' && (
+                  <div className="flex gap-3">
+                    <YearPickerInput
+                      label="Pilih Tahun"
+                      value={selectedYear}
+                      onChange={setSelectedYear}
+                    />
+                  </div>
+                )}
               </div>
             )}
 
@@ -570,7 +656,12 @@ export default function ReportTable({
         </div>
 
       </div>
+    </>
+  );
 
+  return (
+    <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
+      {filterPanel}
       {/* ── Table ── */}
       <div className="flex-1 overflow-hidden flex flex-col">
         <div
@@ -584,8 +675,7 @@ export default function ReportTable({
           }}
         >
           <table
-            className="w-full border-collapse"
-            style={{ minWidth: columns.reduce((s, c) => s + (c.width ?? 100), 0) }}
+            className="w-full border-collapse table-fixed"
           >
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-100">
@@ -593,13 +683,23 @@ export default function ReportTable({
                   <th
                     key={col.key}
                     onClick={() => handleSort(col.key)}
-                    className="py-2.5 px-2 text-xs font-bold text-gray-700 whitespace-nowrap border-r border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200"
-                    style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left' }}
+                    className="py-2.5 px-2 text-xs font-bold text-gray-700 border-r border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200"
+                    style={{ width: col.width ? `${col.width}px` : 'auto', textAlign: col.align ?? 'left' }}
                   >
-                    {col.label}
-                    <span className="ml-1 inline-block opacity-50" style={{ fontSize: 8 }}>
-                      {sortKey === col.key ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
-                    </span>
+                    <div className={`flex items-center gap-1 ${col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : 'justify-start'}`}>
+                      <span>{col.label}</span>
+                      <span className="inline-flex items-center text-gray-400">
+                        {sortKey === col.key ? (
+                          sortDir === 'asc' ? (
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                          ) : (
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                          )
+                        ) : (
+                          <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-50" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
+                        )}
+                      </span>
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -651,8 +751,8 @@ export default function ReportTable({
                       {columns.map((col) => (
                         <td
                           key={col.key}
-                          className="py-2.5 px-2 text-xs text-gray-800 align-top border-r border-gray-100 last:border-r-0"
-                          style={{ minWidth: col.width ?? 80, textAlign: col.align ?? 'left', wordBreak: 'break-word' }}
+                          className="py-2.5 px-2 text-xs text-gray-800 align-top border-r border-gray-100 last:border-r-0 break-words"
+                          style={{ textAlign: col.align ?? 'left' }}
                         >
                           {col.render ? col.render(row) : String(row[col.key] ?? '-')}
                         </td>
@@ -701,6 +801,7 @@ export default function ReportTable({
           </div>
         )}
       </div>
-    </div>
+    </LiquidPullToRefresh>
   );
 }
+

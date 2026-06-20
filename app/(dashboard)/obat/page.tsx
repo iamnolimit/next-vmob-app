@@ -8,6 +8,7 @@ import RankedList from '@/components/RankedList';
 import PageHeader from '@/components/PageHeader';
 import TabSelector from '@/components/TabSelector';
 import { useFetch } from '@/lib/useFetch';
+import { DashboardSkeleton } from '@/components/SkeletonLoader';
 import { obatPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
 import { normalizeApiData, calculateSafePercentageChange, safeParseInt, generateSafeChartData } from '@/lib/utils';
@@ -43,12 +44,7 @@ export default function ObatPage() {
     isMutation: false,
   });
 
-  useEffect(() => {
-    if (user) {
-      refetch(obatPageConfig.getApiParams(user, activeTab));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, user]);
+  // Fetch is driven by useFetch reacting to params changes (activeTab → params → paramsKey)
 
   const normalizedData = normalizeApiData(apiData, 'medicine');
   const { dataNilaiObat, dataObatExpired, dataObatStokHabis, dataObatStokHilang } = normalizedData || {};
@@ -127,11 +123,9 @@ export default function ObatPage() {
 
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          </div>
+          <DashboardSkeleton cardCount={4} />
         ) : (
-          <div className="pb-4">
+          <div className="pb-4 animate-content-in">
             <div className="mt-4">
               <ChartCarousel data={chartData} items={obatChartItems} title={dateLabels[activeTab]} />
             </div>

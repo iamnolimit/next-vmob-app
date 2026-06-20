@@ -65,7 +65,7 @@ export default function LapPendapatanPetugasMedisPage() {
 
   return (
     <ReportTable
-      title="Laporan Pendapatan Petugas Medis"
+      title="Pendapatan Petugas Medis"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'dokter', label: 'Dokter', width: 150 },

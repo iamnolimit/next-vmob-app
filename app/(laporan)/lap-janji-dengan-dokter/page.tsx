@@ -55,7 +55,7 @@ export default function LapJanjiDenganDokterPage() {
 
   return (
     <ReportTable
-      title="Laporan Janji Dengan Dokter"
+      title="Janji Dengan Dokter"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'tanggal', label: 'Tanggal', width: 150 },

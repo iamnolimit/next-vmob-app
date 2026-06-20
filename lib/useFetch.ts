@@ -31,11 +31,15 @@ export function useFetch<T = any>({ endpoint, apiVersion = 'api7', params = {}, 
     }
   };
 
+  // Stable JSON key so effect re-runs only when params actually change
+  const paramsKey = JSON.stringify(params);
+
   useEffect(() => {
     if (!isMutation && user) {
       fetchData();
     }
-  }, [user, isMutation]); // Re-fetch if user changes, but usually user is stable
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isMutation, paramsKey]); // Re-fetch when user or params change
 
   const mutate = async (mutationParams: Record<string, any>) => {
     return fetchData(mutationParams);

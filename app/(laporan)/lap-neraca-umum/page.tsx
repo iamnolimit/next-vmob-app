@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+import { ListSkeleton } from '@/components/SkeletonLoader';
 import SelectInput from '@/components/SelectInput';
 import DatePickerInput from '@/components/DatePickerInput';
 import { formatNumber, cabangOptions } from '@/lib/dummyData';
@@ -106,26 +108,48 @@ export default function LapNeracaUmumPage() {
     },
   ];
 
-  const subtitle = `Per ${fmtDate(appliedDate)} · ${cabangOptions.find(c => c.value === appliedCabang)?.label}`;
+  const handleRefresh = useCallback(() => {
+    const formatDate = (isoDate: string) => {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      return `${d} ${months[Number(m) - 1]} ${y}`;
+    };
+    const [y, m] = appliedDate.split('-');
+    return refetch({
+      bulan: `${months[Number(m) - 1]} ${y}`,
+      tahun: y,
+      tglAwal: formatDate(appliedDate),
+      tglAkhir: formatDate(appliedDate),
+    });
+  }, [appliedDate, refetch]);
 
-  return (
-    <div className="flex flex-col h-full">
-      <LaporanHeader title="Laporan Neraca Umum" onExport={() => setShowExportMenu(true)} />
-
-      {/* Filter */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0 mt-4">
+  const filterNode = (
+    <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
         <button
-          className="w-full flex items-center justify-between px-4 py-2.5 active:bg-gray-50"
+          className="w-full flex items-center justify-between px-4 py-3 active:bg-blue-50/50 transition-colors"
           onClick={() => setShowFilter(!showFilter)}
         >
-          <div className="flex items-center gap-2">
-            <span className="text-blue-600">🔽</span>
-            <span className="text-sm font-semibold text-blue-600">Filter Periode</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#035afc]/10 flex items-center justify-center flex-shrink-0">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+                <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none" />
+                <circle cx="15" cy="12" r="2" fill="currentColor" stroke="none" />
+                <circle cx="9" cy="18" r="2" fill="currentColor" stroke="none" />
+              </svg>
+            </div>
+            <span className="text-sm font-semibold text-[#035afc]">Filter Periode</span>
           </div>
-          <span
-            className="text-blue-600 text-lg leading-none inline-block transition-transform duration-200"
+          <svg
+            viewBox="0 0 24 24"
+            className="w-4 h-4 text-[#035afc] transition-transform duration-200 flex-shrink-0"
             style={{ transform: showFilter ? 'rotate(180deg)' : 'none' }}
-          >▾</span>
+            fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </button>
 
         <div
@@ -161,66 +185,17 @@ export default function LapNeracaUmumPage() {
             <span className="text-[11px] bg-green-50 text-green-700 font-medium px-2.5 py-1 rounded-full">
               🏥 {cabangOptions.find(c => c.value === appliedCabang)?.label}
             </span>
-            <button
-              onClick={() => setShowExportMenu(true)}
-              className="ml-auto flex items-center gap-1.5 bg-blue-600 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full active:bg-blue-700"
-            >
-              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3v12M7 8l5-5 5 5M5 20h14" />
-              </svg>
-              Export
-            </button>
-
-            {showExportMenu && (
-              <div
-                className="fixed inset-0 z-50 flex flex-col justify-end"
-                style={{ background: 'rgba(0,0,0,0.4)' }}
-                onClick={() => setShowExportMenu(false)}
-              >
-                <div className="bg-white rounded-t-3xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex justify-center pt-3 pb-1">
-                    <div className="w-10 h-1 rounded-full bg-gray-300" />
-                  </div>
-                  <div className="flex items-center justify-between px-5 py-2 border-b border-gray-100">
-                    <button onClick={() => setShowExportMenu(false)} className="text-sm font-medium text-gray-500 py-1">Batal</button>
-                    <span className="text-sm font-bold text-gray-900">Export Laporan</span>
-                    <div className="w-12" />
-                  </div>
-                  <div className="pb-8">
-                    <button
-                      onClick={async () => { await exportSectionedToExcel('laporan_neraca_umum', 'Laporan Neraca Umum', sections, namaKlinik); setShowExportMenu(false); }}
-                      className="w-full flex items-center gap-4 px-5 py-4 text-left border-b border-gray-100 active:bg-gray-50"
-                    >
-                      <div className="w-10 h-10 rounded-2xl bg-green-50 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">📊</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">Export Excel</p>
-                        <p className="text-xs text-gray-400 mt-0.5">Format .xlsx · Microsoft Excel</p>
-                      </div>
-                    </button>
-                    <button
-                      onClick={async () => { await exportSectionedToPdf('laporan_neraca_umum', 'Laporan Neraca Umum', sections, namaKlinik, subtitle); setShowExportMenu(false); }}
-                      className="w-full flex items-center gap-4 px-5 py-4 text-left active:bg-gray-50"
-                    >
-                      <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">📄</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">Export PDF</p>
-                        <p className="text-xs text-gray-400 mt-0.5">Format .pdf · Adobe PDF</p>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>
+  );
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 pb-8 bg-gray-50">
+  const headerNode = <LaporanHeader title="Neraca Umum" />;
+
+  return (
+    <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
+      {filterNode}
+      <div className="px-3 py-4 pb-8 bg-gray-50">
         <div className="flex gap-2">
           {/* AKTIVA */}
           <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow">
@@ -266,6 +241,6 @@ export default function LapNeracaUmumPage() {
           <span className="text-sm font-bold text-gray-900">{fmt(totalAktiva)}</span>
         </div>
       </div>
-    </div>
+    </LiquidPullToRefresh>
   );
 }

@@ -1,41 +1,37 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 
-// We import the CSS in globals.css override below
 import 'react-datepicker/dist/react-datepicker.css';
 
-interface DatePickerInputProps {
+interface MonthPickerInputProps {
   label: string;
-  value: string; // ISO date string YYYY-MM-DD
+  value: string; // ISO month string YYYY-MM
   onChange: (iso: string) => void;
-  minDate?: string;
-  maxDate?: string;
 }
 
-export default function DatePickerInput({
+export default function MonthPickerInput({
   label,
   value,
   onChange,
-  minDate,
-  maxDate,
-}: DatePickerInputProps) {
+}: MonthPickerInputProps) {
   const [open, setOpen] = useState(false);
-  const selected = value ? parseISO(value) : new Date();
+  // parseISO needs a full date, so we append -01
+  const selected = value ? parseISO(`${value}-01`) : new Date();
 
-  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   const displayDate = value
     ? (() => {
-        const [y, m, d] = value.split('-');
-        return `${d} ${months[Number(m) - 1]} ${y}`;
+        const [y, m] = value.split('-');
+        return `${months[Number(m) - 1]} ${y}`;
       })()
-    : 'Pilih tanggal';
+    : 'Pilih bulan';
 
   const handleChange = (date: Date | null) => {
     if (date) {
-      onChange(format(date, 'yyyy-MM-dd'));
+      onChange(format(date, 'yyyy-MM'));
     }
     setOpen(false);
   };
@@ -84,10 +80,7 @@ export default function DatePickerInput({
               </button>
               <span className="text-sm font-bold text-gray-900">{label}</span>
               <button
-                onClick={() => {
-                  // apply current selection (already handled by handleChange)
-                  setOpen(false);
-                }}
+                onClick={() => setOpen(false)}
                 className="text-sm font-semibold text-blue-600 py-1"
               >
                 Selesai
@@ -101,9 +94,10 @@ export default function DatePickerInput({
                 onChange={handleChange}
                 inline
                 locale={id}
-                minDate={minDate ? parseISO(minDate) : undefined}
-                maxDate={maxDate ? parseISO(maxDate) : undefined}
+                showMonthYearPicker
+                dateFormat="MM/yyyy"
                 calendarClassName="vmob-cal"
+                renderCustomHeader={() => <div style={{ display: 'none' }} />}
               />
             </div>
           </div>

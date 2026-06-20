@@ -60,7 +60,7 @@ export default function LapPembelianObatPage() {
 
   return (
     <ReportTable
-      title="Laporan Pembelian Obat"
+      title="Pembelian Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'tanggal', label: 'Tanggal', width: 110 },

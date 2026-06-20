@@ -54,7 +54,7 @@ export default function SelectInput({
       {/* Bottom sheet overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-50 flex flex-col justify-end mb-0"
+          className="fixed inset-0 z-[100] flex flex-col justify-end mb-0"
           style={{ background: 'rgba(0,0,0,0.4)' }}
           onClick={() => setOpen(false)}
         >

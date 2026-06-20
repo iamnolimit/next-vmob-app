@@ -6,6 +6,8 @@ import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
 import TabSelector from '@/components/TabSelector';
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+import { DashboardSkeleton } from '@/components/SkeletonLoader';
 import { useFetch } from '@/lib/useFetch';
 import { dashboardPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
@@ -36,12 +38,7 @@ export default function DashboardPage() {
     isMutation: false,
   });
 
-  useEffect(() => {
-    if (user) {
-      refetch(dashboardPageConfig.getApiParams(user, activeTab));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, user]);
+  // Fetch is driven by useFetch reacting to params changes (activeTab → params → paramsKey)
 
   const normalizedData = normalizeApiData(apiData, 'dashboard');
   
@@ -120,27 +117,40 @@ export default function DashboardPage() {
     '3': 'Tahun Ini',
   };
 
-  return (
-    <>
-      <PageHeader
-        title="Dashboard"
-        subtitle={`Data ${dateLabels[activeTab]}`}
-        subnavbar={
-          <TabSelector 
-            tabs={tabs} 
-            activeTab={activeTab} 
-            onChange={setActiveTab} 
-          />
-        }
-      />
+  const handleRefresh = async () => {
+    if (user) {
+      await refetch(dashboardPageConfig.getApiParams(user, activeTab));
+    }
+  };
 
-      <div className="flex-1 overflow-y-auto pb-6">
+  const headerNode = (
+    <PageHeader
+      title="Dashboard"
+      subtitle={`Data ${dateLabels[activeTab]}`}
+      subnavbar={
+        <TabSelector
+          tabs={tabs}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        />
+      }
+    />
+  );
+
+  return (
+    <LiquidPullToRefresh
+      header={headerNode}
+      onRefresh={handleRefresh}
+      threshold={90}
+      maxPull={160}
+      color="#035afc"
+      className="flex-1"
+    >
+      <div className="pb-6">
         {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          </div>
+          <DashboardSkeleton cardCount={5} />
         ) : (
-          <div className="pb-4">
+          <div className="pb-4 animate-content-in">
             <div className="mt-4">
               <ChartCarousel data={chartData} items={dashboardChartItems} title={dateLabels[activeTab]} />
             </div>
@@ -162,6 +172,6 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-    </>
+    </LiquidPullToRefresh>
   );
 }

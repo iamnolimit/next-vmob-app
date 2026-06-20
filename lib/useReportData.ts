@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { fetchApi } from './api';
 import { useAuth } from './authContext';
 
@@ -82,6 +82,21 @@ export function useReportData({
   const refetch = useCallback((extraParams: Record<string, any> = {}) => {
     return fetchPage(extraParams, false);
   }, [fetchPage]);
+
+  // Stable ref so callers can use refetch in useEffect without it as a dependency
+  const refetchRef = useRef(refetch);
+  useEffect(() => { refetchRef.current = refetch; }, [refetch]);
+
+  // Auto-fetch once when user becomes available (for pages that don't call refetch manually)
+  const didAutoFetchRef = useRef(false);
+  useEffect(() => {
+    // We remove the auto-fetch here because ReportTable already handles the initial fetch
+    // with the correct date filters. If we auto-fetch here, it sends a request without
+    // the date filters (tanggalawal/tanggalakhir), which causes the API to return 500.
+    // if (didAutoFetchRef.current || !user) return;
+    // didAutoFetchRef.current = true;
+    // refetchRef.current();
+  }, [user]);
 
   // loadMore: append next page using the same filter params as the last refetch
   const loadMore = useCallback(() => {

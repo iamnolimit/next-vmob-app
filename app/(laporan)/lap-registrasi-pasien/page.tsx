@@ -57,13 +57,13 @@ export default function LapRegistrasiPasienPage() {
 
   return (
     <ReportTable
-      title="Laporan Registrasi Pasien"
+      title="Registrasi Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 100 },
+        { key: 'tanggal', label: 'Tanggal', width: 80 },
         { key: 'noRM', label: 'No. RM', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 140 },
-        { key: 'alamat', label: 'Alamat', width: 200 },
+        { key: 'pasien', label: 'Pasien', width: 120 },
+        { key: 'alamat', label: 'Alamat' },
       ]}
       data={data}
       loading={loading}

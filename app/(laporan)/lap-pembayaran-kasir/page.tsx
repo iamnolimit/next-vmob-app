@@ -65,7 +65,7 @@ export default function LapPembayaranKasirPage() {
 
   return (
     <ReportTable
-      title="Laporan Pembayaran Kasir"
+      title="Pembayaran Kasir"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'tanggal', label: 'Tanggal', width: 100 },

@@ -18,9 +18,7 @@ interface ChartCarouselProps {
 const BAR_MAX_HEIGHT = 88; // px
 
 function formatShort(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000)     return `${(n / 1_000).toFixed(0)}K`;
-  return String(n);
+  return `Rp ${new Intl.NumberFormat('id-ID').format(n)}`;
 }
 
 export default function ChartCarousel({ data, items, title, dataByChart }: ChartCarouselProps) {

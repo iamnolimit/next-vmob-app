@@ -6,6 +6,17 @@
 }
 .animate-fadeIn { animation: fadeIn 0.18s ease-out; }
 
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-content-in { animation: contentFadeIn 0.3s ease-out; }
+
 /* ─── Pertumbuhan Pasien micro animations ─── */
 
 @keyframes growthCardIn {
@@ -291,24 +302,48 @@ html, body {
   color: #1c1c1e;
   margin-bottom: 8px;
 }
+.vmob-datepicker .react-datepicker__month-container {
+  width: 100%;
+}
+.vmob-datepicker .react-datepicker__month {
+  margin: 0;
+  padding: 0;
+}
+.vmob-datepicker .react-datepicker__day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  width: 100%;
+}
+.vmob-datepicker .react-datepicker__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+}
 .vmob-datepicker .react-datepicker__day-name {
   color: #8e8e93;
   font-size: 12px;
   font-weight: 600;
-  width: 2.5rem;
+  width: 100%;
   line-height: 2.5rem;
-  margin: 0 1px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .vmob-datepicker .react-datepicker__day {
   width: 2.5rem;
   height: 2.5rem;
   line-height: 2.5rem;
-  margin: 2px 1px;
+  margin: 2px auto;
   border-radius: 50%;
   font-size: 14px;
   font-weight: 500;
   color: #1c1c1e;
   transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .vmob-datepicker .react-datepicker__day:hover {
   background: #e5f0ff;
@@ -360,4 +395,68 @@ html, body {
 }
 .vmob-datepicker .react-datepicker__triangle {
   display: none;
+}
+
+/* ─── Month & Year Picker Overrides ───
+   react-datepicker membungkus konten gridnya dengan div tambahan
+   yang tidak terlihat di markup biasa, mis. .react-datepicker__year-wrapper
+   dan (tergantung versi) .react-datepicker__month-wrapper per baris.
+   Daripada menebak persis pengelompokan bulannya, .month-wrapper di-set
+   "display: contents" — ini membubarkan div tersebut dari layout sehingga
+   anak-anaknya (.month-text) langsung jadi flex item dari .month. Hasilnya
+   tetap benar berapa pun jumlah bulan per wrapper di versi library kamu. */
+
+.vmob-datepicker .react-datepicker__month,
+.vmob-datepicker .react-datepicker__year {
+  margin: 0;
+  padding: 0;
+}
+
+/* Year grid: wrapper bawaan react-datepicker punya max-width:180px,
+   harus di-override supaya tidak mepet ke kiri */
+.vmob-datepicker .react-datepicker__year-wrapper {
+  max-width: none;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Month grid: bubarkan wrapper baris (jika ada) lalu flex di .month */
+.vmob-datepicker .react-datepicker__month-wrapper {
+  display: contents;
+}
+
+.vmob-datepicker .react-datepicker__month {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.vmob-datepicker .react-datepicker__month .react-datepicker__month-text,
+.vmob-datepicker .react-datepicker__year-wrapper .react-datepicker__year-text {
+  width: 32%;
+  padding: 12px 0;
+  margin: 6px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1c1c1e;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vmob-datepicker .react-datepicker__month-text:hover,
+.vmob-datepicker .react-datepicker__year-text:hover {
+  background: #e5f0ff;
+  color: #1e3a8a;
+}
+.vmob-datepicker .react-datepicker__month-text--selected,
+.vmob-datepicker .react-datepicker__month-text--keyboard-selected,
+.vmob-datepicker .react-datepicker__year-text--selected,
+.vmob-datepicker .react-datepicker__year-text--keyboard-selected {
+  background: #2563eb !important;
+  color: #fff !important;
+  font-weight: 700;
 }

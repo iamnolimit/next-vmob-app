@@ -11,9 +11,7 @@ export default function ChartBar({ data, title }: ChartBarProps) {
   const max = Math.max(...data.map((d) => d.nilai));
 
   const formatShort = (n: number) => {
-    if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
-    if (n >= 1000) return `${(n / 1000).toFixed(0)}K`;
-    return String(n);
+    return `Rp ${new Intl.NumberFormat('id-ID').format(n)}`;
   };
 
   return (

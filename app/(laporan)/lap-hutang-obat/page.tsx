@@ -49,7 +49,7 @@ export default function LapHutangObatPage() {
 
   return (
     <ReportTable
-      title="Laporan Hutang Obat"
+      title="Hutang Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'noFaktur', label: 'No Faktur', width: 150 },

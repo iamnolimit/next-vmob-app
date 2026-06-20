@@ -1,6 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+import { ListSkeleton } from '@/components/SkeletonLoader';
 import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
 
@@ -27,10 +29,6 @@ export default function LapPengaturanBankPage() {
     apiNormalizer,
   });
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
   const enkrip = (norek: string) => {
     if (!norek) return 'Tidak ada';
     const len = norek.length;
@@ -40,11 +38,11 @@ export default function LapPengaturanBankPage() {
   const setDefault = (id: number) => { setAlert('Rekening berhasil dijadikan default. (Dummy)'); };
   const deleteBank = (id: number) => { setAlert('Rekening berhasil dihapus. (Dummy)'); };
 
-  return (
-    <div className="flex flex-col h-full">
-      <LaporanHeader title="Pengaturan Bank" />
+  const headerNode = <LaporanHeader title="Pengaturan Bank" />;
 
-      <div className="flex-1 overflow-y-auto bg-gray-50 pt-4">
+  return (
+    <LiquidPullToRefresh header={headerNode} onRefresh={refetch} className="flex-1">
+      <div className="bg-gray-50 pt-4">
         <div className="px-4 pt-3 flex justify-end">
           <button onClick={() => setShowForm(true)} className="text-sm font-semibold text-blue-600 bg-blue-50 px-4 py-2 rounded-xl">
             + Tambah Rekening
@@ -74,36 +72,40 @@ export default function LapPengaturanBankPage() {
         )}
 
         <div className="px-4 py-3 space-y-3">
-          {loading && <p className="text-center text-sm text-gray-500">Memuat data...</p>}
-          {error && <p className="text-center text-sm text-red-500">{error}</p>}
-          {!loading && !error && banks.length === 0 && (
+          {loading ? (
+            <ListSkeleton rows={4} />
+          ) : error ? (
+            <p className="text-center text-sm text-red-500">{error}</p>
+          ) : banks.length === 0 ? (
             <p className="text-center text-sm text-gray-500">Belum ada rekening bank.</p>
-          )}
-
-          {!loading && !error && banks.map((bank: any) => (
-            <div key={bank.id} className="bg-white rounded-2xl p-4 ios-shadow">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-bold text-gray-900">{bank.bank_nama}</span>
-                    {bank.is_default === '1' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">DEFAULT</span>}
+          ) : (
+            <div className="space-y-3 animate-content-in">
+              {banks.map((bank: any) => (
+                <div key={bank.id} className="bg-white rounded-2xl p-4 ios-shadow">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-bold text-gray-900">{bank.bank_nama}</span>
+                        {bank.is_default === '1' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">DEFAULT</span>}
+                      </div>
+                      <p className="text-sm font-mono text-gray-700">{enkrip(bank.bank_norek)}</p>
+                      <p className="text-xs text-gray-500">{bank.bank_atasnama}</p>
+                    </div>
+                    <span className="text-2xl">🏦</span>
                   </div>
-                  <p className="text-sm font-mono text-gray-700">{enkrip(bank.bank_norek)}</p>
-                  <p className="text-xs text-gray-500">{bank.bank_atasnama}</p>
+                  <div className="flex gap-2">
+                    {bank.is_default !== '1' && (
+                      <button onClick={() => setDefault(bank.id)} className="flex-1 bg-blue-50 text-blue-600 rounded-xl py-1.5 text-xs font-semibold">Set Default</button>
+                    )}
+                    <button onClick={() => setAlert('Form edit dibuka. (Dummy)')} className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-1.5 text-xs font-semibold">Edit</button>
+                    <button onClick={() => deleteBank(bank.id)} className="flex-1 bg-red-50 text-red-600 rounded-xl py-1.5 text-xs font-semibold">Hapus</button>
+                  </div>
                 </div>
-                <span className="text-2xl">🏦</span>
-              </div>
-              <div className="flex gap-2">
-                {bank.is_default !== '1' && (
-                  <button onClick={() => setDefault(bank.id)} className="flex-1 bg-blue-50 text-blue-600 rounded-xl py-1.5 text-xs font-semibold">Set Default</button>
-                )}
-                <button onClick={() => setAlert('Form edit dibuka. (Dummy)')} className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-1.5 text-xs font-semibold">Edit</button>
-                <button onClick={() => deleteBank(bank.id)} className="flex-1 bg-red-50 text-red-600 rounded-xl py-1.5 text-xs font-semibold">Hapus</button>
-              </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       </div>
-    </div>
+    </LiquidPullToRefresh>
   );
 }

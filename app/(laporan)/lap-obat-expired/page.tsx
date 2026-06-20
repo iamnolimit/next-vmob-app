@@ -96,7 +96,7 @@ export default function LapObatExpiredPage() {
 
   return (
     <ReportTable
-      title="Laporan Obat Expired"
+      title="Obat Expired"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'gudang', label: 'Gudang', width: 120 },

@@ -71,7 +71,7 @@ export default function LapObatTerlarisPage() {
 
   return (
     <ReportTable
-      title="Laporan Obat Terlaris"
+      title="Obat Terlaris"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'namaObat', label: 'Nama Obat', width: 180 },

@@ -71,7 +71,7 @@ export default function LapPergantianShiftPage() {
 
   return (
     <ReportTable
-      title="Laporan Pergantian Shift"
+      title="Pergantian Shift"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'bukaShift', label: 'Buka Shift', width: 160 },

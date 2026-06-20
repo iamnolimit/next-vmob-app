@@ -56,40 +56,23 @@ export default function LaporanHeader({ title, subtitle, onExport }: LaporanHead
   const { openSidebar } = useSidebar();
   const { user } = useAuth();
 
-  const resolvedSubtitle =
-    subtitle ?? (user ? `Halo, ${user.nama.split(' ')[0]} 👋` : undefined);
-
   return (
-    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] shadow-md pb-2">
+    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] pb-2">
       <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
         <div className="flex-shrink-0 self-start">
           <BackBtn onClick={() => router.push('/dashboard')} />
         </div>
 
         <div className="flex-1 flex flex-col justify-center min-w-0">
-          {resolvedSubtitle && (
-            <p className="text-[14px] font-medium text-blue-100 mb-0.5">
-              {resolvedSubtitle}
-            </p>
-          )}
+          <p className="text-[14px] font-medium text-blue-100 mb-0.5">
+            Laporan
+          </p>
           <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">
             {title}
           </h1>
         </div>
 
         <div className="flex items-center justify-end gap-1">
-          {onExport && (
-            <button
-              onClick={onExport}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform text-gray-700"
-              title="Export"
-            >
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3v12M7 8l5-5 5 5" />
-                <path d="M5 20h14" />
-              </svg>
-            </button>
-          )}
           <HamburgerBtn onClick={openSidebar} />
         </div>
       </div>

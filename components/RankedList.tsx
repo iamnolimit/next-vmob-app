@@ -1,5 +1,7 @@
 'use client';
 import { formatRupiah } from '@/lib/dummyData';
+import { useRouter } from 'next/navigation';
+import { getStatsRoute } from '@/lib/routeConnector';
 
 interface RankedItem {
   rank: number;
@@ -22,6 +24,16 @@ const rankColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
 const rankBg     = ['bg-yellow-50', 'bg-gray-50', 'bg-orange-50'];
 
 export default function RankedList({ title, icon, color = '#1d4ed8', items, type = 'obat' }: RankedListProps) {
+  const router = useRouter();
+  const route = getStatsRoute(title);
+  const isClickable = !!route;
+
+  const handleSeeAll = () => {
+    if (isClickable && route) {
+      router.push(route);
+    }
+  };
+
   return (
     <div 
       className="rounded-[20px] mx-4 mb-4 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.1)] border border-white/40 overflow-hidden"
@@ -37,9 +49,14 @@ export default function RankedList({ title, icon, color = '#1d4ed8', items, type
           )}
           <h3 className="text-[15px] font-bold text-gray-900">{title}</h3>
         </div>
-        <button className="text-[12px] font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full active:scale-95 transition-transform">
-          Semua
-        </button>
+        {isClickable && (
+          <button 
+            onClick={handleSeeAll}
+            className="text-[12px] font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full active:scale-95 transition-transform"
+          >
+            Semua
+          </button>
+        )}
       </div>
 
       {/* Items */}

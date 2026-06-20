@@ -1,5 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { getStatsRoute } from '@/lib/routeConnector';
+import { ChevronRight } from 'lucide-react';
+
 interface StatCardProps {
   label: string;
   value: string;
@@ -10,14 +14,25 @@ interface StatCardProps {
 }
 
 export default function StatCard({ label, value, change, icon, color = '#1d4ed8', invoiceCount }: StatCardProps) {
+  const router = useRouter();
   const isPositive   = change !== undefined && change >= 0;
   const changeColor  = change === undefined ? '' : isPositive ? '#10b981' : '#ef4444';
   const changeBg     = change === undefined ? '' : isPositive ? '#d1fae5' : '#fee2e2';
   const changeSymbol = change === undefined ? '' : isPositive ? '↑' : '↓';
 
+  const route = getStatsRoute(label);
+  const isClickable = !!route;
+
+  const handleClick = () => {
+    if (isClickable && route) {
+      router.push(route);
+    }
+  };
+
   return (
     <div 
-      className="rounded-[20px] p-4 mx-4 mb-3 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.1)] border border-white/40"
+      onClick={handleClick}
+      className={`rounded-[20px] p-4 mx-4 mb-3 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.1)] border border-white/40 relative overflow-hidden ${isClickable ? 'cursor-pointer hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.15)] transition-all active:scale-[0.98]' : ''}`}
       style={{ background: `linear-gradient(145deg, #ffffff, ${color}08)` }}
     >
       <div className="flex justify-between items-center gap-3">
@@ -50,6 +65,12 @@ export default function StatCard({ label, value, change, icon, color = '#1d4ed8'
           )}
         </div>
       </div>
+
+      {isClickable && (
+        <div className="absolute right-0 top-0 bottom-0 w-8 flex items-center justify-center" style={{ backgroundColor: `${color}10` }}>
+          <ChevronRight size={18} style={{ color: color }} />
+        </div>
+      )}
     </div>
   );
 }

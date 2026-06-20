@@ -58,7 +58,7 @@ export default function LapPenjualanObatPage() {
 
   return (
     <ReportTable
-      title="Laporan Penjualan Obat"
+      title="Penjualan Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'noFaktur', label: 'No Faktur', width: 130 },

@@ -63,7 +63,7 @@ export default function LapStokOpnamePage() {
 
   return (
     <ReportTable
-      title="Laporan Stok Opname"
+      title="Stok Opname"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'gudang', label: 'Gudang', width: 120 },

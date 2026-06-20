@@ -57,7 +57,7 @@ export default function LapObatStokHabisPage() {
 
   return (
     <ReportTable
-      title="Laporan Obat Stok Habis"
+      title="Obat Stok Habis"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
         { key: 'gudang', label: 'Gudang', width: 120 },

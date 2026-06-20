@@ -380,26 +380,9 @@ export const formatSafeCurrency = (amount: any) => {
  */
 export const formatSafeChartValue = (value: any) => {
   const numValue = safeParseNumber(value, 0);
-
-  if (numValue >= 1000000) {
-    const millions = numValue / 1000000;
-    const formatted = millions.toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    return `Rp ${formatted}M`;
-  }
-  if (numValue >= 1000) {
-    const thousands = numValue / 1000;
-    const formatted = thousands.toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    return `Rp ${formatted}K`;
-  }
   return `Rp ${numValue.toLocaleString('id-ID', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   })}`;
 };
 

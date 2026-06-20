@@ -84,7 +84,7 @@ export default function PageHeader({
     subtitle ?? (user ? `Halo, ${user.nama.split(' ')[0]} 👋` : undefined);
 
   return (
-    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] shadow-md pb-2">
+    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] pb-2">
       {/* Clean, modern header without the heavy background */}
       <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
         {/* Left slot: Menu or Back button */}

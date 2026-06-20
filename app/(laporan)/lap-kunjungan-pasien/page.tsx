@@ -29,7 +29,7 @@ export default function LapKunjunganPasienPage() {
   }, []);
 
   const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
-    apiEndpoint: 'kunjungan/index',
+    apiEndpoint: 'laporan-transaksi-kunjungan/index',
     apiVersion: 'api7',
     apiParams: {
       filter: '',
@@ -51,6 +51,8 @@ export default function LapKunjunganPasienPage() {
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
+      a: filters.cabang,
+      reg: filters.cabangReg,
     });
   }, [refetch]);
 
@@ -60,13 +62,13 @@ export default function LapKunjunganPasienPage() {
 
   return (
     <ReportTable
-      title="Laporan Kunjungan Pasien"
+      title="Kunjungan Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 100 },
-        { key: 'nama', label: 'Nama', width: 140 },
-        { key: 'poli', label: 'Poli', width: 110 },
-        { key: 'dokter', label: 'Dokter', width: 140 },
+        { key: 'tanggal', label: 'Tanggal', width: 80 },
+        { key: 'nama', label: 'Nama', width: 120 },
+        { key: 'poli', label: 'Poli', width: 100 },
+        { key: 'dokter', label: 'Dokter' },
       ]}
       data={data}
       loading={loading}
