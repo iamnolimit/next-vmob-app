@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { customerChartItems } from '@/lib/dummyData';
-import { UserPlus, Users } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
@@ -21,9 +21,9 @@ const tabs = [
 ];
 
 const dateLabels: Record<string, string> = {
-  threeMonth: '3 Bulan Terakhir',
-  sixMonth: '6 Bulan Terakhir',
-  oneYear:  '1 Tahun Terakhir',
+  threeMonth: 'Apr 2026 - Jun 2026',
+  sixMonth: 'Jan 2026 - Jun 2026',
+  oneYear:  'Jul 2025 - Jun 2026',
 };
 
 export default function CustomerPage() {
@@ -49,15 +49,15 @@ export default function CustomerPage() {
     {
       label: 'Pasien Baru',
       value: `${datapasienbaru.count || 0} Orang`,
-      icon: <UserPlus size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:person-add-outline" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: datapasienbaru.peningkatan || 0,
     },
     {
       label: 'Kunjungan Pasien',
       value: `${datakunjungan.count || 0} Orang`,
-      icon: <Users size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:local-hospital" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: datakunjungan.peningkatan || 0,
     },
   ];
@@ -71,8 +71,8 @@ export default function CustomerPage() {
       }}
       header={
         <PageHeader
-          title="Customer"
-          subtitle={`Data customer ${dateLabels[activeTab]}`}
+          title="Dashboard Customer"
+          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 

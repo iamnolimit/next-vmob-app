@@ -6,7 +6,7 @@ import { User, Hospital, Tag } from 'lucide-react';
 
 const groupColors: Record<string, string> = {
   Admin: 'bg-purple-500',
-  Dokter: 'bg-[#4f6dfa]',
+  Dokter: 'bg-primary-accent',
   Kasir: 'bg-green-500',
   Apoteker: 'bg-orange-500',
 };
@@ -55,7 +55,7 @@ export default function ProfilPage() {
         </button>
         <div className="flex flex-col items-center relative mt-4">
           <div
-            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-4 overflow-hidden border-4 border-white ${groupColors[roleName] ?? 'bg-[#4f6dfa]'}`}
+            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-4 overflow-hidden border-4 border-white ${groupColors[roleName] ?? 'bg-primary-accent'}`}
           >
             {user.avatar.startsWith('http') ? (
               <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
@@ -64,7 +64,7 @@ export default function ProfilPage() {
             )}
           </div>
           <h1 className="text-xl font-extrabold text-gray-900">{user.nama}</h1>
-          <span className="mt-2 inline-block text-xs font-semibold bg-[#4f6dfa]/10 text-[#4f6dfa] px-3 py-1 rounded-full">
+          <span className="mt-2 inline-block text-xs font-semibold bg-primary-accent/10 text-primary-accent px-3 py-1 rounded-full">
             {roleName}
           </span>
         </div>

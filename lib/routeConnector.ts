@@ -2,7 +2,7 @@ export const STATS_TO_ROUTE_MAP: Record<string, string | null> = {
   // Dashboard Stats -> Laporan
   'Penjualan Kasir': '/lap-penjualan-obat',
   'Penjualan Online': '/lap-penjualan-obat',
-  'Pemeriksaan Klinik': '/lap-pembayaran-kasir',
+  'Pemeriksaan Klinik': null,
   'Pendapatan HomeCare': null,
   'Total Pendapatan': null,
 

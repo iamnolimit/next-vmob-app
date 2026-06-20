@@ -75,14 +75,14 @@ const laporanMenus = [
 
 const avatarColors: Record<string, string> = {
   Admin:    'bg-purple-500',
-  Dokter:   'bg-[#4f6dfa]',
+  Dokter:   'bg-primary-accent',
   Kasir:    'bg-green-500',
   Apoteker: 'bg-orange-500',
 };
 
 const groupBadgeColors: Record<string, string> = {
   Admin:    'bg-purple-100 text-purple-700',
-  Dokter:   'bg-[#4f6dfa]/10 text-[#4f6dfa]',
+  Dokter:   'bg-primary-accent/10 text-primary-accent',
   Kasir:    'bg-green-100 text-green-700',
   Apoteker: 'bg-orange-100 text-orange-700',
 };
@@ -118,7 +118,7 @@ function MenuItem({
       onClick={onClick}
       className={`w-[calc(100%-1rem)] mx-2 flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-all duration-200 ${
         active 
-          ? 'bg-[#4f6dfa]/10 text-[#4f6dfa] shadow-sm' 
+          ? 'bg-primary-accent/10 text-primary-accent shadow-sm' 
           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
       }`}
     >
@@ -167,14 +167,14 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
       {/* Sidebar Panel */}
       <div 
-        className={`fixed top-4 bottom-4 left-4 w-72 bg-white/95 backdrop-blur-xl z-[200] transform transition-transform duration-300 ease-in-out shadow-[0_8px_40px_rgb(0,0,0,0.12)] rounded-3xl overflow-hidden border border-white/50 ${
+        className={`fixed top-4 bottom-4 left-4 right-4 bg-white/95 backdrop-blur-xl z-[200] transform transition-transform duration-300 ease-in-out shadow-[0_8px_40px_rgb(0,0,0,0.12)] rounded-3xl overflow-hidden border border-white/50 ${
           open ? 'translate-x-0' : '-translate-x-[120%]'
         }`}
       >
         {/* Ambient Background Effects */}
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-orange-100/40 via-blue-50/20 to-transparent pointer-events-none" />
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-32 -left-24 w-48 h-48 bg-[#4f6dfa]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-32 -left-24 w-48 h-48 bg-primary-accent/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col h-full relative z-10">
 
@@ -193,7 +193,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {/* ── Profile ── */}
           {user && (
             <div className="px-4 pb-6 flex-shrink-0 flex flex-col items-center text-center border-b border-gray-100/50">
-              <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 overflow-hidden border-4 border-white ${avatarColors[user.group] ?? 'bg-[#4f6dfa]'}`}>
+              <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 overflow-hidden border-4 border-white ${avatarColors[user.group] ?? 'bg-primary-accent'}`}>
                 {user.avatar.startsWith('http') ? (
                   <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
                 ) : (
@@ -352,7 +352,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                       router.replace('/dashboard');
                     }}
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden ${avatarColors[session.group] ?? 'bg-[#4f6dfa]'}`}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden ${avatarColors[session.group] ?? 'bg-primary-accent'}`}>
                       {session.avatar.startsWith('http') ? (
                         <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
                       ) : (

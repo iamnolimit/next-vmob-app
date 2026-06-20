@@ -48,7 +48,7 @@ export default function MonthPickerInput({
           onClick={() => setOpen(true)}
           className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-100 rounded-xl border-2 border-transparent active:border-blue-500 transition-all text-left"
         >
-          <span className="text-[#4f6dfa] text-sm flex-shrink-0">📅</span>
+          <span className="text-primary-accent text-sm flex-shrink-0">📅</span>
           <span className="text-sm font-medium text-gray-800 truncate">{displayDate}</span>
           <span className="ml-auto text-gray-400 text-xs flex-shrink-0">▾</span>
         </button>
@@ -81,7 +81,7 @@ export default function MonthPickerInput({
               <span className="text-sm font-bold text-gray-900">{label}</span>
               <button
                 onClick={() => setOpen(false)}
-                className="text-sm font-semibold text-[#4f6dfa] py-1"
+                className="text-sm font-semibold text-primary-accent py-1"
               >
                 Selesai
               </button>

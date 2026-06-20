@@ -180,10 +180,13 @@
 .chart-title {
   animation: titleSlide 0.3s cubic-bezier(0.25, 1, 0.5, 1) both;
 }
-
+@theme {
+  --color-primary-accent: var(--primary-accent);
+}
 :root {
   --background: #f2f2f7;
   --foreground: #1c1c1e;
+  --primary-accent: #127cff;
 }
 
 * {
@@ -217,7 +220,7 @@ html, body {
 
 /* Animated background gradient for dashboard */
 .bg-gradient-ios {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #4f6dfa 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, var(--primary-accent) 100%);
 }
 
 /* Card shadow iOS style */
@@ -352,14 +355,14 @@ html, body {
 }
 .vmob-datepicker .react-datepicker__day--selected,
 .vmob-datepicker .react-datepicker__day--keyboard-selected {
-  background: #4f6dfa !important;
+  background: var(--primary-accent) !important;
   color: #fff !important;
   border-radius: 50% !important;
   font-weight: 700;
 }
 .vmob-datepicker .react-datepicker__day--today {
   font-weight: 700;
-  color: #4f6dfa;
+  color: var(--primary-accent);
 }
 .vmob-datepicker .react-datepicker__day--today.react-datepicker__day--selected {
   color: #fff !important;
@@ -375,7 +378,7 @@ html, body {
   top: 14px;
 }
 .vmob-datepicker .react-datepicker__navigation-icon::before {
-  border-color: #4f6dfa;
+  border-color: var(--primary-accent);
 }
 .vmob-datepicker .react-datepicker__month-dropdown-container,
 .vmob-datepicker .react-datepicker__year-dropdown-container {
@@ -389,7 +392,7 @@ html, body {
   padding: 4px 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #4f6dfa;
+  color: var(--primary-accent);
   outline: none;
   cursor: pointer;
 }
@@ -456,7 +459,7 @@ html, body {
 .vmob-datepicker .react-datepicker__month-text--keyboard-selected,
 .vmob-datepicker .react-datepicker__year-text--selected,
 .vmob-datepicker .react-datepicker__year-text--keyboard-selected {
-  background: #4f6dfa !important;
+  background: var(--primary-accent) !important;
   color: #fff !important;
   font-weight: 700;
 }

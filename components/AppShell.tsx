@@ -16,9 +16,9 @@ interface AppShellProps {
 
 const bottomTabs = [
   { label: 'Home',  href: '/dashboard', icon: <LayoutDashboard size={22} /> },
-  { label: 'Forecast', href: '/forecast', icon: <LineChart size={22} /> },
-  { label: 'Keuangan', href: '/keuangan', icon: <CircleDollarSign size={22} /> },
   { label: 'Obat',  href: '/obat',      icon: <Stethoscope size={22} /> },
+  { label: 'Keuangan', href: '/keuangan', icon: <CircleDollarSign size={22} /> },
+  { label: 'Forecast', href: '/forecast', icon: <LineChart size={22} /> },
   { label: 'Customer', href: '/customer', icon: <UsersRound size={22} /> },
 ];
 
@@ -49,7 +49,7 @@ function BottomNav() {
               className="flex flex-col items-center justify-center flex-1 h-14"
             >
               <div className={`flex flex-col items-center justify-center w-full max-w-[5rem] h-full rounded-full transition-all duration-300 ${
-                isActive ? 'bg-[#4f6dfa]/10 text-[#4f6dfa]' : 'bg-transparent text-gray-500'
+                isActive ? 'bg-primary-accent/10 text-primary-accent' : 'bg-transparent text-gray-500'
               }`}>
                 <span
                   className={`mb-1 transition-all duration-300 flex justify-center ${
@@ -60,7 +60,7 @@ function BottomNav() {
                 </span>
                 <span
                   className={`text-[10px] font-bold tracking-wide transition-colors duration-300 ${
-                    isActive ? 'text-[#4f6dfa]' : 'text-gray-500'
+                    isActive ? 'text-primary-accent' : 'text-gray-500'
                   }`}
                 >
                   {tab.label}

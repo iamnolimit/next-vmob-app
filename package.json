@@ -16,6 +16,7 @@
     "@capacitor/core": "^6.2.1",
     "@capacitor/filesystem": "^6.0.4",
     "@capacitor/share": "^6.0.4",
+    "@iconify/react": "^6.0.2",
     "@types/qs": "^6.15.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.21",

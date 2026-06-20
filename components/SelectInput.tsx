@@ -43,7 +43,7 @@ export default function SelectInput({
           onClick={() => setOpen(true)}
           className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-100 rounded-xl border-2 border-transparent active:border-blue-500 transition-all text-left"
         >
-          <span className="text-[#4f6dfa] text-sm flex-shrink-0">{icon}</span>
+          <span className="text-primary-accent text-sm flex-shrink-0">{icon}</span>
           <span className="text-sm font-medium text-gray-800 truncate">
             {selected?.label ?? 'Pilih...'}
           </span>
@@ -88,12 +88,12 @@ export default function SelectInput({
                     key={opt.value}
                     onClick={() => handleSelect(opt.value)}
                     className={`w-full flex items-center justify-between px-5 py-3.5 text-left border-b border-gray-100 last:border-none active:bg-gray-50 transition-colors ${
-                      isActive ? 'bg-[#4f6dfa]/10' : ''
+                      isActive ? 'bg-primary-accent/10' : ''
                     }`}
                   >
                     <span
                       className={`text-sm ${
-                        isActive ? 'font-semibold text-[#4f6dfa]' : 'text-gray-800'
+                        isActive ? 'font-semibold text-primary-accent' : 'text-gray-800'
                       }`}
                     >
                       {opt.label}
@@ -101,7 +101,7 @@ export default function SelectInput({
                     {isActive && (
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-5 h-5 text-[#4f6dfa] flex-shrink-0"
+                        className="w-5 h-5 text-primary-accent flex-shrink-0"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth={2.5}

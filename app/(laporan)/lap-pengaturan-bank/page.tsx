@@ -44,7 +44,7 @@ export default function LapPengaturanBankPage() {
     <LiquidPullToRefresh header={headerNode} onRefresh={refetch} className="flex-1">
       <div className="bg-gray-50 pt-4">
         <div className="px-4 pt-3 flex justify-end">
-          <button onClick={() => setShowForm(true)} className="text-sm font-semibold text-[#4f6dfa] bg-[#4f6dfa]/10 px-4 py-2 rounded-xl">
+          <button onClick={() => setShowForm(true)} className="text-sm font-semibold text-primary-accent bg-primary-accent/10 px-4 py-2 rounded-xl">
             + Tambah Rekening
           </button>
         </div>
@@ -66,7 +66,7 @@ export default function LapPengaturanBankPage() {
             </div>
             <div className="flex gap-2 mt-3">
               <button onClick={() => setShowForm(false)} className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-2 text-sm font-medium">Batal</button>
-              <button onClick={() => { setShowForm(false); setAlert('Rekening berhasil ditambahkan.'); }} className="flex-1 bg-[#4f6dfa] text-white rounded-xl py-2 text-sm font-medium">Simpan</button>
+              <button onClick={() => { setShowForm(false); setAlert('Rekening berhasil ditambahkan.'); }} className="flex-1 bg-primary-accent text-white rounded-xl py-2 text-sm font-medium">Simpan</button>
             </div>
           </div>
         )}
@@ -86,7 +86,7 @@ export default function LapPengaturanBankPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-sm font-bold text-gray-900">{bank.bank_nama}</span>
-                        {bank.is_default === '1' && <span className="text-[10px] font-bold text-[#4f6dfa] bg-[#4f6dfa]/10 px-2 py-0.5 rounded-full">DEFAULT</span>}
+                        {bank.is_default === '1' && <span className="text-[10px] font-bold text-primary-accent bg-primary-accent/10 px-2 py-0.5 rounded-full">DEFAULT</span>}
                       </div>
                       <p className="text-sm font-mono text-gray-700">{enkrip(bank.bank_norek)}</p>
                       <p className="text-xs text-gray-500">{bank.bank_atasnama}</p>
@@ -95,7 +95,7 @@ export default function LapPengaturanBankPage() {
                   </div>
                   <div className="flex gap-2">
                     {bank.is_default !== '1' && (
-                      <button onClick={() => setDefault(bank.id)} className="flex-1 bg-[#4f6dfa]/10 text-[#4f6dfa] rounded-xl py-1.5 text-xs font-semibold">Set Default</button>
+                      <button onClick={() => setDefault(bank.id)} className="flex-1 bg-primary-accent/10 text-primary-accent rounded-xl py-1.5 text-xs font-semibold">Set Default</button>
                     )}
                     <button onClick={() => setAlert('Form edit dibuka. (Dummy)')} className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-1.5 text-xs font-semibold">Edit</button>
                     <button onClick={() => deleteBank(bank.id)} className="flex-1 bg-red-50 text-red-600 rounded-xl py-1.5 text-xs font-semibold">Hapus</button>

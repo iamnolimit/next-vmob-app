@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { obatChartItems, pembelianObatTerbanyak, obatTerlaris } from '@/lib/dummyData';
-import { Pill, AlertTriangle, Package, Search } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import RankedList from '@/components/RankedList';
@@ -22,9 +22,9 @@ const tabs = [
 ];
 
 const dateLabels: Record<string, string> = {
-  '1':  'Hari Ini',
-  '2': 'Bulan Ini',
-  '3': 'Tahun Ini',
+  '1':  '20 Juni 2026',
+  '2': 'Juni 2026',
+  '3': '2026',
 };
 
 const formatRupiah = (amount: number) =>
@@ -73,32 +73,32 @@ export default function ObatPage() {
     {
       label: 'Nilai Stok Obat',
       value: formatRupiah(dataNilaiObat?.nilai || 0),
-      icon: <Pill size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:medication" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: 0,
       invoiceCount: dataNilaiObat?.count ? `${dataNilaiObat.count} Obat` : '',
     },
     {
       label: 'Obat Expired',
       value: formatRupiah(dataObatExpired?.nilai || 0),
-      icon: <AlertTriangle size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: 0,
       invoiceCount: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '',
     },
     {
       label: 'Obat Stok Habis',
       value: dataObatStokHabis?.count ? `${dataObatStokHabis.count} Obat` : '0 Obat',
-      icon: <Package size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:inventory-2" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: 0,
       invoiceCount: '',
     },
     {
       label: 'Obat Hilang',
       value: formatRupiah(nilaiObatHilang),
-      icon: <Search size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:search-off" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(obatHilangChange.value) * (obatHilangChange.isPositive ? 1 : -1),
       invoiceCount: dataObatStokHilang?.count ? `${dataObatStokHilang.count} Obat` : '0 Obat',
     },
@@ -116,8 +116,8 @@ export default function ObatPage() {
       }}
       header={
         <PageHeader
-          title="Obat"
-          subtitle={`Data obat ${dateLabels[activeTab]}`}
+          title="Dashboard Obat"
+          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 

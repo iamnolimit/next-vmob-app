@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { keuanganChartItems } from '@/lib/dummyData';
-import { Landmark, Banknote, Scale, TrendingUp, TrendingDown, BarChart3, Receipt, FileText, Hospital } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
@@ -21,9 +21,9 @@ const tabs = [
 ];
 
 const dateLabels: Record<string, string> = {
-  '1':  'Hari Ini',
-  '2': 'Bulan Ini',
-  '3': 'Tahun Ini',
+  '1':  '20 Juni 2026',
+  '2': 'Juni 2026',
+  '3': '2026',
 };
 
 const formatRupiah = (amount: number) =>
@@ -111,72 +111,72 @@ export default function KeuanganPage() {
     {
       label: 'Total Aset',
       value: formatRupiah(totalAsetValue),
-      icon: <Landmark size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:account-balance" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(totalAsetChange.value) * (totalAsetChange.isPositive ? 1 : -1),
       invoiceCount: 'Total aset perusahaan',
     },
     {
       label: 'Total Cash',
       value: latestCash ? formatRupiah(latestCash.y || 0) : 'Rp 0',
-      icon: <Banknote size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:payments" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(cashChange.value) * (cashChange.isPositive ? 1 : -1),
       invoiceCount: 'Kas dan setara kas',
     },
     {
       label: 'Total Pasiva',
       value: latestPasiva ? formatRupiah(latestPasiva.y || 0) : 'Rp 0',
-      icon: <Scale size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:balance" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(pasivaChange.value) * (pasivaChange.isPositive ? 1 : -1),
       invoiceCount: 'Total kewajiban',
     },
     {
       label: 'Total Pendapatan',
       value: latestPendapatan ? formatRupiah(latestPendapatan.y || 0) : 'Rp 0',
-      icon: <TrendingUp size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:trending-up" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(pendapatanChange.value) * (pendapatanChange.isPositive ? 1 : -1),
       invoiceCount: 'Pendapatan operasional',
     },
     {
       label: 'Total Pengeluaran',
       value: latestPengeluaran ? formatRupiah(latestPengeluaran.y || 0) : 'Rp 0',
-      icon: <TrendingDown size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:trending-down" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(pengeluaranChange.value) * (pengeluaranChange.isPositive ? 1 : -1),
       invoiceCount: 'Biaya operasional',
     },
     {
       label: 'Laba Rugi',
       value: latestLabarugi ? formatRupiah(latestLabarugi.y || 0) : 'Rp 0',
-      icon: <BarChart3 size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:analytics" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(labarugiChange.value) * (labarugiChange.isPositive ? 1 : -1),
       invoiceCount: 'Laba bersih periode',
     },
     {
       label: 'Hutang Obat Jatuh Tempo',
       value: latestHutang ? formatRupiah(latestHutang.y || 0) : 'Rp 0',
-      icon: <Receipt size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:receipt-long" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(hutangChange.value) * (hutangChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestHutang?.jmlfaktur, 0)} faktur`,
     },
     {
       label: 'Piutang Apotek Jatuh Tempo',
       value: latestPiutang ? formatRupiah(latestPiutang.y || 0) : 'Rp 0',
-      icon: <FileText size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:description" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(piutangChange.value) * (piutangChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPiutang?.jmlfaktur, 0)} faktur`,
     },
     {
       label: 'Piutang Klinik Jatuh Tempo',
       value: latestPiutangKlinik ? formatRupiah(latestPiutangKlinik.y || 0) : 'Rp 0',
-      icon: <Hospital size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:local-hospital" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: parseFloat(piutangKlinikChange.value) * (piutangKlinikChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPiutangKlinik?.jmlfaktur, 0)} faktur`,
     },
@@ -191,8 +191,8 @@ export default function KeuanganPage() {
       }}
       header={
         <PageHeader
-          title="Keuangan"
-          subtitle={`Data keuangan ${dateLabels[activeTab]}`}
+          title="Dashboard Keuangan"
+          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 

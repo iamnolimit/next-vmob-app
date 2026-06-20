@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { forecastChartItems, katlarisData } from '@/lib/dummyData';
-import { Star, StarHalf, Sparkles, AlertTriangle, Package, TrendingUp, TrendingDown, CircleDollarSign } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import RankedList from '@/components/RankedList';
@@ -22,9 +22,9 @@ const tabs = [
 ];
 
 const dateLabels: Record<string, string> = {
-  threeMonth: '3 Bulan ke Depan',
-  sixMonth: '6 Bulan ke Depan',
-  oneYear:  '1 Tahun ke Depan',
+  threeMonth: 'Apr 2026 - Jun 2026',
+  sixMonth: 'Jan 2026 - Jun 2026',
+  oneYear:  'Jul 2025 - Jun 2026',
 };
 
 const formatRupiah = (amount: number) =>
@@ -56,64 +56,64 @@ export default function ForecastPage() {
       label: 'Pareto A',
       value: formatRupiah(data.nominalParetoA || 0),
       invoiceCount: `${data.paretoA || 0} Obat`,
-      icon: <Star size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:stars" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.paA || 0,
     },
     {
       label: 'Pareto B',
       value: formatRupiah(data.nominalParetoB || 0),
       invoiceCount: `${data.paretoB || 0} Obat`,
-      icon: <StarHalf size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:star-half" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.paB || 0,
     },
     {
       label: 'Pareto C',
       value: formatRupiah(data.nominalParetoC || 0),
       invoiceCount: `${data.paretoC || 0} Obat`,
-      icon: <Sparkles size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:grade" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.paC || 0,
     },
     {
       label: 'Dibawah Pareto C (Stok Mati)',
       value: formatRupiah(data.nominalParetoMin || 0),
       invoiceCount: `${data.paretoMin || 0} Obat`,
-      icon: <AlertTriangle size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.paMin || 0,
     },
     {
       label: 'Stock On Hand',
       value: formatRupiah(data.pengadaan1 || 0),
       invoiceCount: `${data.status1 || 0} Obat`,
-      icon: <Package size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:inventory-2" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.pStatus1 || 0,
     },
     {
       label: 'Over Stock',
       value: formatRupiah(data.pengadaan2 || 0),
       invoiceCount: `${data.status2 || 0} Obat`,
-      icon: <TrendingUp size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:trending-up" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.pStatus2 || 0,
     },
     {
       label: 'Under Stock',
       value: formatRupiah(data.pengadaan3 || 0),
       invoiceCount: `${data.status3 || 0} Obat`,
-      icon: <TrendingDown size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:trending-down" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.pStatus3 || 0,
     },
     {
       label: 'Potential Lost',
       value: formatRupiah(data.pengadaan4 || 0),
       invoiceCount: `${data.status4 || 0} Obat`,
-      icon: <CircleDollarSign size={20} />,
-      color: '#4f6dfa',
+      icon: <Icon icon="material-symbols:money-off" width={20} height={20} />,
+      color: 'var(--primary-accent)',
       change: data.pStatus4 || 0,
     },
   ];
@@ -149,8 +149,8 @@ export default function ForecastPage() {
       }}
       header={
         <PageHeader
-          title="Forecast"
-          subtitle={`Proyeksi ${dateLabels[activeTab]}`}
+          title="Dashboard Forecast"
+          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 

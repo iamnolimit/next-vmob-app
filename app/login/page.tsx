@@ -51,7 +51,7 @@ function LoginContent() {
     <div className="min-h-screen flex flex-col bg-gray-50">
 
       {/* Header — sama seperti dashboard */}
-      <div className="relative z-10 bg-[#4f6dfa] rounded-b-[2.5rem] shadow-md">
+      <div className="relative z-10 bg-primary-accent rounded-b-[2.5rem] shadow-md">
         <div className="px-6 pt-10 pb-6 flex flex-col items-center gap-4">
           {/* Logo */}
           <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center overflow-hidden shadow-lg">
@@ -91,8 +91,8 @@ function LoginContent() {
           <label className="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">
             Domain
           </label>
-          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-[#4f6dfa] transition-colors shadow-sm overflow-hidden">
-            <span className="pl-4 flex-shrink-0 text-[#4f6dfa]/60">
+          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-primary-accent transition-colors shadow-sm overflow-hidden">
+            <span className="pl-4 flex-shrink-0 text-primary-accent/60">
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
@@ -119,8 +119,8 @@ function LoginContent() {
           <label className="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">
             Username
           </label>
-          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-[#4f6dfa] transition-colors shadow-sm">
-            <span className="pl-4 flex-shrink-0 text-[#4f6dfa]/60">
+          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-primary-accent transition-colors shadow-sm">
+            <span className="pl-4 flex-shrink-0 text-primary-accent/60">
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
@@ -144,8 +144,8 @@ function LoginContent() {
           <label className="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">
             Password
           </label>
-          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-[#4f6dfa] transition-colors shadow-sm">
-            <span className="pl-4 flex-shrink-0 text-[#4f6dfa]/60">
+          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-primary-accent transition-colors shadow-sm">
+            <span className="pl-4 flex-shrink-0 text-primary-accent/60">
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" />
                 <path d="M7 11V7a5 5 0 0110 0v4" />
@@ -163,7 +163,7 @@ function LoginContent() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="pr-4 pl-2 text-gray-400 active:text-[#4f6dfa] transition-colors"
+              className="pr-4 pl-2 text-gray-400 active:text-primary-accent transition-colors"
             >
               {showPassword ? (
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -185,7 +185,7 @@ function LoginContent() {
         <button
           onClick={handleLogin}
           disabled={loading}
-          className="w-full bg-[#4f6dfa] text-white font-bold py-4 rounded-2xl text-sm shadow-lg shadow-[#4f6dfa]/30 active:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full bg-primary-accent text-white font-bold py-4 rounded-2xl text-sm shadow-lg shadow-primary-accent/30 active:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -212,7 +212,7 @@ function LoginContent() {
           <div className="mt-5 text-center">
             <button
               onClick={() => setShowSessions(true)}
-              className="inline-flex items-center gap-1.5 text-sm text-[#4f6dfa] font-semibold"
+              className="inline-flex items-center gap-1.5 text-sm text-primary-accent font-semibold"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
@@ -247,8 +247,8 @@ function LoginContent() {
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#4f6dfa]/10 flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <div className="w-7 h-7 rounded-lg bg-primary-accent/10 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary-accent" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
@@ -275,7 +275,7 @@ function LoginContent() {
                       router.replace('/dashboard');
                     }}
                   >
-                    <div className="w-11 h-11 rounded-full bg-[#4f6dfa]/10 flex items-center justify-center text-[#4f6dfa] font-bold text-base overflow-hidden border-2 border-[#4f6dfa]/20">
+                    <div className="w-11 h-11 rounded-full bg-primary-accent/10 flex items-center justify-center text-primary-accent font-bold text-base overflow-hidden border-2 border-primary-accent/20">
                       {session.avatar.startsWith('http') ? (
                         <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
                       ) : (
@@ -286,7 +286,7 @@ function LoginContent() {
                       <p className="text-sm font-bold text-gray-900 truncate">{session.nama}</p>
                       <p className="text-xs text-gray-400 truncate">@{session.username} · {session.domain}</p>
                     </div>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#4f6dfa]/40 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary-accent/40 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6" />
                     </svg>
                   </button>
@@ -308,7 +308,7 @@ function LoginContent() {
                   setUsername('');
                   setPassword('');
                 }}
-                className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-[#4f6dfa]/20 rounded-2xl text-[#4f6dfa] active:bg-[#4f6dfa]/5 transition-colors"
+                className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-primary-accent/20 rounded-2xl text-primary-accent active:bg-primary-accent/5 transition-colors"
               >
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="9" />
@@ -327,7 +327,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#4f6dfa]" />}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-primary-accent" />}>
       <LoginContent />
     </Suspense>
   );
