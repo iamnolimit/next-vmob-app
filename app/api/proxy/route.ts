@@ -2,11 +2,11 @@ import qs from 'qs';
 import { NextResponse } from 'next/server';
 
 // main
-const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api7lb.vmedis.com/';
-const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedis.com/';
+// const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api7lb.vmedis.com/';
+// const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedis.com/';
 // mr
-// const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
-// const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
+const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
+const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
 function getBaseUrl(apiVersion: string): string {
   switch (apiVersion) {
     case 'api5':
