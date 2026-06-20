@@ -13,6 +13,8 @@ import { forecastPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
 import { normalizeApiData, generateForecastSafeChartData } from '@/lib/utils';
 
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+
 const tabs = [
   { label: '3 Bulan', value: 'threeMonth' },
   { label: '6 Bulan', value: 'sixMonth' },
@@ -55,7 +57,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoA || 0),
       invoiceCount: `${data.paretoA || 0} Obat`,
       icon: <Star size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.paA || 0,
     },
     {
@@ -63,7 +65,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoB || 0),
       invoiceCount: `${data.paretoB || 0} Obat`,
       icon: <StarHalf size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.paB || 0,
     },
     {
@@ -71,7 +73,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoC || 0),
       invoiceCount: `${data.paretoC || 0} Obat`,
       icon: <Sparkles size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.paC || 0,
     },
     {
@@ -79,7 +81,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.nominalParetoMin || 0),
       invoiceCount: `${data.paretoMin || 0} Obat`,
       icon: <AlertTriangle size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.paMin || 0,
     },
     {
@@ -87,7 +89,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan1 || 0),
       invoiceCount: `${data.status1 || 0} Obat`,
       icon: <Package size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.pStatus1 || 0,
     },
     {
@@ -95,7 +97,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan2 || 0),
       invoiceCount: `${data.status2 || 0} Obat`,
       icon: <TrendingUp size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.pStatus2 || 0,
     },
     {
@@ -103,7 +105,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan3 || 0),
       invoiceCount: `${data.status3 || 0} Obat`,
       icon: <TrendingDown size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.pStatus3 || 0,
     },
     {
@@ -111,7 +113,7 @@ export default function ForecastPage() {
       value: formatRupiah(data.pengadaan4 || 0),
       invoiceCount: `${data.status4 || 0} Obat`,
       icon: <CircleDollarSign size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: data.pStatus4 || 0,
     },
   ];
@@ -141,19 +143,25 @@ export default function ForecastPage() {
   })();
 
   return (
-    <>
-      <PageHeader
-        title="Forecast"
-        subtitle={`Proyeksi ${dateLabels[activeTab]}`}
-        subnavbar={
-          <TabSelector 
-            tabs={tabs} 
-            activeTab={activeTab} 
-            onChange={setActiveTab} 
-          />
-        }
-      />
-
+    <LiquidPullToRefresh
+      onRefresh={async () => {
+        await refetch();
+      }}
+      header={
+        <PageHeader
+          title="Forecast"
+          subtitle={`Proyeksi ${dateLabels[activeTab]}`}
+          subnavbar={
+            <TabSelector 
+              tabs={tabs} 
+              activeTab={activeTab} 
+              onChange={setActiveTab} 
+            />
+          }
+        />
+      }
+      className="flex-1"
+    >
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <DashboardSkeleton cardCount={5} />
@@ -187,6 +195,6 @@ export default function ForecastPage() {
           </div>
         )}
       </div>
-    </>
+    </LiquidPullToRefresh>
   );
 }

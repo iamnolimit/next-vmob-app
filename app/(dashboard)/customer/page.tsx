@@ -12,6 +12,8 @@ import { customerPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
 import { normalizeApiData, generateCustomerSafeChartData } from '@/lib/utils';
 
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+
 const tabs = [
   { label: '3 Bulan', value: 'threeMonth' },
   { label: '6 Bulan', value: 'sixMonth' },
@@ -48,14 +50,14 @@ export default function CustomerPage() {
       label: 'Pasien Baru',
       value: `${datapasienbaru.count || 0} Orang`,
       icon: <UserPlus size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: datapasienbaru.peningkatan || 0,
     },
     {
       label: 'Kunjungan Pasien',
       value: `${datakunjungan.count || 0} Orang`,
       icon: <Users size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: datakunjungan.peningkatan || 0,
     },
   ];
@@ -63,19 +65,25 @@ export default function CustomerPage() {
   const chartData = generateCustomerSafeChartData(data);
 
   return (
-    <>
-      <PageHeader
-        title="Customer"
-        subtitle={`Data customer ${dateLabels[activeTab]}`}
-        subnavbar={
-          <TabSelector 
-            tabs={tabs} 
-            activeTab={activeTab} 
-            onChange={setActiveTab} 
-          />
-        }
-      />
-
+    <LiquidPullToRefresh
+      onRefresh={async () => {
+        await refetch();
+      }}
+      header={
+        <PageHeader
+          title="Customer"
+          subtitle={`Data customer ${dateLabels[activeTab]}`}
+          subnavbar={
+            <TabSelector 
+              tabs={tabs} 
+              activeTab={activeTab} 
+              onChange={setActiveTab} 
+            />
+          }
+        />
+      }
+      className="flex-1"
+    >
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <DashboardSkeleton cardCount={2} />
@@ -101,6 +109,6 @@ export default function CustomerPage() {
           </div>
         )}
       </div>
-    </>
+    </LiquidPullToRefresh>
   );
 }

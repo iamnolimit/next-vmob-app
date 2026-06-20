@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useNavLoading } from '@/lib/navLoadingContext';
@@ -61,26 +61,28 @@ const laporanMenus = [
       { label: 'Laporan Laba Rugi',   href: '/lap-laba-rugi',   icon: <LineChart size={20} /> },
     ],
   },
+  /*
   {
     category: 'Sistem',
-    icon: <UsersRound size={20} />,
+    icon: <Settings size={20} />,
     items: [
-      { label: 'Manajemen User',  href: '/lap-manajemen-user',  icon: <UserCheck size={20} /> },
-      { label: 'Pengaturan Bank', href: '/lap-pengaturan-bank', icon: <CircleDollarSign size={20} /> },
+      // { label: 'Manajemen User',  href: '/lap-manajemen-user',  icon: <UserCheck size={20} /> },
+      // { label: 'Pengaturan Bank', href: '/lap-pengaturan-bank', icon: <CircleDollarSign size={20} /> },
     ],
   },
+  */
 ];
 
 const avatarColors: Record<string, string> = {
   Admin:    'bg-purple-500',
-  Dokter:   'bg-blue-500',
+  Dokter:   'bg-[#4f6dfa]',
   Kasir:    'bg-green-500',
   Apoteker: 'bg-orange-500',
 };
 
 const groupBadgeColors: Record<string, string> = {
   Admin:    'bg-purple-100 text-purple-700',
-  Dokter:   'bg-blue-100 text-blue-700',
+  Dokter:   'bg-[#4f6dfa]/10 text-[#4f6dfa]',
   Kasir:    'bg-green-100 text-green-700',
   Apoteker: 'bg-orange-100 text-orange-700',
 };
@@ -90,15 +92,18 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-function SectionLabel({ label, isOpen, onClick }: { label: string; isOpen: boolean; onClick: () => void }) {
+function SectionLabel({ label, icon, isOpen, onClick }: { label: string; icon?: React.ReactNode; isOpen: boolean; onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
       className="w-full flex items-center justify-between px-5 pt-6 pb-2 text-left"
     >
-      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
+      <div className="flex items-center gap-2">
+        {icon && <span className="text-gray-400">{icon}</span>}
+        <span className="text-[13px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
+      </div>
       <ChevronRight 
-        size={14} 
+        size={16} 
         className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`} 
       />
     </button>
@@ -111,14 +116,14 @@ function MenuItem({
   return (
     <button
       onClick={onClick}
-      className={`w-[calc(100%-1rem)] mx-2 flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 ${
+      className={`w-[calc(100%-1rem)] mx-2 flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-all duration-200 ${
         active 
-          ? 'bg-[#035afc]/10 text-[#035afc] shadow-sm' 
+          ? 'bg-[#4f6dfa]/10 text-[#4f6dfa] shadow-sm' 
           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
       }`}
     >
       <span className={`w-6 flex justify-center flex-shrink-0 transition-transform duration-200 ${active ? 'scale-110' : 'opacity-70'}`}>{icon}</span>
-      <span className={`text-[14px] flex-1 truncate ${active ? 'font-bold' : 'font-medium'}`}>
+      <span className={`text-[16px] flex-1 truncate ${active ? 'font-bold' : 'font-medium'}`}>
         {label}
       </span>
     </button>
@@ -169,7 +174,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         {/* Ambient Background Effects */}
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-orange-100/40 via-blue-50/20 to-transparent pointer-events-none" />
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-32 -left-24 w-48 h-48 bg-blue-200/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-32 -left-24 w-48 h-48 bg-[#4f6dfa]/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col h-full relative z-10">
 
@@ -188,7 +193,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {/* ── Profile ── */}
           {user && (
             <div className="px-4 pb-6 flex-shrink-0 flex flex-col items-center text-center border-b border-gray-100/50">
-              <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 overflow-hidden border-4 border-white ${avatarColors[user.group] ?? 'bg-blue-400'}`}>
+              <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 overflow-hidden border-4 border-white ${avatarColors[user.group] ?? 'bg-[#4f6dfa]'}`}>
                 {user.avatar.startsWith('http') ? (
                   <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
                 ) : (
@@ -206,6 +211,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             <div>
               <SectionLabel 
                 label="Dashboard" 
+                icon={<LayoutDashboard size={18} />}
                 isOpen={openGroups['Dashboard'] ?? true} 
                 onClick={() => toggleGroup('Dashboard')} 
               />
@@ -253,6 +259,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 <div key={group.category}>
                   <SectionLabel 
                     label={group.category} 
+                    icon={group.icon && React.cloneElement(group.icon as React.ReactElement<any>, { size: 18 })}
                     isOpen={isOpen} 
                     onClick={() => toggleGroup(group.category)} 
                   />
@@ -345,7 +352,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                       router.replace('/dashboard');
                     }}
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden ${avatarColors[session.group] ?? 'bg-blue-400'}`}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden ${avatarColors[session.group] ?? 'bg-[#4f6dfa]'}`}>
                       {session.avatar.startsWith('http') ? (
                         <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
                       ) : (

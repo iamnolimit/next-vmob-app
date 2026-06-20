@@ -91,7 +91,7 @@ export default function GantiPasswordPage() {
             <p className="text-sm text-gray-500">Gunakan password baru Anda saat login berikutnya.</p>
             <button
               onClick={() => router.back()}
-              className="mt-2 w-full bg-blue-600 text-white text-sm font-semibold py-3 rounded-xl active:bg-blue-700"
+              className="mt-2 w-full bg-[#4f6dfa] text-white text-sm font-semibold py-3 rounded-xl active:bg-[#4f6dfa]/90"
             >
               Kembali ke Profil
             </button>
@@ -165,7 +165,7 @@ export default function GantiPasswordPage() {
             {/* Submit */}
             <button
               onClick={handleSubmit}
-              className="w-full bg-blue-600 text-white text-sm font-semibold py-3.5 rounded-2xl active:bg-blue-700 transition-colors shadow-sm"
+              className="w-full bg-[#4f6dfa] text-white text-sm font-semibold py-3.5 rounded-2xl active:bg-[#4f6dfa]/90 transition-colors shadow-sm"
             >
               Simpan Password Baru
             </button>

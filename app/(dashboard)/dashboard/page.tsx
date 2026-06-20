@@ -71,7 +71,7 @@ export default function DashboardPage() {
       label: 'Penjualan Kasir',
       value: latestPenjualanKasir ? formatRupiah(latestPenjualanKasir.grandtotal || 0) : 'Rp 0',
       icon: <Store size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(penjualanKasirChange.value) * (penjualanKasirChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPenjualanKasir?.jumfaktur, 0)} faktur`,
     },
@@ -79,7 +79,7 @@ export default function DashboardPage() {
       label: 'Penjualan Online',
       value: latestPenjualanOnline ? formatRupiah(latestPenjualanOnline.grandtotal || 0) : 'Rp 0',
       icon: <ShoppingCart size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(penjualanOnlineChange.value) * (penjualanOnlineChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPenjualanOnline?.jumfaktur, 0)} faktur`,
     },
@@ -87,7 +87,7 @@ export default function DashboardPage() {
       label: 'Pemeriksaan Klinik',
       value: latestPemeriksaanKlinik ? formatRupiah(latestPemeriksaanKlinik.grandtotal || 0) : 'Rp 0',
       icon: <Hospital size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(pemeriksaanKlinikChange.value) * (pemeriksaanKlinikChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPemeriksaanKlinik?.jumfaktur, 0)} faktur`,
     },
@@ -95,7 +95,7 @@ export default function DashboardPage() {
       label: 'Pendapatan HomeCare',
       value: latestPendapatanHC ? formatRupiah(latestPendapatanHC.grandtotal || 0) : 'Rp 0',
       icon: <Home size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(pendapatanHCChange.value) * (pendapatanHCChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPendapatanHC?.jumfaktur, 0)} faktur`,
     },
@@ -103,7 +103,7 @@ export default function DashboardPage() {
       label: 'Total Pendapatan',
       value: latestTotalPendapatan ? formatRupiah(latestTotalPendapatan.grandtotal || 0) : 'Rp 0',
       icon: <CircleDollarSign size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(totalPendapatanChange.value) * (totalPendapatanChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestTotalPendapatan?.jumfaktur, 0)} faktur`,
     },
@@ -143,7 +143,7 @@ export default function DashboardPage() {
       onRefresh={handleRefresh}
       threshold={90}
       maxPull={160}
-      color="#035afc"
+      color="#4f6dfa"
       className="flex-1"
     >
       <div className="pb-6">

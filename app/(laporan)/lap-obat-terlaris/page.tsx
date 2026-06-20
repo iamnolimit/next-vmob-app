@@ -74,11 +74,11 @@ export default function LapObatTerlarisPage() {
       title="Obat Terlaris"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'namaObat', label: 'Nama Obat', width: 180 },
-        { key: 'jumlahTerjual', label: 'Jml Terjual', align: 'right', width: 110 },
-        { key: 'jumlahTransaksi', label: 'Jml Transaksi', align: 'right', width: 100,
+        { key: 'namaObat', label: 'Nama Obat', width: 120 },
+        { key: 'jumlahTerjual', label: 'Jml Terjual', align: 'right', width: 80 },
+        { key: 'jumlahTransaksi', label: 'Jml Transaksi', align: 'right', width: 80,
           render: (r) => Number(r.jumlahTransaksi).toLocaleString('id-ID') },
-        { key: 'nominal', label: 'Nominal', align: 'right', width: 130,
+        { key: 'nominal', label: 'Nominal', align: 'right',
           render: (r) => formatNumber(r.nominal as number) },
       ]}
       data={data}

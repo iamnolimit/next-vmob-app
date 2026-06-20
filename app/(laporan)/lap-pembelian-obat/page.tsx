@@ -63,11 +63,11 @@ export default function LapPembelianObatPage() {
       title="Pembelian Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 110 },
-        { key: 'noFaktur', label: 'No Faktur', width: 150 },
-        { key: 'supplier', label: 'Supplier', width: 150 },
-        { key: 'gudang', label: 'Gudang', width: 120 },
-        { key: 'total', label: 'Total', align: 'right', width: 130,
+        { key: 'tanggal', label: 'Tanggal', width: 80 },
+        { key: 'noFaktur', label: 'No Faktur', width: 100 },
+        { key: 'supplier', label: 'Supplier', width: 100 },
+        { key: 'gudang', label: 'Gudang', width: 80 },
+        { key: 'total', label: 'Total', align: 'right',
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}

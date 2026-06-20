@@ -30,7 +30,7 @@ function HamburgerBtn({ onClick }: { onClick: () => void }) {
 function ProfileBtn({ onClick, user }: { onClick: () => void, user: any }) {
   const avatarColors: Record<string, string> = {
     Admin:    'bg-purple-500',
-    Dokter:   'bg-blue-500',
+    Dokter:   'bg-[#4f6dfa]',
     Kasir:    'bg-green-500',
     Apoteker: 'bg-orange-500',
   };
@@ -38,7 +38,7 @@ function ProfileBtn({ onClick, user }: { onClick: () => void, user: any }) {
   return (
     <button
       onClick={onClick}
-      className={`w-12 h-12 flex items-center justify-center rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform overflow-hidden border-2 border-white ${user ? (avatarColors[user.group] ?? 'bg-blue-400') : 'bg-white'}`}
+      className={`w-12 h-12 flex items-center justify-center rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform overflow-hidden border-2 border-white ${user ? (avatarColors[user.group] ?? 'bg-[#4f6dfa]') : 'bg-white'}`}
     >
       {user ? (
         user.avatar.startsWith('http') ? (
@@ -84,7 +84,7 @@ export default function PageHeader({
     subtitle ?? (user ? `Halo, ${user.nama.split(' ')[0]} 👋` : undefined);
 
   return (
-    <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] pb-2">
+    <div className="relative z-10 mb-4 bg-[#4f6dfa] rounded-b-[2.5rem] pb-2">
       {/* Clean, modern header without the heavy background */}
       <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
         {/* Left slot: Menu or Back button */}

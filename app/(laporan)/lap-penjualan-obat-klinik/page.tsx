@@ -67,10 +67,10 @@ export default function LapPenjualanObatKlinikPage() {
       title="Penjualan Obat Klinik"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No Faktur', width: 130 },
-        { key: 'pasien', label: 'Pasien', width: 130 },
-        { key: 'dokter', label: 'Dokter', width: 130 },
-        { key: 'total', label: 'Total', align: 'right', width: 110,
+        { key: 'noFaktur', label: 'No Faktur', width: 100 },
+        { key: 'pasien', label: 'Pasien', width: 100 },
+        { key: 'dokter', label: 'Dokter', width: 100 },
+        { key: 'total', label: 'Total', align: 'right',
           render: (r) => formatNumber(r.total as number) },
       ]}
       data={data}

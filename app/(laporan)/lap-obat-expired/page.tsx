@@ -99,10 +99,10 @@ export default function LapObatExpiredPage() {
       title="Obat Expired"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'gudang', label: 'Gudang', width: 120 },
-        { key: 'namaObat', label: 'Nama Obat', width: 210 },
-        { key: 'sisaStok', label: 'Sisa Stok', align: 'right', width: 110 },
-        { key: 'tanggalExpired', label: 'Tgl Expired', align: 'center', width: 110 },
+        { key: 'gudang', label: 'Gudang', width: 80 },
+        { key: 'namaObat', label: 'Nama Obat', width: 120 },
+        { key: 'sisaStok', label: 'Sisa Stok', align: 'right', width: 80 },
+        { key: 'tanggalExpired', label: 'Tgl Expired', align: 'center', width: 80 },
       ]}
       data={data}
       loading={loading}

@@ -52,7 +52,7 @@ export default function RankedList({ title, icon, color = '#1d4ed8', items, type
         {isClickable && (
           <button 
             onClick={handleSeeAll}
-            className="text-[12px] font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full active:scale-95 transition-transform"
+            className="text-[12px] font-semibold text-[#4f6dfa] bg-[#4f6dfa]/10 px-3 py-1 rounded-full active:scale-95 transition-transform"
           >
             Semua
           </button>

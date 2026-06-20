@@ -42,7 +42,7 @@ export default function YearPickerInput({
           onClick={() => setOpen(true)}
           className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-100 rounded-xl border-2 border-transparent active:border-blue-500 transition-all text-left"
         >
-          <span className="text-blue-500 text-sm flex-shrink-0">📅</span>
+          <span className="text-[#4f6dfa] text-sm flex-shrink-0">📅</span>
           <span className="text-sm font-medium text-gray-800 truncate">{displayDate}</span>
           <span className="ml-auto text-gray-400 text-xs flex-shrink-0">▾</span>
         </button>
@@ -75,7 +75,7 @@ export default function YearPickerInput({
               <span className="text-sm font-bold text-gray-900">{label}</span>
               <button
                 onClick={() => setOpen(false)}
-                className="text-sm font-semibold text-blue-600 py-1"
+                className="text-sm font-semibold text-[#4f6dfa] py-1"
               >
                 Selesai
               </button>
@@ -101,13 +101,13 @@ export default function YearPickerInput({
                   const endYear = startYear + 11;
                   return (
                     <div className="flex items-center justify-between px-4 py-2">
-                      <button onClick={decreaseYear} className="text-blue-600 font-bold text-lg px-2 py-1">
+                      <button onClick={decreaseYear} className="text-[#4f6dfa] font-bold text-lg px-2 py-1">
                         &lt;
                       </button>
                       <span className="text-lg font-bold text-gray-900">
                         {startYear} - {endYear}
                       </span>
-                      <button onClick={increaseYear} className="text-blue-600 font-bold text-lg px-2 py-1">
+                      <button onClick={increaseYear} className="text-[#4f6dfa] font-bold text-lg px-2 py-1">
                         &gt;
                       </button>
                     </div>

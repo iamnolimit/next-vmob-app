@@ -91,7 +91,7 @@ export default function LiquidPullToRefresh({
   onRefresh,
   threshold = 90,
   maxPull = 160,
-  color = '#035afc',
+  color = '#4f6dfa',
   className = '',
 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);

@@ -12,6 +12,8 @@ import { keuanganPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
 import { normalizeApiData, calculateSafePercentageChange, safeParseInt, generateSafeChartData } from '@/lib/utils';
 
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+
 const tabs = [
   { label: 'Hari Ini',  value: '1'  },
   { label: 'Bulan Ini', value: '2' },
@@ -110,7 +112,7 @@ export default function KeuanganPage() {
       label: 'Total Aset',
       value: formatRupiah(totalAsetValue),
       icon: <Landmark size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(totalAsetChange.value) * (totalAsetChange.isPositive ? 1 : -1),
       invoiceCount: 'Total aset perusahaan',
     },
@@ -118,7 +120,7 @@ export default function KeuanganPage() {
       label: 'Total Cash',
       value: latestCash ? formatRupiah(latestCash.y || 0) : 'Rp 0',
       icon: <Banknote size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(cashChange.value) * (cashChange.isPositive ? 1 : -1),
       invoiceCount: 'Kas dan setara kas',
     },
@@ -126,7 +128,7 @@ export default function KeuanganPage() {
       label: 'Total Pasiva',
       value: latestPasiva ? formatRupiah(latestPasiva.y || 0) : 'Rp 0',
       icon: <Scale size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(pasivaChange.value) * (pasivaChange.isPositive ? 1 : -1),
       invoiceCount: 'Total kewajiban',
     },
@@ -134,7 +136,7 @@ export default function KeuanganPage() {
       label: 'Total Pendapatan',
       value: latestPendapatan ? formatRupiah(latestPendapatan.y || 0) : 'Rp 0',
       icon: <TrendingUp size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(pendapatanChange.value) * (pendapatanChange.isPositive ? 1 : -1),
       invoiceCount: 'Pendapatan operasional',
     },
@@ -142,7 +144,7 @@ export default function KeuanganPage() {
       label: 'Total Pengeluaran',
       value: latestPengeluaran ? formatRupiah(latestPengeluaran.y || 0) : 'Rp 0',
       icon: <TrendingDown size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(pengeluaranChange.value) * (pengeluaranChange.isPositive ? 1 : -1),
       invoiceCount: 'Biaya operasional',
     },
@@ -150,7 +152,7 @@ export default function KeuanganPage() {
       label: 'Laba Rugi',
       value: latestLabarugi ? formatRupiah(latestLabarugi.y || 0) : 'Rp 0',
       icon: <BarChart3 size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(labarugiChange.value) * (labarugiChange.isPositive ? 1 : -1),
       invoiceCount: 'Laba bersih periode',
     },
@@ -158,7 +160,7 @@ export default function KeuanganPage() {
       label: 'Hutang Obat Jatuh Tempo',
       value: latestHutang ? formatRupiah(latestHutang.y || 0) : 'Rp 0',
       icon: <Receipt size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(hutangChange.value) * (hutangChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestHutang?.jmlfaktur, 0)} faktur`,
     },
@@ -166,7 +168,7 @@ export default function KeuanganPage() {
       label: 'Piutang Apotek Jatuh Tempo',
       value: latestPiutang ? formatRupiah(latestPiutang.y || 0) : 'Rp 0',
       icon: <FileText size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(piutangChange.value) * (piutangChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPiutang?.jmlfaktur, 0)} faktur`,
     },
@@ -174,7 +176,7 @@ export default function KeuanganPage() {
       label: 'Piutang Klinik Jatuh Tempo',
       value: latestPiutangKlinik ? formatRupiah(latestPiutangKlinik.y || 0) : 'Rp 0',
       icon: <Hospital size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(piutangKlinikChange.value) * (piutangKlinikChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPiutangKlinik?.jmlfaktur, 0)} faktur`,
     },
@@ -183,19 +185,25 @@ export default function KeuanganPage() {
   const chartData = normalizedData ? generateSafeChartData(normalizedData, activeTab === '1' ? 'today' : activeTab === '2' ? 'month' : 'year') : [];
 
   return (
-    <>
-      <PageHeader
-        title="Keuangan"
-        subtitle={`Data keuangan ${dateLabels[activeTab]}`}
-        subnavbar={
-          <TabSelector 
-            tabs={tabs} 
-            activeTab={activeTab} 
-            onChange={setActiveTab} 
-          />
-        }
-      />
-
+    <LiquidPullToRefresh
+      onRefresh={async () => {
+        await refetch();
+      }}
+      header={
+        <PageHeader
+          title="Keuangan"
+          subtitle={`Data keuangan ${dateLabels[activeTab]}`}
+          subnavbar={
+            <TabSelector 
+              tabs={tabs} 
+              activeTab={activeTab} 
+              onChange={setActiveTab} 
+            />
+          }
+        />
+      }
+      className="flex-1"
+    >
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <DashboardSkeleton cardCount={9} />
@@ -215,6 +223,6 @@ export default function KeuanganPage() {
           </div>
         )}
       </div>
-    </>
+    </LiquidPullToRefresh>
   );
 }

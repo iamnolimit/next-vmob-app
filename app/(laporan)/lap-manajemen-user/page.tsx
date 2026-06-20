@@ -6,7 +6,7 @@ import { ListSkeleton } from '@/components/SkeletonLoader';
 import { useReportData } from '@/lib/useReportData';
 
 const groupColors: Record<string, string> = {
-  Dokter: 'bg-blue-100 text-blue-700',
+  Dokter: 'bg-[#4f6dfa]/10 text-[#4f6dfa]',
   Kasir: 'bg-green-100 text-green-700',
   Admin: 'bg-purple-100 text-purple-700',
   Apoteker: 'bg-orange-100 text-orange-700',

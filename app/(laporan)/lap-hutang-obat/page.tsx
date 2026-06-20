@@ -52,10 +52,10 @@ export default function LapHutangObatPage() {
       title="Hutang Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No Faktur', width: 150 },
-        { key: 'supplier', label: 'Supplier', width: 150 },
-        { key: 'jatuhTempo', label: 'Jatuh Tempo', align: 'center', width: 110 },
-        { key: 'total', label: 'Total', align: 'right', width: 130,
+        { key: 'noFaktur', label: 'No Faktur', width: 100 },
+        { key: 'supplier', label: 'Supplier', width: 100 },
+        { key: 'jatuhTempo', label: 'Jatuh Tempo', align: 'center', width: 80 },
+        { key: 'total', label: 'Total', align: 'right',
           render: (r) => formatNumber(r.total as number) },
       ]}
       data={data}

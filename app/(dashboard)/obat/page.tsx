@@ -13,6 +13,8 @@ import { obatPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
 import { normalizeApiData, calculateSafePercentageChange, safeParseInt, generateSafeChartData } from '@/lib/utils';
 
+import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
+
 const tabs = [
   { label: 'Hari Ini',  value: '1'  },
   { label: 'Bulan Ini', value: '2' },
@@ -72,7 +74,7 @@ export default function ObatPage() {
       label: 'Nilai Stok Obat',
       value: formatRupiah(dataNilaiObat?.nilai || 0),
       icon: <Pill size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: 0,
       invoiceCount: dataNilaiObat?.count ? `${dataNilaiObat.count} Obat` : '',
     },
@@ -80,7 +82,7 @@ export default function ObatPage() {
       label: 'Obat Expired',
       value: formatRupiah(dataObatExpired?.nilai || 0),
       icon: <AlertTriangle size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: 0,
       invoiceCount: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '',
     },
@@ -88,7 +90,7 @@ export default function ObatPage() {
       label: 'Obat Stok Habis',
       value: dataObatStokHabis?.count ? `${dataObatStokHabis.count} Obat` : '0 Obat',
       icon: <Package size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: 0,
       invoiceCount: '',
     },
@@ -96,7 +98,7 @@ export default function ObatPage() {
       label: 'Obat Hilang',
       value: formatRupiah(nilaiObatHilang),
       icon: <Search size={20} />,
-      color: '#035afc',
+      color: '#4f6dfa',
       change: parseFloat(obatHilangChange.value) * (obatHilangChange.isPositive ? 1 : -1),
       invoiceCount: dataObatStokHilang?.count ? `${dataObatStokHilang.count} Obat` : '0 Obat',
     },
@@ -108,19 +110,25 @@ export default function ObatPage() {
   const obatTerlarisData = normalizedData?.dataObatTerlaris || [];
 
   return (
-    <>
-      <PageHeader
-        title="Obat"
-        subtitle={`Data obat ${dateLabels[activeTab]}`}
-        subnavbar={
-          <TabSelector 
-            tabs={tabs} 
-            activeTab={activeTab} 
-            onChange={setActiveTab} 
-          />
-        }
-      />
-
+    <LiquidPullToRefresh
+      onRefresh={async () => {
+        await refetch();
+      }}
+      header={
+        <PageHeader
+          title="Obat"
+          subtitle={`Data obat ${dateLabels[activeTab]}`}
+          subnavbar={
+            <TabSelector 
+              tabs={tabs} 
+              activeTab={activeTab} 
+              onChange={setActiveTab} 
+            />
+          }
+        />
+      }
+      className="flex-1"
+    >
       <div className="flex-1 overflow-y-auto pb-6">
         {loading ? (
           <DashboardSkeleton cardCount={4} />
@@ -152,6 +160,6 @@ export default function ObatPage() {
           </div>
         )}
       </div>
-    </>
+    </LiquidPullToRefresh>
   );
 }

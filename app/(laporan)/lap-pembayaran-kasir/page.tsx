@@ -68,11 +68,11 @@ export default function LapPembayaranKasirPage() {
       title="Pembayaran Kasir"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 100 },
-        { key: 'noFaktur', label: 'No Faktur', width: 130 },
-        { key: 'pasien', label: 'Pasien', width: 130 },
-        { key: 'dokter', label: 'Dokter', width: 130 },
-        { key: 'total', label: 'Total', align: 'right', width: 110,
+        { key: 'tanggal', label: 'Tanggal', width: 80 },
+        { key: 'noFaktur', label: 'No Faktur', width: 100 },
+        { key: 'pasien', label: 'Pasien', width: 100 },
+        { key: 'dokter', label: 'Dokter', width: 100 },
+        { key: 'total', label: 'Total', align: 'right',
           render: (r) => formatNumber(r.total as number) },
       ]}
       data={data}

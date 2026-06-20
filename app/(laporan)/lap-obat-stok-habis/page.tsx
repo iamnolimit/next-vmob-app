@@ -60,10 +60,10 @@ export default function LapObatStokHabisPage() {
       title="Obat Stok Habis"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'gudang', label: 'Gudang', width: 120 },
-        { key: 'namaObat', label: 'Nama Obat', width: 190 },
-        { key: 'stokMinimal', label: 'Stok Minimal', align: 'right', width: 120 },
-        { key: 'stokNyata', label: 'Stok Nyata', align: 'right', width: 120 },
+        { key: 'gudang', label: 'Gudang', width: 80 },
+        { key: 'namaObat', label: 'Nama Obat', width: 120 },
+        { key: 'stokMinimal', label: 'Stok Minimal', align: 'right', width: 80 },
+        { key: 'stokNyata', label: 'Stok Nyata', align: 'right' },
       ]}
       data={data}
       loading={loading}

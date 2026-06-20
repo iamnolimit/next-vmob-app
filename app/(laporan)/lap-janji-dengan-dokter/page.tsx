@@ -58,10 +58,10 @@ export default function LapJanjiDenganDokterPage() {
       title="Janji Dengan Dokter"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 150 },
-        { key: 'pasien', label: 'Pasien', width: 130 },
-        { key: 'dokter', label: 'Dokter', width: 140 },
-        { key: 'keterangan', label: 'Keterangan', width: 170 },
+        { key: 'tanggal', label: 'Tanggal', width: 100 },
+        { key: 'pasien', label: 'Pasien', width: 100 },
+        { key: 'dokter', label: 'Dokter', width: 100 },
+        { key: 'keterangan', label: 'Keterangan' },
       ]}
       data={data}
       loading={loading}

@@ -39,9 +39,9 @@ export default function RootLayout({
         <body className="h-full overflow-hidden bg-[#f4f6f8] relative" suppressHydrationWarning>
         {/* Global Ambient Background */}
         <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#035afc]/10 rounded-full blur-[100px]" />
-          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[30%] bg-[#035afc]/5 rounded-full blur-[100px]" />
-          <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-[#035afc]/10 rounded-full blur-[120px]" />
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#4f6dfa]/10 rounded-full blur-[100px]" />
+          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[30%] bg-[#4f6dfa]/5 rounded-full blur-[100px]" />
+          <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-[#4f6dfa]/10 rounded-full blur-[120px]" />
         </div>
 
         <AuthProvider>

@@ -317,7 +317,7 @@ export default function ReportTable({
   const headerNode = (
     <>
       {/* ── Header ── */}
-      <div className="relative z-10 mb-4 bg-[#035afc] rounded-b-[2.5rem] pb-2">
+      <div className="relative z-10 mb-4 bg-[#4f6dfa] rounded-b-[2.5rem] pb-2">
         <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
           <div className="flex-shrink-0 self-start">
             <button
@@ -359,12 +359,12 @@ export default function ReportTable({
         {/* Toggle row */}
         <button
           onClick={() => setShowFilter((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-3 active:bg-blue-50/50 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 active:bg-[#4f6dfa]/5 transition-colors"
         >
           <div className="flex items-center gap-2.5">
             {/* Sliders icon */}
-            <div className="w-7 h-7 rounded-lg bg-[#035afc]/10 flex items-center justify-center flex-shrink-0">
-              <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-7 h-7 rounded-lg bg-[#4f6dfa]/10 flex items-center justify-center flex-shrink-0">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <line x1="4" y1="6" x2="20" y2="6" />
                 <line x1="4" y1="12" x2="20" y2="12" />
                 <line x1="4" y1="18" x2="20" y2="18" />
@@ -373,9 +373,9 @@ export default function ReportTable({
                 <circle cx="9" cy="18" r="2" fill="currentColor" stroke="none" />
               </svg>
             </div>
-            <span className="text-sm font-semibold text-[#035afc]">Filter &amp; Pencarian</span>
+            <span className="text-sm font-semibold text-[#4f6dfa]">Filter &amp; Pencarian</span>
             {appliedFilter && (
-              <span className="inline-flex items-center gap-1 bg-[#035afc] text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
+              <span className="inline-flex items-center gap-1 bg-[#4f6dfa] text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
                 Aktif
               </span>
             )}
@@ -383,7 +383,7 @@ export default function ReportTable({
           {/* Chevron icon */}
           <svg
             viewBox="0 0 24 24"
-            className="w-4 h-4 text-[#035afc] transition-transform duration-200 flex-shrink-0"
+            className="w-4 h-4 text-[#4f6dfa] transition-transform duration-200 flex-shrink-0"
             style={{ transform: showFilter ? 'rotate(180deg)' : 'none' }}
             fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
           >
@@ -395,7 +395,7 @@ export default function ReportTable({
         {appliedFilter && !showFilter && (
           <div className="px-4 pb-3 flex items-center gap-1.5 flex-wrap">
             {!hideDateFilter && (
-              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#4f6dfa]/8 text-[#4f6dfa] font-medium px-2.5 py-1 rounded-full border border-[#4f6dfa]/15">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
@@ -406,7 +406,7 @@ export default function ReportTable({
               </span>
             )}
             {intervalOptions && (
-              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#4f6dfa]/8 text-[#4f6dfa] font-medium px-2.5 py-1 rounded-full border border-[#4f6dfa]/15">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="9" />
                   <polyline points="12 7 12 12 15 15" />
@@ -415,7 +415,7 @@ export default function ReportTable({
               </span>
             )}
             {cabangOptions && appliedFilter.cabang && (
-              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#4f6dfa]/8 text-[#4f6dfa] font-medium px-2.5 py-1 rounded-full border border-[#4f6dfa]/15">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                   <polyline points="9 22 9 12 15 12 15 22" />
@@ -424,7 +424,7 @@ export default function ReportTable({
               </span>
             )}
             {gudangOptions && appliedFilter.gudang && appliedFilter.gudang !== '' && (
-              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#4f6dfa]/8 text-[#4f6dfa] font-medium px-2.5 py-1 rounded-full border border-[#4f6dfa]/15">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="7" width="20" height="14" rx="2" />
                   <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
@@ -433,7 +433,7 @@ export default function ReportTable({
               </span>
             )}
             {sortKey && (
-              <span className="inline-flex items-center gap-1 text-[11px] bg-[#035afc]/8 text-[#035afc] font-medium px-2.5 py-1 rounded-full border border-[#035afc]/15">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-[#4f6dfa]/8 text-[#4f6dfa] font-medium px-2.5 py-1 rounded-full border border-[#4f6dfa]/15">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
                 </svg>
@@ -442,7 +442,7 @@ export default function ReportTable({
             )}
             <button
               onClick={resetFilter}
-              className="inline-flex items-center gap-1 text-[11px] text-[#035afc] font-semibold px-2.5 py-1 rounded-full border border-[#035afc]/30 active:bg-[#035afc]/10 transition-colors"
+              className="inline-flex items-center gap-1 text-[11px] text-[#4f6dfa] font-semibold px-2.5 py-1 rounded-full border border-[#4f6dfa]/30 active:bg-[#4f6dfa]/10 transition-colors"
             >
               <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -463,7 +463,7 @@ export default function ReportTable({
             {resolvedCabangOptions.length > 1 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                     <polyline points="9 22 9 12 15 12 15 22" />
                   </svg>
@@ -482,7 +482,7 @@ export default function ReportTable({
             {gudangOptions && gudangOptions.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="7" width="20" height="14" rx="2" />
                     <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
                   </svg>
@@ -501,7 +501,7 @@ export default function ReportTable({
             {intervalOptions && intervalOptions.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="9" />
                     <polyline points="12 7 12 12 15 15" />
                   </svg>
@@ -514,7 +514,7 @@ export default function ReportTable({
                       onClick={() => setSelectedInterval(opt.value)}
                       className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                         selectedInterval === opt.value
-                          ? 'bg-[#035afc] text-white shadow-sm'
+                          ? 'bg-[#4f6dfa] text-white shadow-sm'
                           : 'bg-gray-100 text-gray-600 active:bg-gray-200'
                       }`}
                     >
@@ -530,22 +530,22 @@ export default function ReportTable({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-semibold text-gray-500 flex items-center gap-1.5">
-                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" />
                       <line x1="16" y1="2" x2="16" y2="6" />
                       <line x1="8" y1="2" x2="8" y2="6" />
                       <line x1="3" y1="10" x2="21" y2="10" />
                     </svg>
-                    Filter Waktu
+                    Pilihan Periode
                   </p>
                   <div className="flex bg-gray-100 rounded-lg p-0.5">
                     {(['tanggal', 'bulan', 'tahun'] as const).map((type) => (
                       <button
                         key={type}
                         onClick={() => setDateFilterType(type)}
-                        className={`px-2.5 py-1 text-[10px] font-bold rounded-md capitalize transition-colors ${
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md capitalize transition-colors ${
                           dateFilterType === type
-                            ? 'bg-white text-[#035afc] shadow-sm'
+                            ? 'bg-white text-[#4f6dfa] shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
                         }`}
                       >
@@ -598,14 +598,14 @@ export default function ReportTable({
             {searchFields.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="7" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                   Pencarian
                 </p>
                 <div className="relative">
-                  <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#035afc]/50 pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4f6dfa]/50 pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="7" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
@@ -614,7 +614,7 @@ export default function ReportTable({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder={searchPlaceholder}
-                    className="w-full pl-9 pr-9 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#035afc]/40 focus:bg-white transition-colors"
+                    className="w-full pl-9 pr-9 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#4f6dfa]/40 focus:bg-white transition-colors"
                   />
                   {search && (
                     <button
@@ -644,7 +644,7 @@ export default function ReportTable({
               </button>
               <button
                 onClick={applyFilter}
-                className="flex-1 py-3 rounded-xl text-sm font-bold bg-[#035afc] text-white shadow-md active:bg-[#024de0] transition-colors flex items-center justify-center gap-1.5"
+                className="flex-1 py-3 rounded-xl text-sm font-bold bg-[#4f6dfa] text-white shadow-md active:bg-[#4f6dfa] transition-colors flex items-center justify-center gap-1.5"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
@@ -691,9 +691,9 @@ export default function ReportTable({
                       <span className="inline-flex items-center text-gray-400">
                         {sortKey === col.key ? (
                           sortDir === 'asc' ? (
-                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
                           ) : (
-                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
                           )
                         ) : (
                           <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-50" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
@@ -709,7 +709,7 @@ export default function ReportTable({
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
                     <div className="flex flex-col items-center gap-2 text-gray-400">
-                      <svg className="w-8 h-8 animate-spin text-[#035afc]" viewBox="0 0 24 24" fill="none">
+                      <svg className="w-8 h-8 animate-spin text-[#4f6dfa]" viewBox="0 0 24 24" fill="none">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                       </svg>
@@ -765,16 +765,16 @@ export default function ReportTable({
                       <td colSpan={columns.length} className="text-center py-5">
                         {loading ? (
                           <div className="flex justify-center items-center gap-2">
-                            <svg className="w-5 h-5 animate-spin text-[#035afc]" viewBox="0 0 24 24" fill="none">
+                            <svg className="w-5 h-5 animate-spin text-[#4f6dfa]" viewBox="0 0 24 24" fill="none">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                             </svg>
-                            <span className="text-xs text-[#035afc] font-semibold">Memuat data selanjutnya...</span>
+                            <span className="text-xs text-[#4f6dfa] font-semibold">Memuat data selanjutnya...</span>
                           </div>
                         ) : (
                           <button
                             onClick={handleLoadMore}
-                            className="text-xs text-[#035afc] font-semibold px-5 py-2.5 rounded-full border border-[#035afc]/30 bg-blue-50 active:bg-blue-100"
+                            className="text-xs text-[#4f6dfa] font-semibold px-5 py-2.5 rounded-full border border-[#4f6dfa]/30 bg-[#4f6dfa]/10 active:bg-[#4f6dfa]/20"
                           >
                             Muat 50 data berikutnya
                           </button>
@@ -796,8 +796,8 @@ export default function ReportTable({
         {/* Grand total (Floating) */}
         {totalLabel && totalValue && (
           <div className="fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-5 py-4 flex items-center justify-between z-50">
-            <span className="text-sm font-bold text-blue-800">{totalLabel}</span>
-            <span className="text-lg font-extrabold text-blue-900">{totalValue}</span>
+            <span className="text-sm font-bold text-[#4f6dfa]">{totalLabel}</span>
+            <span className="text-lg font-extrabold text-[#4f6dfa]">{totalValue}</span>
           </div>
         )}
       </div>

@@ -215,12 +215,12 @@ export default function LapLabaRugiPage() {
   const filterNode = (
     <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
       <button
-        className="w-full flex items-center justify-between px-4 py-3 active:bg-blue-50/50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 active:bg-[#4f6dfa]/5 transition-colors"
         onClick={() => setShowFilter(!showFilter)}
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-[#035afc]/10 flex items-center justify-center flex-shrink-0">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#035afc]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-7 h-7 rounded-lg bg-[#4f6dfa]/10 flex items-center justify-center flex-shrink-0">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#4f6dfa]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <line x1="4" y1="6" x2="20" y2="6" />
               <line x1="4" y1="12" x2="20" y2="12" />
               <line x1="4" y1="18" x2="20" y2="18" />
@@ -229,11 +229,11 @@ export default function LapLabaRugiPage() {
               <circle cx="9" cy="18" r="2" fill="currentColor" stroke="none" />
             </svg>
           </div>
-          <span className="text-sm font-semibold text-[#035afc]">Filter &amp; Periode</span>
+          <span className="text-sm font-semibold text-[#4f6dfa]">Filter &amp; Periode</span>
         </div>
         <svg
           viewBox="0 0 24 24"
-          className="w-4 h-4 text-[#035afc] transition-transform duration-200 flex-shrink-0"
+          className="w-4 h-4 text-[#4f6dfa] transition-transform duration-200 flex-shrink-0"
           style={{ transform: showFilter ? 'rotate(180deg)' : 'none' }}
           fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
         >
@@ -253,7 +253,7 @@ export default function LapLabaRugiPage() {
             <div className="flex gap-2">
               {(['tanggal', 'bulan', 'tahun'] as PeriodType[]).map((p) => (
                 <button key={p} onClick={() => setPeriodType(p)}
-                  className={`flex-1 py-2 rounded-xl text-sm font-semibold capitalize transition-colors ${periodType === p ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                  className={`flex-1 py-2 rounded-xl text-sm font-semibold capitalize transition-colors ${periodType === p ? 'bg-[#4f6dfa] text-white' : 'bg-gray-100 text-gray-600'}`}>
                   {p.charAt(0).toUpperCase() + p.slice(1)}
                 </button>
               ))}
@@ -270,14 +270,14 @@ export default function LapLabaRugiPage() {
 
           <div className="flex gap-2.5">
             <button onClick={() => setShowFilter(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700">Batal</button>
-            <button onClick={applyFilter} className="flex-1 py-3 rounded-xl text-sm font-bold bg-blue-600 text-white shadow-md active:bg-blue-700">Terapkan</button>
+            <button onClick={applyFilter} className="flex-1 py-3 rounded-xl text-sm font-bold bg-[#4f6dfa] text-white shadow-md active:bg-[#4f6dfa]/90">Terapkan</button>
           </div>
         </div>
       </div>
 
       {!showFilter && (
         <div className="px-4 pb-2 flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] bg-blue-50 text-blue-600 font-medium px-2.5 py-1 rounded-full">
+          <span className="text-[11px] bg-[#4f6dfa]/10 text-[#4f6dfa] font-medium px-2.5 py-1 rounded-full">
             {String.fromCodePoint(0x1F4C5)} {fmtDate(appliedStart)} {String.fromCodePoint(0x2013)} {fmtDate(appliedEnd)}
           </span>
           <span className="text-[11px] bg-purple-50 text-purple-600 font-medium px-2.5 py-1 rounded-full capitalize">
@@ -355,7 +355,7 @@ export default function LapLabaRugiPage() {
             <div className="mt-4 relative">
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
-                className="w-full py-3 rounded-xl text-sm font-bold bg-blue-600 text-white shadow-md active:bg-blue-700"
+                className="w-full py-3 rounded-xl text-sm font-bold bg-[#4f6dfa] text-white shadow-md active:bg-[#4f6dfa]/90"
               >
                 Export Laporan
               </button>

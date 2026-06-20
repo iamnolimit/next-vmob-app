@@ -68,10 +68,10 @@ export default function LapPendapatanPetugasMedisPage() {
       title="Pendapatan Petugas Medis"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'dokter', label: 'Dokter', width: 150 },
-        { key: 'noFaktur', label: 'No. Faktur', width: 130 },
-        { key: 'pemeriksaan', label: 'Pemeriksaan', width: 150 },
-        { key: 'feeDokter', label: 'Fee Dokter', align: 'right', width: 120,
+        { key: 'dokter', label: 'Dokter', width: 100 },
+        { key: 'noFaktur', label: 'No. Faktur', width: 100 },
+        { key: 'pemeriksaan', label: 'Pemeriksaan', width: 100 },
+        { key: 'feeDokter', label: 'Fee Dokter', align: 'right',
           render: (r) => formatRupiah(r.feeDokter as number) },
       ]}
       data={data}

@@ -43,10 +43,10 @@ export default function LapTagihanJaminanPage() {
       title="Tagihan Jaminan Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No. Faktur', width: 130 },
-        { key: 'pasien', label: 'Pasien', width: 130 },
-        { key: 'jaminan', label: 'Jaminan', width: 140 },
-        { key: 'totalBiaya', label: 'Total', align: 'right', width: 120,
+        { key: 'noFaktur', label: 'No. Faktur', width: 100 },
+        { key: 'pasien', label: 'Pasien', width: 100 },
+        { key: 'jaminan', label: 'Jaminan', width: 100 },
+        { key: 'totalBiaya', label: 'Total', align: 'right',
           render: (r) => formatRupiah(r.totalBiaya as number) },
       ]}
       data={data}

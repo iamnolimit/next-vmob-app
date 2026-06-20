@@ -74,10 +74,10 @@ export default function LapPergantianShiftPage() {
       title="Pergantian Shift"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'bukaShift', label: 'Buka Shift', width: 160 },
-        { key: 'tutupShift', label: 'Tutup Shift', width: 160 },
-        { key: 'kasir', label: 'Kasir', width: 120 },
-        { key: 'saldoKasir', label: 'Saldo Kasir', align: 'right', width: 130,
+        { key: 'bukaShift', label: 'Buka Shift', width: 120 },
+        { key: 'tutupShift', label: 'Tutup Shift', width: 120 },
+        { key: 'kasir', label: 'Kasir', width: 100 },
+        { key: 'saldoKasir', label: 'Saldo Kasir', align: 'right',
           render: (r) => formatNumber(r.saldoKasir as number) },
       ]}
       data={data}

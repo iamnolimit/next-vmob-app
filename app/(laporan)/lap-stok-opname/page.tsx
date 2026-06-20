@@ -66,10 +66,10 @@ export default function LapStokOpnamePage() {
       title="Stok Opname"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'gudang', label: 'Gudang', width: 120 },
-        { key: 'namaObat', label: 'Nama Obat', width: 190 },
-        { key: 'selisih', label: 'Selisih', align: 'right', width: 80 },
-        { key: 'nominalSelisih', label: 'Nominal Selisih', align: 'right', width: 140,
+        { key: 'gudang', label: 'Gudang', width: 80 },
+        { key: 'namaObat', label: 'Nama Obat', width: 120 },
+        { key: 'selisih', label: 'Selisih', align: 'right', width: 60 },
+        { key: 'nominalSelisih', label: 'Nominal Selisih', align: 'right',
           render: (r) => formatNumber(r.nominalSelisih as number) },
       ]}
       data={data}
