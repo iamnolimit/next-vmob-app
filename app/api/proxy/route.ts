@@ -17,14 +17,16 @@ function getBaseUrl(apiVersion: string): string {
   }
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Target-URL, Target-Version, Target-Options',
+};
+
 export async function OPTIONS(request: Request) {
   return new NextResponse(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
+    headers: corsHeaders,
   });
 }
 
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
     if (!endpoint) {
       return NextResponse.json({ error: 'Missing endpoint' }, { 
         status: 400,
-        headers: { 'Access-Control-Allow-Origin': '*' }
+        headers: corsHeaders
       });
     }
 
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
       }
       return NextResponse.json({ data }, { 
         status: response.status,
-        headers: { 'Access-Control-Allow-Origin': '*' }
+        headers: corsHeaders
       });
     } else {
       const text = await response.text();
@@ -68,7 +70,7 @@ export async function POST(request: Request) {
         { error: 'Invalid response from API', details: text.substring(0, 200) },
         { 
           status: response.status,
-          headers: { 'Access-Control-Allow-Origin': '*' }
+          headers: corsHeaders
         }
       );
     }
@@ -77,7 +79,7 @@ export async function POST(request: Request) {
     console.error('Proxy Error:', error);
     return NextResponse.json({ error: message }, { 
       status: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' }
+      headers: corsHeaders
     });
   }
 }
