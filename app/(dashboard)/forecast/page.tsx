@@ -190,7 +190,7 @@ export default function ForecastPage() {
             </div>
 
             <div className="mt-6">
-              <RankedList title="Kategori Obat Terlaris" icon="�" color="#1d4ed8"
+              <RankedList title="Kategori Obat Terlaris" icon="📊" color="#1d4ed8"
                 items={katlarisDataApi.map((item: any, i: number) => ({ rank: i + 1, name: item.name, persen: item.persen, nilai: item.nilai }))}
                 type="katlaris" />
             </div>
