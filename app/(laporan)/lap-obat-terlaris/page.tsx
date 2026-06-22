@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { formatRupiah, formatNumber } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
 
 export default function LapObatTerlarisPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,7 +79,7 @@ export default function LapObatTerlarisPage() {
         { key: 'jumlahTransaksi', label: 'Jml Transaksi', align: 'right', width: 80,
           render: (r) => Number(r.jumlahTransaksi).toLocaleString('id-ID') },
         { key: 'nominal', label: 'Nominal', align: 'right',
-          render: (r) => formatNumber(r.nominal as number) },
+          render: (r) => formatRupiah(r.nominal as number) },
       ]}
       data={data}
       loading={loading}

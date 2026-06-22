@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { formatRupiah, formatNumber } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
 
 export default function LapPembayaranKasirPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,12 +46,16 @@ export default function LapPembayaranKasirPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
+  // cari: 4=tanggal, 3=bulan, 2=tahun
+  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
+      cari: periodToCari(filters.periodType || 'tanggal'),
       a: filters.cabang,
       reg: filters.cabangReg,
     });
@@ -67,13 +71,13 @@ export default function LapPembayaranKasirPage() {
     <ReportTable
       title="Pembayaran Kasir"
       columns={[
-        { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 80 },
-        { key: 'noFaktur', label: 'No Faktur', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 100 },
-        { key: 'dokter', label: 'Dokter', width: 100 },
-        { key: 'total', label: 'Total', align: 'right',
-          render: (r) => formatNumber(r.total as number) },
+        { key: 'no', label: 'No', align: 'center', width: 36 },
+        { key: 'tanggal', label: 'Tgl', width: 70 },
+        { key: 'noFaktur', label: 'No Faktur', width: 90 },
+        { key: 'pasien', label: 'Pasien', width: 90 },
+        { key: 'dokter', label: 'Dokter', width: 90 },
+        { key: 'total', label: 'Total', align: 'right', width: 90,
+          render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
       loading={loading}

@@ -2,9 +2,11 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { formatRupiah, gudangOptions } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
+import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapPembelianObatPage() {
+  const { gudangOptions } = useGudangOptions();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;
@@ -49,6 +51,7 @@ export default function LapPembelianObatPage() {
       carimobile: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      gudid: filters.gudang || '',
     });
   }, [refetch]);
 
@@ -62,12 +65,12 @@ export default function LapPembelianObatPage() {
     <ReportTable
       title="Pembelian Obat"
       columns={[
-        { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 80 },
-        { key: 'noFaktur', label: 'No Faktur', width: 100 },
-        { key: 'supplier', label: 'Supplier', width: 100 },
-        { key: 'gudang', label: 'Gudang', width: 80 },
-        { key: 'total', label: 'Total', align: 'right',
+        { key: 'no', label: 'No', align: 'center', width: 36 },
+        { key: 'tanggal', label: 'Tgl', width: 70 },
+        { key: 'noFaktur', label: 'No Faktur', width: 90 },
+        { key: 'supplier', label: 'Supplier', width: 90 },
+        { key: 'gudang', label: 'Gudang', width: 70 },
+        { key: 'total', label: 'Total', align: 'right', width: 90,
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}

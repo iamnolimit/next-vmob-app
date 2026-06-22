@@ -1,6 +1,6 @@
 'use client';
 import ReportTable from '@/components/ReportTable';
-import { formatRupiah, formatNumber } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
 import { useReportData } from '@/lib/useReportData';
 
 export default function LapPiutangObatPage() {
@@ -63,7 +63,7 @@ export default function LapPiutangObatPage() {
         { key: 'pasien', label: 'Pasien', width: 100 },
         { key: 'jatuhTempo', label: 'Jatuh Tempo', align: 'center', width: 80 },
         { key: 'total', label: 'Total', align: 'right',
-          render: (r) => formatNumber(r.total as number) },
+          render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
       loading={loading}

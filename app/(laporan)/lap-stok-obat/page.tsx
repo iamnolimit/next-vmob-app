@@ -2,9 +2,10 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { gudangOptions } from '@/lib/dummyData';
+import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapStokObatPage() {
+  const { gudangOptions } = useGudangOptions();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;
@@ -49,6 +50,7 @@ export default function LapStokObatPage() {
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      gudid: filters.gudang || '',
     });
   }, [refetch]);
 

@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { formatRupiah, formatNumber } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
 
 export default function LapPenjualanObatPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,6 +45,7 @@ export default function LapPenjualanObatPage() {
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
       filter: filters.search,
+      carimobile: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
     });
@@ -65,7 +66,7 @@ export default function LapPenjualanObatPage() {
         { key: 'pasien', label: 'Pasien', width: 100 },
         { key: 'dokter', label: 'Dokter', width: 100 },
         { key: 'total', label: 'Total', align: 'right',
-          render: (r) => formatNumber(r.total as number) },
+          render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
       loading={loading}

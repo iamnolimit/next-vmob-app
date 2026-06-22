@@ -227,10 +227,10 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                   onClick={() => go('/dashboard')}
                 />
                 <MenuItem
-                  icon={<LineChart size={20} />}
-                  label="Smart Forecast"
-                  active={normalizedPathname === '/forecast'}
-                  onClick={() => go('/forecast')}
+                  icon={<Stethoscope size={20} />}
+                  label="Obat"
+                  active={normalizedPathname === '/obat'}
+                  onClick={() => go('/obat')}
                 />
                 <MenuItem
                   icon={<CircleDollarSign size={20} />}
@@ -239,10 +239,10 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                   onClick={() => go('/keuangan')}
                 />
                 <MenuItem
-                  icon={<Stethoscope size={20} />}
-                  label="Obat"
-                  active={normalizedPathname === '/obat'}
-                  onClick={() => go('/obat')}
+                  icon={<LineChart size={20} />}
+                  label="Smart Forecast"
+                  active={normalizedPathname === '/forecast'}
+                  onClick={() => go('/forecast')}
                 />
                 <MenuItem
                   icon={<UsersRound size={20} />}

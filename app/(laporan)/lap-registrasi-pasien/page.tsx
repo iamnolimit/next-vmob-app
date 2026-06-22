@@ -3,6 +3,23 @@ import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 
+// Parse tanggal Indonesia (dd Mon yyyy) ke ISO untuk sorting
+function parseTglIndo(tgl: string): string {
+  if (!tgl || tgl === '-') return '';
+  const months: Record<string, string> = {
+    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+    Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+    Mei: '05', Agt: '08', Okt: '10', Des: '12',
+  };
+  const parts = tgl.trim().split(' ');
+  if (parts.length === 3) {
+    const [d, m, y] = parts;
+    const mm = months[m] || '01';
+    return `${y}-${mm}-${d.padStart(2, '0')}`;
+  }
+  return tgl;
+}
+
 export default function LapRegistrasiPasienPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
@@ -10,14 +27,18 @@ export default function LapRegistrasiPasienPage() {
     if (!Array.isArray(dataArray)) return [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return dataArray.map((item: any, index: number) => ({
-      no: offset + index + 1,
-      tanggal: item.tgl || item.pastglreg || '-',
-      noRM: item.pasrm || '',
-      pasien: item.pasnama || '-',
-      alamat: item.pasalamat || '-',
-      rawData: item,
-    }));
+    return dataArray.map((item: any, index: number) => {
+      const tgl = item.tgl || item.pastglreg || '-';
+      return {
+        no: offset + index + 1,
+        tanggal: tgl,
+        tanggalISO: parseTglIndo(tgl),
+        noRM: item.pasrm || '',
+        pasien: item.pasnama || '-',
+        alamat: item.pasalamat || '-',
+        rawData: item,
+      };
+    });
   }, []);
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
@@ -60,7 +81,8 @@ export default function LapRegistrasiPasienPage() {
       title="Registrasi Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 80 },
+        { key: 'tanggalISO', label: 'Tanggal', width: 80,
+          render: (r) => String(r.tanggal ?? '-') },
         { key: 'noRM', label: 'No. RM', width: 100 },
         { key: 'pasien', label: 'Pasien', width: 120 },
         { key: 'alamat', label: 'Alamat' },

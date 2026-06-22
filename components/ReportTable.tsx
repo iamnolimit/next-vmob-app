@@ -9,6 +9,7 @@ import DatePickerInput from './DatePickerInput';
 import MonthPickerInput from './MonthPickerInput';
 import YearPickerInput from './YearPickerInput';
 import SelectInput from './SelectInput';
+import { useGudangOptions } from '@/lib/useGudangOptions';
 
 
 export interface Column {
@@ -54,7 +55,7 @@ interface ReportTableProps {
   /** Field name in data row to apply gudang filter against */
   gudangField?: string;
   /** Callback to fetch data from API (always resets to offset 0) */
-  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; cabangReg: string; gudang: string; offset: number; limit: number }) => void;
+  onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; cabangReg: string; gudang: string; offset: number; limit: number; periodType: 'tanggal' | 'bulan' | 'tahun' }) => void;
   /** Callback to load the next page (append mode) */
   onLoadMore?: () => void;
   /** Callback to clear data when filter is reset (without re-fetching) */
@@ -118,6 +119,9 @@ export default function ReportTable({
   // Fetch cabang from API; fall back to prop if provided
   const { cabangOptions: fetchedCabangOptions } = useCabangOptions();
   const resolvedCabangOptions = cabangOptions ?? fetchedCabangOptions;
+  // Fetch gudang from API; fall back to prop if provided
+  const { gudangOptions: fetchedGudangOptions } = useGudangOptions();
+  const resolvedGudangOptions = gudangOptions ?? fetchedGudangOptions;
 
   // Initialize from prop or user.app_id (available immediately from auth)
   const [selectedCabang, setSelectedCabang] = useState<string>(
@@ -134,15 +138,14 @@ export default function ReportTable({
     setSelectedCabang(user.app_id);
     setSelectedCabangReg(user.app_reg ?? '');
   }
-  const [selectedGudang, setSelectedGudang] = useState<string>(
-    gudangOptions?.[0]?.value ?? ''
-  );
+  const [selectedGudang, setSelectedGudang] = useState<string>('');
   const [appliedFilter, setAppliedFilter] = useState<{
     start: string; end: string; interval: string | number; cabang?: string; gudang?: string;
   } | null>(null);
 
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [isFiltering, setIsFiltering] = useState(false);
   const limit = 50;
 
   // Track whether we have any data yet (to distinguish initial load vs load-more)
@@ -194,6 +197,7 @@ export default function ReportTable({
         gudang: selectedGudang,
         offset: 0,
         limit,
+        periodType: dateFilterType,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -215,7 +219,6 @@ export default function ReportTable({
     if (data.length > 0) {
       hasDataRef.current = true;
     } else {
-      // Fresh refetch reset data to empty — reset the flag so initial spinner shows
       hasDataRef.current = false;
     }
     // Only restore scroll if we were appending (savedScrollTop > 0)
@@ -229,6 +232,12 @@ export default function ReportTable({
       });
     }
   }, [data]);
+
+  // Clear filtering overlay when loading finishes
+  useEffect(() => {
+    if (!loading) setIsFiltering(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   // Update both cabang value and its reg together when user changes selection
   const handleCabangChange = (value: string) => {
@@ -253,20 +262,20 @@ export default function ReportTable({
 
     setAppliedFilter({ start: finalStart, end: finalEnd, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
     setShowFilter(false);
+    setIsFiltering(true);
     if (onFetchData) {
-      onFetchData({ start: finalStart, end: finalEnd, search, interval: selectedInterval, cabang: selectedCabang, cabangReg: selectedCabangReg, gudang: selectedGudang, offset: 0, limit });
+      onFetchData({ start: finalStart, end: finalEnd, search, interval: selectedInterval, cabang: selectedCabang, cabangReg: selectedCabangReg, gudang: selectedGudang, offset: 0, limit, periodType: dateFilterType });
     }
   };
 
   const resetFilter = () => {
-    const defaultStart = toISO(firstOfMonth);
+    const defaultStart = toISO(today);
     const defaultEnd = toISO(today);
     const defaultInterval = intervalOptions?.[0]?.value ?? 'all';
     const defaultCabangObj = resolvedCabangOptions.find((c) => c.value === user?.app_id)
       ?? resolvedCabangOptions[0];
     const defaultCabang = defaultCabangObj?.value ?? user?.app_id ?? '';
     const defaultCabangReg = defaultCabangObj?.reg ?? user?.app_reg ?? '';
-    const defaultGudang = gudangOptions?.[0]?.value ?? '';
 
     setStartDate(defaultStart);
     setEndDate(defaultEnd);
@@ -277,7 +286,7 @@ export default function ReportTable({
     setSelectedInterval(defaultInterval);
     setSelectedCabang(defaultCabang);
     setSelectedCabangReg(defaultCabangReg);
-    setSelectedGudang(defaultGudang);
+    setSelectedGudang('');
     setSortKey(null);
     setSortDir('asc');
     setAppliedFilter(null);
@@ -309,7 +318,8 @@ export default function ReportTable({
         gudang: appliedFilter?.gudang || selectedGudang,
         interval: appliedFilter?.interval || selectedInterval,
         offset: 0,
-        limit
+        limit,
+        periodType: dateFilterType
       });
     }
   };
@@ -483,7 +493,7 @@ export default function ReportTable({
             )}
 
             {/* Gudang select */}
-            {gudangOptions && gudangOptions.length > 0 && (
+            {resolvedGudangOptions && resolvedGudangOptions.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1.5">
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-primary-accent" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -496,7 +506,7 @@ export default function ReportTable({
                   label=""
                   value={selectedGudang}
                   onChange={setSelectedGudang}
-                  options={gudangOptions}
+                  options={resolvedGudangOptions}
                 />
               </div>
             )}
@@ -666,6 +676,18 @@ export default function ReportTable({
   return (
     <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
       {filterPanel}
+      {/* ── Loading overlay saat filter apply ── */}
+      {(isFiltering || (loading && hasDataRef.current)) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+          <div className="bg-white rounded-2xl shadow-xl px-8 py-6 flex flex-col items-center gap-3">
+            <svg className="w-10 h-10 animate-spin text-primary-accent" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+            <span className="text-sm font-semibold text-gray-700">Memuat data...</span>
+          </div>
+        </div>
+      )}
       {/* ── Table ── */}
       <div className="flex-1 overflow-hidden flex flex-col">
         <div

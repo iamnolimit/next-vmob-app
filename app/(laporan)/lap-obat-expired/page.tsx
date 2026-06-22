@@ -2,9 +2,10 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { gudangOptions } from '@/lib/dummyData';
+import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapObatExpiredPage() {
+  const { gudangOptions } = useGudangOptions();
   const formatExpiredDate = (dateString: string) => {
     if (!dateString || dateString === '-') return '-';
     try {
@@ -68,13 +69,6 @@ export default function LapObatExpiredPage() {
     apiNormalizer,
   });
 
-  const fmtDate = (isoDate: string) => {
-    if (!isoDate) return '';
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const [y, m, d] = isoDate.split('-');
-    return `${d} ${months[Number(m) - 1]} ${y}`;
-  };
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
     const cari = filters.interval ?? 1;
@@ -83,10 +77,7 @@ export default function LapObatExpiredPage() {
       cari,
       a: filters.cabang,
       reg: filters.cabangReg,
-      ...(cari === 5 && {
-        tglAwal: fmtDate(filters.start),
-        tglAkhir: fmtDate(filters.end),
-      }),
+      gudid: filters.gudang || '',
     });
   }, [refetch]);
 
@@ -116,9 +107,8 @@ export default function LapObatExpiredPage() {
         { label: '30 Hari', value: 2 },
         { label: '15 Hari', value: 3 },
         { label: '7 Hari', value: 4 },
-        { label: 'Tanggal', value: 5 },
       ]}
-      intervalTitle="Periode Expired"
+      intervalTitle="Berdasarkan Tanggal Expired"
       gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}

@@ -2,9 +2,11 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { formatRupiah, formatNumber, gudangOptions } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
+import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapStokOpnamePage() {
+  const { gudangOptions } = useGudangOptions();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;
@@ -52,6 +54,7 @@ export default function LapStokOpnamePage() {
       namaobat: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      gudid: filters.gudang || '',
     });
   }, [refetch]);
 
@@ -70,7 +73,7 @@ export default function LapStokOpnamePage() {
         { key: 'namaObat', label: 'Nama Obat', width: 120 },
         { key: 'selisih', label: 'Selisih', align: 'right', width: 60 },
         { key: 'nominalSelisih', label: 'Nominal Selisih', align: 'right',
-          render: (r) => formatNumber(r.nominalSelisih as number) },
+          render: (r) => formatRupiah(r.nominalSelisih as number) },
       ]}
       data={data}
       loading={loading}

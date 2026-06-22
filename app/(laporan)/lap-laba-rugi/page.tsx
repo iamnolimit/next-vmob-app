@@ -5,7 +5,10 @@ import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
 import { ListSkeleton } from '@/components/SkeletonLoader';
 import SelectInput from '@/components/SelectInput';
 import DatePickerInput from '@/components/DatePickerInput';
-import { formatNumber, cabangOptions } from '@/lib/dummyData';
+import { formatNumber } from '@/lib/dummyData';
+import { useCabangOptions } from '@/lib/useCabangOptions';
+import MonthPickerInput from '@/components/MonthPickerInput';
+import YearPickerInput from '@/components/YearPickerInput';
 import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
 import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
@@ -14,7 +17,6 @@ type PeriodType = 'tanggal' | 'bulan' | 'tahun';
 
 const today = new Date();
 const toISO = (d: Date) => d.toISOString().slice(0, 10);
-const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
 const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
 function fmtDate(iso: string) {
@@ -24,16 +26,32 @@ function fmtDate(iso: string) {
 
 export default function LapLabaRugiPage() {
   const { user } = useAuth();
+  const { cabangOptions } = useCabangOptions();
   const namaKlinik = user?.cabang ?? 'Vmedis Mobile';
   const [showFilter, setShowFilter] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [periodType, setPeriodType] = useState<PeriodType>('bulan');
   const [startDate, setStartDate] = useState(toISO(today));
   const [endDate, setEndDate] = useState(toISO(today));
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const [selectedYear, setSelectedYear] = useState<string>(() => new Date().getFullYear().toString());
   const [appliedStart, setAppliedStart] = useState(toISO(today));
   const [appliedEnd, setAppliedEnd] = useState(toISO(today));
-  const [selectedCabang, setSelectedCabang] = useState(cabangOptions[0].value);
-  const [appliedCabang, setAppliedCabang] = useState(cabangOptions[0].value);
+  const [selectedCabang, setSelectedCabang] = useState('');
+  const [appliedCabang, setAppliedCabang] = useState('');
+
+  // Set default cabang when options load
+  useEffect(() => {
+    if (cabangOptions.length > 0 && !selectedCabang) {
+      const match = cabangOptions.find((c) => c.value === user?.app_id) ?? cabangOptions[0];
+      setSelectedCabang(match.value);
+      setAppliedCabang(match.value);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cabangOptions]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any) => {
@@ -86,26 +104,24 @@ export default function LapLabaRugiPage() {
     apiNormalizer,
   });
 
-  useEffect(() => {
+  const buildRefetchParams = useCallback((start: string, end: string, period: PeriodType) => {
     const formatDate = (isoDate: string) => {
       if (!isoDate) return '';
       const [y, m, d] = isoDate.split('-');
       return `${d} ${months[Number(m) - 1]} ${y}`;
     };
-
     let cariValue = 4;
     let bulan = '';
     let tahun = '';
     let tglAwal = '';
     let tglAkhir = '';
-
-    if (periodType === 'tanggal') {
+    if (period === 'tanggal') {
       cariValue = 4;
-      tglAwal = formatDate(appliedStart);
-      tglAkhir = formatDate(appliedEnd);
-    } else if (periodType === 'bulan') {
+      tglAwal = formatDate(start);
+      tglAkhir = formatDate(end);
+    } else if (period === 'bulan') {
       cariValue = 3;
-      const [y, m] = appliedStart.split('-');
+      const [y, m] = start.split('-');
       bulan = `${y}-${m}`;
       tahun = y;
       tglAwal = `01 ${months[Number(m) - 1]} ${y}`;
@@ -113,57 +129,18 @@ export default function LapLabaRugiPage() {
       tglAkhir = `${lastDay} ${months[Number(m) - 1]} ${y}`;
     } else {
       cariValue = 2;
-      const [y] = appliedStart.split('-');
+      const [y] = start.split('-');
       tahun = y;
       tglAwal = `01 Jan ${y}`;
       tglAkhir = `31 Des ${y}`;
     }
-
-    refetch({
-      cari: cariValue,
-      bulan,
-      tahun,
-      tglAwal,
-      tglAkhir,
-      apiEndpoint: cariValue === 2 || cariValue === 3 ? 'dy-lap-laba-rugi-bulan/laporan/' : 'dy-lap-laba-rugi/laporan/',
-    });
-  }, [appliedStart, appliedEnd, periodType, refetch]);
+    return { cari: cariValue, bulan, tahun, tglAwal, tglAkhir,
+      apiEndpoint: cariValue === 2 || cariValue === 3 ? 'dy-lap-laba-rugi-bulan/laporan/' : 'dy-lap-laba-rugi/laporan/' };
+  }, []);
 
   const handleRefresh = useCallback(() => {
-    const formatDate = (isoDate: string) => {
-      if (!isoDate) return '';
-      const [y, m, d] = isoDate.split('-');
-      return `${d} ${months[Number(m) - 1]} ${y}`;
-    };
-    let cariValue = 4;
-    let bulan = '';
-    let tahun = '';
-    let tglAwal = '';
-    let tglAkhir = '';
-    if (periodType === 'tanggal') {
-      cariValue = 4;
-      tglAwal = formatDate(appliedStart);
-      tglAkhir = formatDate(appliedEnd);
-    } else if (periodType === 'bulan') {
-      cariValue = 3;
-      const [y, m] = appliedStart.split('-');
-      bulan = `${y}-${m}`;
-      tahun = y;
-      tglAwal = `01 ${months[Number(m) - 1]} ${y}`;
-      const lastDay = new Date(Number(y), Number(m), 0).getDate();
-      tglAkhir = `${lastDay} ${months[Number(m) - 1]} ${y}`;
-    } else {
-      cariValue = 2;
-      const [y] = appliedStart.split('-');
-      tahun = y;
-      tglAwal = `01 Jan ${y}`;
-      tglAkhir = `31 Des ${y}`;
-    }
-    return refetch({
-      cari: cariValue, bulan, tahun, tglAwal, tglAkhir,
-      apiEndpoint: cariValue === 2 || cariValue === 3 ? 'dy-lap-laba-rugi-bulan/laporan/' : 'dy-lap-laba-rugi/laporan/',
-    });
-  }, [appliedStart, appliedEnd, periodType, refetch]);
+    return refetch(buildRefetchParams(appliedStart, appliedEnd, periodType));
+  }, [appliedStart, appliedEnd, periodType, refetch, buildRefetchParams]);
 
   const reportData = data[0] || {
     pemasukanData: [],
@@ -179,10 +156,39 @@ export default function LapLabaRugiPage() {
   const fmt = (v: number) => formatNumber(v);
 
   const applyFilter = () => {
-    setAppliedStart(startDate);
-    setAppliedEnd(endDate);
+    let finalStart = startDate;
+    let finalEnd = endDate;
+    if (periodType === 'bulan') {
+      const [y, m] = selectedMonth.split('-');
+      finalStart = `${y}-${m}-01`;
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      finalEnd = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
+    } else if (periodType === 'tahun') {
+      finalStart = `${selectedYear}-01-01`;
+      finalEnd = `${selectedYear}-12-31`;
+    }
+    setAppliedStart(finalStart);
+    setAppliedEnd(finalEnd);
     setAppliedCabang(selectedCabang);
     setShowFilter(false);
+    refetch(buildRefetchParams(finalStart, finalEnd, periodType));
+  };
+
+  const resetFilter = () => {
+    const d = new Date();
+    const todayISO = toISO(d);
+    const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    setPeriodType('bulan');
+    setStartDate(todayISO);
+    setEndDate(todayISO);
+    setSelectedMonth(monthStr);
+    setSelectedYear(d.getFullYear().toString());
+    setAppliedStart(todayISO);
+    setAppliedEnd(todayISO);
+    const defaultCabang = (cabangOptions.find((c) => c.value === user?.app_id) ?? cabangOptions[0])?.value ?? '';
+    setSelectedCabang(defaultCabang);
+    setAppliedCabang(defaultCabang);
+    setShowFilter(true);
   };
 
   const exportSections = [
@@ -246,30 +252,45 @@ export default function LapLabaRugiPage() {
         style={{ maxHeight: showFilter ? 750 : 0, opacity: showFilter ? 1 : 0 }}
       >
         <div className="px-4 pb-4 pt-1 space-y-4">
-          <SelectInput label="Cabang / Klinik" value={selectedCabang} onChange={setSelectedCabang} options={cabangOptions} />
+          <SelectInput
+            label="Cabang / Klinik"
+            value={selectedCabang}
+            onChange={setSelectedCabang}
+            options={cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? 'Cabang Saat Ini' }]}
+          />
 
           <div>
-            <p className="text-xs font-semibold text-gray-500 mb-2">Tipe Periode</p>
-            <div className="flex gap-2">
+            <p className="text-xs font-semibold text-gray-500 mb-2">Pilihan Periode</p>
+            <div className="flex bg-gray-100 rounded-lg p-0.5">
               {(['tanggal', 'bulan', 'tahun'] as PeriodType[]).map((p) => (
                 <button key={p} onClick={() => setPeriodType(p)}
-                  className={`flex-1 py-2 rounded-xl text-sm font-semibold capitalize transition-colors ${periodType === p ? 'bg-primary-accent text-white' : 'bg-gray-100 text-gray-600'}`}>
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-md capitalize transition-colors ${periodType === p ? 'bg-white text-primary-accent shadow-sm' : 'text-gray-500'}`}>
                   {p.charAt(0).toUpperCase() + p.slice(1)}
                 </button>
               ))}
             </div>
           </div>
 
-          <div>
-            <p className="text-xs font-semibold text-gray-500 mb-2">Rentang Tanggal</p>
+          {periodType === 'tanggal' && (
             <div className="flex gap-3">
               <DatePickerInput label="Tanggal Awal" value={startDate} onChange={setStartDate} maxDate={endDate} />
               <DatePickerInput label="Tanggal Akhir" value={endDate} onChange={setEndDate} minDate={startDate} />
             </div>
-          </div>
+          )}
+
+          {periodType === 'bulan' && (
+            <MonthPickerInput label="Pilih Bulan" value={selectedMonth} onChange={setSelectedMonth} />
+          )}
+
+          {periodType === 'tahun' && (
+            <YearPickerInput label="Pilih Tahun" value={selectedYear} onChange={setSelectedYear} />
+          )}
 
           <div className="flex gap-2.5">
-            <button onClick={() => setShowFilter(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700">Batal</button>
+            <button onClick={resetFilter} className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700 flex items-center justify-center gap-1.5">
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
+              Reset
+            </button>
             <button onClick={applyFilter} className="flex-1 py-3 rounded-xl text-sm font-bold bg-primary-accent text-white shadow-md active:bg-primary-accent/90">Terapkan</button>
           </div>
         </div>
@@ -280,11 +301,11 @@ export default function LapLabaRugiPage() {
           <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full">
             {String.fromCodePoint(0x1F4C5)} {fmtDate(appliedStart)} {String.fromCodePoint(0x2013)} {fmtDate(appliedEnd)}
           </span>
-          <span className="text-[11px] bg-purple-50 text-purple-600 font-medium px-2.5 py-1 rounded-full capitalize">
+          <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full capitalize">
             {periodType}
           </span>
           <span className="text-[11px] bg-green-50 text-green-700 font-medium px-2.5 py-1 rounded-full">
-            {String.fromCodePoint(0x1F3E5)} {cabangOptions.find(c => c.value === appliedCabang)?.label}
+            {String.fromCodePoint(0x1F3E5)} {(cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? '' }]).find(c => c.value === appliedCabang)?.label}
           </span>
         </div>
       )}

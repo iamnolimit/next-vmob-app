@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { formatRupiah, formatNumber } from '@/lib/dummyData';
+import { formatRupiah } from '@/lib/dummyData';
 
 export default function LapPergantianShiftPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,7 +78,7 @@ export default function LapPergantianShiftPage() {
         { key: 'tutupShift', label: 'Tutup Shift', width: 120 },
         { key: 'kasir', label: 'Kasir', width: 100 },
         { key: 'saldoKasir', label: 'Saldo Kasir', align: 'right',
-          render: (r) => formatNumber(r.saldoKasir as number) },
+          render: (r) => formatRupiah(r.saldoKasir as number) },
       ]}
       data={data}
       loading={loading}

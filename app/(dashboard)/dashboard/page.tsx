@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { dashboardChartItems } from '@/lib/dummyData';
-import { Icon } from '@iconify/react';
+import { Pill, ShoppingCart, Hospital, Home, LineChart } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
 import PageHeader from '@/components/PageHeader';
@@ -70,7 +70,7 @@ export default function DashboardPage() {
     {
       label: 'Penjualan Kasir',
       value: latestPenjualanKasir ? formatRupiah(latestPenjualanKasir.grandtotal || 0) : 'Rp 0',
-      icon: <Icon icon="material-symbols:point-of-sale" width={20} height={20} />,
+      icon: <Pill size={20} />,
       color: 'var(--primary-accent)',
       change: parseFloat(penjualanKasirChange.value) * (penjualanKasirChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPenjualanKasir?.jumfaktur, 0)} faktur`,
@@ -78,7 +78,7 @@ export default function DashboardPage() {
     {
       label: 'Penjualan Online',
       value: latestPenjualanOnline ? formatRupiah(latestPenjualanOnline.grandtotal || 0) : 'Rp 0',
-      icon: <Icon icon="material-symbols:shopping-cart" width={20} height={20} />,
+      icon: <ShoppingCart size={20} />,
       color: 'var(--primary-accent)',
       change: parseFloat(penjualanOnlineChange.value) * (penjualanOnlineChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPenjualanOnline?.jumfaktur, 0)} faktur`,
@@ -86,7 +86,7 @@ export default function DashboardPage() {
     {
       label: 'Pemeriksaan Klinik',
       value: latestPemeriksaanKlinik ? formatRupiah(latestPemeriksaanKlinik.grandtotal || 0) : 'Rp 0',
-      icon: <Icon icon="material-symbols:local-hospital" width={20} height={20} />,
+      icon: <Hospital size={20} />,
       color: 'var(--primary-accent)',
       change: parseFloat(pemeriksaanKlinikChange.value) * (pemeriksaanKlinikChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPemeriksaanKlinik?.jumfaktur, 0)} faktur`,
@@ -94,7 +94,7 @@ export default function DashboardPage() {
     {
       label: 'Pendapatan HomeCare',
       value: latestPendapatanHC ? formatRupiah(latestPendapatanHC.grandtotal || 0) : 'Rp 0',
-      icon: <Icon icon="material-symbols:home-health" width={20} height={20} />,
+      icon: <Home size={20} />,
       color: 'var(--primary-accent)',
       change: parseFloat(pendapatanHCChange.value) * (pendapatanHCChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestPendapatanHC?.jumfaktur, 0)} faktur`,
@@ -102,7 +102,7 @@ export default function DashboardPage() {
     {
       label: 'Total Pendapatan',
       value: latestTotalPendapatan ? formatRupiah(latestTotalPendapatan.grandtotal || 0) : 'Rp 0',
-      icon: <Icon icon="material-symbols:account-balance-wallet" width={20} height={20} />,
+      icon: <LineChart size={20} />,
       color: 'var(--primary-accent)',
       change: parseFloat(totalPendapatanChange.value) * (totalPendapatanChange.isPositive ? 1 : -1),
       invoiceCount: `${safeParseInt(latestTotalPendapatan?.jumfaktur, 0)} faktur`,

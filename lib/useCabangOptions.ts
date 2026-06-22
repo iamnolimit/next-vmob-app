@@ -18,9 +18,11 @@ export function useCabangOptions() {
     if (!user?.app_id) return;
 
     setLoading(true);
-    fetchApi('ap-list-cabang/index', { device: 'mobile' }, user, 'api5')
+    fetchApi('ap-list-cabang/index', { a: user.app_id, device: 'mobile' }, user, 'api5')
       .then((response) => {
-        const cabangData: Record<string, string>[] = response?.data || response;
+        // Handle nested: response.data.data or response.data or response
+        const cabangData: Record<string, string>[] =
+          response?.data?.data || response?.data || response;
         if (Array.isArray(cabangData) && cabangData.length > 0) {
           const options: CabangOption[] = cabangData.map((c) => ({
             value: c.appidcabang,
