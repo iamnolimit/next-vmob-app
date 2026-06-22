@@ -26,7 +26,7 @@ const medalEmojis = ['🥇', '🥈', '🥉'];
 export default function RankedList({ title, icon, color = '#1d4ed8', items, type = 'obat' }: RankedListProps) {
   const router = useRouter();
   const route = getStatsRoute(title);
-  const isClickable = !!route;
+  const isClickable = !!route && title !== 'Kategori Obat Terlaris';
 
   const handleSeeAll = () => {
     if (isClickable && route) {
