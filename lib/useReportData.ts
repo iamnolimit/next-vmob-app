@@ -103,5 +103,14 @@ export function useReportData({
     return fetchPage({}, true);
   }, [fetchPage]);
 
-  return { data, loading, error, hasMore, refetch, loadMore };
+  // reset: clear data without fetching (used by ReportTable resetFilter)
+  const reset = useCallback(() => {
+    setData([]);
+    setError(null);
+    setHasMore(true);
+    currentOffsetRef.current = 0;
+    lastFilterParamsRef.current = {};
+  }, []);
+
+  return { data, loading, error, hasMore, refetch, loadMore, reset };
 }

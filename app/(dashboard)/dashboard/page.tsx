@@ -111,11 +111,17 @@ export default function DashboardPage() {
 
   const chartData = normalizedData ? generateSafeChartData(normalizedData, activeTab === '1' ? 'today' : activeTab === '2' ? 'month' : 'year') : [];
 
-  const dateLabels: Record<string, string> = {
-    '1':  '20 Juni 2026',
-    '2': 'Juni 2026',
-    '3': '2026',
+  const getDateLabel = (tab: string): string => {
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.toLocaleDateString('id-ID', { month: 'long' });
+    const year = now.getFullYear();
+    if (tab === '1') return `${day} ${month} ${year}`;
+    if (tab === '2') return `${month} ${year}`;
+    return `${year}`;
   };
+
+  const currentDateLabel = getDateLabel(activeTab);
 
   const handleRefresh = async () => {
     if (user) {
@@ -126,7 +132,7 @@ export default function DashboardPage() {
   const headerNode = (
     <PageHeader
       title="Dashboard Home"
-      subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
+      subtitle={`Berikut adalah laporan data ${currentDateLabel}`}
       subnavbar={
         <TabSelector
           tabs={tabs}
@@ -152,7 +158,7 @@ export default function DashboardPage() {
         ) : (
           <div className="pb-4 animate-content-in">
             <div className="mt-4">
-              <ChartCarousel data={chartData} items={dashboardChartItems} title={dateLabels[activeTab]} />
+              <ChartCarousel data={chartData} items={dashboardChartItems} title={currentDateLabel} />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-4 px-4">

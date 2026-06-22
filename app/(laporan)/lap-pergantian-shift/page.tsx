@@ -34,7 +34,7 @@ export default function LapPergantianShiftPage() {
     }));
   }, []);
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'aplaporangantishift/index',
     apiVersion: 'api7',
     apiParams: {
@@ -91,6 +91,7 @@ export default function LapPergantianShiftPage() {
       searchPlaceholder="Kasir"
       dateField="bukaShift"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

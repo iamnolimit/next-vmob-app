@@ -26,7 +26,7 @@ export default function LapPembayaranKasirPage() {
     }));
   }, []);
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'kln-lap-bayar-kasir/index',
     apiVersion: 'api7',
     apiParams: {
@@ -41,7 +41,7 @@ export default function LapPembayaranKasirPage() {
 
   const fmtDate = (isoDate: string) => {
     if (!isoDate) return '';
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const [y, m, d] = isoDate.split('-');
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
@@ -86,6 +86,7 @@ export default function LapPembayaranKasirPage() {
       searchPlaceholder="Nama Pasien / No Faktur / Dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

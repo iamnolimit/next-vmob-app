@@ -136,6 +136,7 @@ export const normalizeMedicineData = (apiResponse: any) => {
     },
     dataObatStokHilang: {
       count: safeParseInt(data.dataObatStokHilang?.count, 0),
+      nilai: safeParseNumber(data.dataObatStokHilang?.nilai, 0),
       peningkatan: safeParseNumber(data.dataObatStokHilang?.peningkatan, 0),
       statistik: normalizeStatistik(data.dataObatStokHilang?.statistik),
     },
@@ -160,8 +161,8 @@ export const calculateSafePercentageChange = (current: any, previous: any) => {
 
   if (previousVal === 0) {
     return {
-      value: '0.0',
-      isPositive: true,
+      value: currentVal > 0 ? '100.0' : '0.0',
+      isPositive: currentVal >= 0,
       currentValue: currentVal,
       previousValue: previousVal,
     };
@@ -169,7 +170,7 @@ export const calculateSafePercentageChange = (current: any, previous: any) => {
 
   const percentageChange = ((currentVal - previousVal) / previousVal) * 100;
   return {
-    value: Math.abs(percentageChange).toFixed(1),
+    value: Math.abs(percentageChange).toFixed(1), // No cap — can exceed 100%
     isPositive: percentageChange >= 0,
     currentValue: currentVal,
     previousValue: previousVal,
@@ -458,6 +459,10 @@ export const normalizeForecastData = (apiResponse: any) => {
       nominalParetoB: 0,
       nominalParetoC: 0,
       nominalParetoMin: 0,
+      pengadaan1: 0,
+      pengadaan2: 0,
+      pengadaan3: 0,
+      pengadaan4: 0,
       katlaris: {},
     };
   }
@@ -485,6 +490,10 @@ export const normalizeForecastData = (apiResponse: any) => {
     nominalParetoB: safeParseNumber(data.nominalParetoB, 0),
     nominalParetoC: safeParseNumber(data.nominalParetoC, 0),
     nominalParetoMin: safeParseNumber(data.nominalParetoMin, 0),
+    pengadaan1: safeParseNumber(data.pengadaan1, 0),
+    pengadaan2: safeParseNumber(data.pengadaan2, 0),
+    pengadaan3: safeParseNumber(data.pengadaan3, 0),
+    pengadaan4: safeParseNumber(data.pengadaan4, 0),
     katlaris: normalizeObject(data.katlaris),
     total: safeParseNumber(data.total, 0),
     countData: safeParseInt(data.countData, 0),

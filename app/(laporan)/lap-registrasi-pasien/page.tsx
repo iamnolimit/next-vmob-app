@@ -20,7 +20,7 @@ export default function LapRegistrasiPasienPage() {
     }));
   }, []);
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'laporanmasterpasien/index',
     apiVersion: 'api5',
     apiParams: {
@@ -35,7 +35,7 @@ export default function LapRegistrasiPasienPage() {
 
   const fmtDate = (isoDate: string) => {
     if (!isoDate) return '';
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const [y, m, d] = isoDate.split('-');
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
@@ -76,6 +76,7 @@ export default function LapRegistrasiPasienPage() {
       searchPlaceholder="No RM / pasien / alamat"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

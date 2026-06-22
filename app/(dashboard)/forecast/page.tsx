@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { forecastChartItems, katlarisData } from '@/lib/dummyData';
+import { useState } from 'react';
+import { forecastChartItems } from '@/lib/dummyData';
 import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
@@ -21,10 +21,9 @@ const tabs = [
   { label: '1 Tahun', value: 'oneYear'  },
 ];
 
-const dateLabels: Record<string, string> = {
-  threeMonth: 'Apr 2026 - Jun 2026',
-  sixMonth: 'Jan 2026 - Jun 2026',
-  oneYear:  'Jul 2025 - Jun 2026',
+const getDateLabel = (tab: string): string => {
+  const dates = forecastPageConfig.calculatePeriodDates(tab);
+  return `${dates.bulan} - ${dates.bulan1}`;
 };
 
 const formatRupiah = (amount: number) =>
@@ -51,6 +50,9 @@ export default function ForecastPage() {
   const normalizedData = normalizeApiData(apiData, 'forecast');
   const data = normalizedData || {};
 
+  // paA/paB/paC/paMin are percentage share values (always positive, e.g. 70.5).
+  // Sign is hardcoded per category: A/B = positive (good), C/Min = negative (bad).
+  // pStatus1-4 same: Stock On Hand = positive, Over/Under/Potential Lost = negative.
   const stats = [
     {
       label: 'Pareto A',
@@ -74,7 +76,7 @@ export default function ForecastPage() {
       invoiceCount: `${data.paretoC || 0} Obat`,
       icon: <Icon icon="material-symbols:grade" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: data.paC || 0,
+      change: -(data.paC || 0),
     },
     {
       label: 'Dibawah Pareto C (Stok Mati)',
@@ -82,7 +84,7 @@ export default function ForecastPage() {
       invoiceCount: `${data.paretoMin || 0} Obat`,
       icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: data.paMin || 0,
+      change: -(data.paMin || 0),
     },
     {
       label: 'Stock On Hand',
@@ -98,7 +100,7 @@ export default function ForecastPage() {
       invoiceCount: `${data.status2 || 0} Obat`,
       icon: <Icon icon="material-symbols:trending-up" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: data.pStatus2 || 0,
+      change: -(data.pStatus2 || 0),
     },
     {
       label: 'Under Stock',
@@ -106,7 +108,7 @@ export default function ForecastPage() {
       invoiceCount: `${data.status3 || 0} Obat`,
       icon: <Icon icon="material-symbols:trending-down" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: data.pStatus3 || 0,
+      change: -(data.pStatus3 || 0),
     },
     {
       label: 'Potential Lost',
@@ -114,7 +116,7 @@ export default function ForecastPage() {
       invoiceCount: `${data.status4 || 0} Obat`,
       icon: <Icon icon="material-symbols:money-off" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: data.pStatus4 || 0,
+      change: -(data.pStatus4 || 0),
     },
   ];
 
@@ -150,7 +152,7 @@ export default function ForecastPage() {
       header={
         <PageHeader
           title="Dashboard Forecast"
-          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
+          subtitle={`Berikut adalah laporan data ${getDateLabel(activeTab)}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 
@@ -188,7 +190,7 @@ export default function ForecastPage() {
             </div>
 
             <div className="mt-6">
-              <RankedList title="Kategori Obat Terlaris" icon="📊" color="#1d4ed8"
+              <RankedList title="Kategori Obat Terlaris" icon="�" color="#1d4ed8"
                 items={katlarisDataApi.map((item: any, i: number) => ({ rank: i + 1, name: item.name, persen: item.persen, nilai: item.nilai }))}
                 type="katlaris" />
             </div>

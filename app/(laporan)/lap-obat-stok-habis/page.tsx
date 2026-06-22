@@ -27,7 +27,7 @@ export default function LapObatStokHabisPage() {
     });
   }, []);
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'my-data-obat/index-mob-v2',
     apiVersion: 'api5',
     apiParams: {
@@ -76,6 +76,7 @@ export default function LapObatStokHabisPage() {
       gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

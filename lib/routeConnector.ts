@@ -2,9 +2,8 @@ export const STATS_TO_ROUTE_MAP: Record<string, string | null> = {
   // Dashboard Stats -> Laporan
   'Penjualan Kasir': '/lap-penjualan-obat',
   'Penjualan Online': '/lap-penjualan-obat',
-  'Pemeriksaan Klinik': null,
+  'Pemeriksaan Klinik': '/lap-pembayaran-kasir',
   'Pendapatan HomeCare': null,
-  'Total Pendapatan': null,
 
   // Forecast Stats -> Laporan
   'Pareto A': '/lap-penjualan-obat',
@@ -19,7 +18,14 @@ export const STATS_TO_ROUTE_MAP: Record<string, string | null> = {
 
   // Customer Stats -> Laporan
   'Pasien Baru': '/lap-registrasi-pasien',
+  'Pasien Baru Bulan Ini': '/lap-registrasi-pasien',
   'Kunjungan Pasien': '/lap-kunjungan-pasien',
+  'Kunjungan Pasien Bulan Ini': '/lap-kunjungan-pasien',
+  'Loyal Customer Bulan Ini': null,
+  'Potensial Customer Bulan Ini': null,
+  'Prospek Customer Bulan Ini': null,
+  'Belum Prospek Bulan Ini': null,
+  'Total Customer Bulan Ini': null,
 
   // Obat Stats -> Laporan
   'Nilai Stok Obat': null,
@@ -30,11 +36,12 @@ export const STATS_TO_ROUTE_MAP: Record<string, string | null> = {
   'Obat Terlaris': '/lap-obat-terlaris',
 
   // Keuangan Stats -> Laporan
-  'Total Aset': null,
-  'Total Cash': null,
-  'Total Pasiva': null,
-  'Total Pengeluaran': null,
-  'Laba Rugi': null,
+  'Total Aset': '/lap-neraca-umum',
+  'Total Cash': '/lap-neraca-umum',
+  'Total Pasiva': '/lap-neraca-umum',
+  'Total Pendapatan': '/lap-laba-rugi',
+  'Total Pengeluaran': '/lap-laba-rugi',
+  'Laba Rugi': '/lap-laba-rugi',
   'Hutang Obat Jatuh Tempo': '/lap-hutang-obat',
   'Piutang Apotek Jatuh Tempo': '/lap-piutang-obat',
   'Piutang Klinik Jatuh Tempo': '/lap-piutang-klinik',

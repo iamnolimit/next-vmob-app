@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { obatChartItems, pembelianObatTerbanyak, obatTerlaris } from '@/lib/dummyData';
+import { useState } from 'react';
+import { obatChartItems } from '@/lib/dummyData';
 import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
 import ChartCarousel from '@/components/ChartCarousel';
@@ -11,7 +11,7 @@ import { useFetch } from '@/lib/useFetch';
 import { DashboardSkeleton } from '@/components/SkeletonLoader';
 import { obatPageConfig } from '@/lib/apiConfigs';
 import { useAuth } from '@/lib/authContext';
-import { normalizeApiData, calculateSafePercentageChange, safeParseInt, generateSafeChartData } from '@/lib/utils';
+import { normalizeApiData, generateSafeChartData } from '@/lib/utils';
 
 import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
 
@@ -21,10 +21,14 @@ const tabs = [
   { label: 'Tahun Ini', value: '3' },
 ];
 
-const dateLabels: Record<string, string> = {
-  '1':  '20 Juni 2026',
-  '2': 'Juni 2026',
-  '3': '2026',
+const getDateLabel = (tab: string): string => {
+  const now = new Date();
+  const day = now.getDate();
+  const month = now.toLocaleDateString('id-ID', { month: 'long' });
+  const year = now.getFullYear();
+  if (tab === '1') return `${day} ${month} ${year}`;
+  if (tab === '2') return `${month} ${year}`;
+  return `${year}`;
 };
 
 const formatRupiah = (amount: number) =>
@@ -51,23 +55,14 @@ export default function ObatPage() {
   const normalizedData = normalizeApiData(apiData, 'medicine');
   const { dataNilaiObat, dataObatExpired, dataObatStokHabis, dataObatStokHilang } = normalizedData || {};
 
-  const stokHilangStats = dataObatStokHilang?.statistik || [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getLastEntry = (array: any[]) => (array?.length > 0 ? array[array.length - 1] : null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getPreviousEntry = (array: any[]) => (array?.length > 1 ? array[array.length - 2] : null);
+  // Use peningkatan from API directly for change indicators
+  const nilaiObatChange = dataNilaiObat?.peningkatan ?? 0;
+  const expiredChange = dataObatExpired?.peningkatan ?? 0;
+  const stokHabisChange = dataObatStokHabis?.peningkatan ?? 0;
+  const obatHilangPeningkatan = dataObatStokHilang?.peningkatan ?? 0;
 
-  const latestObatHilang = getLastEntry(stokHilangStats);
-  const prevObatHilang = getPreviousEntry(stokHilangStats);
-
-  const nilaiObatHilang = latestObatHilang?.total
-    ? parseFloat(latestObatHilang.total)
-    : dataObatStokHilang?.nilai || 0;
-
-  const obatHilangChange = calculateSafePercentageChange(
-    latestObatHilang?.total,
-    prevObatHilang?.total
-  );
+  // Obat Hilang: use nilai directly from API (not from statistik last entry)
+  const nilaiObatHilang = dataObatStokHilang?.nilai || 0;
 
   const stats = [
     {
@@ -75,7 +70,7 @@ export default function ObatPage() {
       value: formatRupiah(dataNilaiObat?.nilai || 0),
       icon: <Icon icon="material-symbols:medication" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: 0,
+      change: nilaiObatChange,
       invoiceCount: dataNilaiObat?.count ? `${dataNilaiObat.count} Obat` : '',
     },
     {
@@ -83,7 +78,7 @@ export default function ObatPage() {
       value: formatRupiah(dataObatExpired?.nilai || 0),
       icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: 0,
+      change: expiredChange,
       invoiceCount: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '',
     },
     {
@@ -91,7 +86,7 @@ export default function ObatPage() {
       value: dataObatStokHabis?.count ? `${dataObatStokHabis.count} Obat` : '0 Obat',
       icon: <Icon icon="material-symbols:inventory-2" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: 0,
+      change: stokHabisChange,
       invoiceCount: '',
     },
     {
@@ -99,7 +94,7 @@ export default function ObatPage() {
       value: formatRupiah(nilaiObatHilang),
       icon: <Icon icon="material-symbols:search-off" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: parseFloat(obatHilangChange.value) * (obatHilangChange.isPositive ? 1 : -1),
+      change: obatHilangPeningkatan,
       invoiceCount: dataObatStokHilang?.count ? `${dataObatStokHilang.count} Obat` : '0 Obat',
     },
   ];
@@ -108,6 +103,7 @@ export default function ObatPage() {
 
   const pembelianObatTerbanyakData = normalizedData?.dataPengadaanObatTerbanyak?.ranking || [];
   const obatTerlarisData = normalizedData?.dataObatTerlaris || [];
+  const currentDateLabel = getDateLabel(activeTab);
 
   return (
     <LiquidPullToRefresh
@@ -117,7 +113,7 @@ export default function ObatPage() {
       header={
         <PageHeader
           title="Dashboard Obat"
-          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
+          subtitle={`Berikut adalah laporan data ${currentDateLabel}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 
@@ -135,7 +131,7 @@ export default function ObatPage() {
         ) : (
           <div className="pb-4 animate-content-in">
             <div className="mt-4">
-              <ChartCarousel data={chartData} items={obatChartItems} title={dateLabels[activeTab]} />
+              <ChartCarousel data={chartData} items={obatChartItems} title={currentDateLabel} />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-4 px-4">

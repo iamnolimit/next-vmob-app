@@ -28,12 +28,13 @@ export default function LapKunjunganPasienPage() {
     }));
   }, []);
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
-    apiEndpoint: 'laporan-transaksi-kunjungan/index',
-    apiVersion: 'api7',
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
+    apiEndpoint: 'kunjungan/index',
+    apiVersion: 'api5',
     apiParams: {
       filter: '',
       sorting: '',
+      reg: 'db',
       cari: 4,
     },
     apiNormalizer,
@@ -41,7 +42,7 @@ export default function LapKunjunganPasienPage() {
 
   const fmtDate = (isoDate: string) => {
     if (!isoDate) return '';
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const [y, m, d] = isoDate.split('-');
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
@@ -81,6 +82,7 @@ export default function LapKunjunganPasienPage() {
       searchPlaceholder="Pasien / No. RM / poli / dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

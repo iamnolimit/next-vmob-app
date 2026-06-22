@@ -57,6 +57,8 @@ interface ReportTableProps {
   onFetchData?: (filters: { start: string; end: string; search: string; interval: string | number; cabang: string; cabangReg: string; gudang: string; offset: number; limit: number }) => void;
   /** Callback to load the next page (append mode) */
   onLoadMore?: () => void;
+  /** Callback to clear data when filter is reset (without re-fetching) */
+  onReset?: () => void;
   loading?: boolean;
   error?: string | null;
   /** Whether there is more data to load */
@@ -94,6 +96,7 @@ export default function ReportTable({
   gudangField,
   onFetchData,
   onLoadMore,
+  onReset,
   loading,
   error,
   hasMore = false,
@@ -279,8 +282,9 @@ export default function ReportTable({
     setSortDir('asc');
     setAppliedFilter(null);
     setSearch('');
-    if (onFetchData) {
-      onFetchData({ start: defaultStart, end: defaultEnd, search: '', interval: defaultInterval, cabang: defaultCabang, cabangReg: defaultCabangReg, gudang: defaultGudang, offset: 0, limit });
+    setShowFilter(true);
+    if (onReset) {
+      onReset();
     }
   };
 
@@ -754,7 +758,7 @@ export default function ReportTable({
                           className="py-2.5 px-2 text-xs text-gray-800 align-top border-r border-gray-100 last:border-r-0 break-words"
                           style={{ textAlign: col.align ?? 'left' }}
                         >
-                          {col.render ? col.render(row) : String(row[col.key] ?? '-')}
+                          {col.render ? col.render(row) : col.key === 'no' ? String(i + 1) : String(row[col.key] ?? '-')}
                         </td>
                       ))}
                     </tr>

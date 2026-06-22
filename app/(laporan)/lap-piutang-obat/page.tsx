@@ -29,7 +29,14 @@ export default function LapPiutangObatPage() {
     return `${year}-${month}-${day}`;
   };
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: '/appiutang-obat/index-v2',
     apiVersion: 'api5',
     apiParams: {
@@ -39,7 +46,6 @@ export default function LapPiutangObatPage() {
       carimobile: '',
       sorting: '',
       deadline: '',
-      reg: 'db',
       cari: 4,
     },
     apiNormalizer,
@@ -66,8 +72,8 @@ export default function LapPiutangObatPage() {
       onLoadMore={loadMore}
       onFetchData={(params) => {
         refetch({
-          tanggalawal: params.start || '',
-          tanggalakhir: params.end || '',
+          tanggalawal: fmtDate(params.start),
+          tanggalakhir: fmtDate(params.end),
           carimobile: params.search || '',
           deadline: params.interval !== 'all' ? params.interval : '',
           a: params.cabang,
@@ -87,6 +93,7 @@ export default function LapPiutangObatPage() {
       ]}
       intervalTitle="Jatuh Tempo"
       dateField="jatuhTempo"
+      onReset={reset}
     />
   );
 }

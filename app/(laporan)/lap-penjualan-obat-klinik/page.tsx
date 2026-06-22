@@ -27,7 +27,7 @@ export default function LapPenjualanObatKlinikPage() {
     }));
   }, []);
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'ki-penjualanobatklinik/index',
     apiVersion: 'api7',
     apiParams: {
@@ -40,7 +40,7 @@ export default function LapPenjualanObatKlinikPage() {
 
   const fmtDate = (isoDate: string) => {
     if (!isoDate) return '';
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const [y, m, d] = isoDate.split('-');
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
@@ -84,6 +84,7 @@ export default function LapPenjualanObatKlinikPage() {
       searchPlaceholder="No faktur / pasien / dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

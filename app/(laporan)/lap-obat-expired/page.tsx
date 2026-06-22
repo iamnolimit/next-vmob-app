@@ -53,7 +53,7 @@ export default function LapObatExpiredPage() {
     return `${year}-${month}-${day}`;
   };
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'ap-obatexpired-batch/index-v2',
     apiVersion: 'api7',
     apiParams: {
@@ -70,7 +70,7 @@ export default function LapObatExpiredPage() {
 
   const fmtDate = (isoDate: string) => {
     if (!isoDate) return '';
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const [y, m, d] = isoDate.split('-');
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
@@ -122,6 +122,7 @@ export default function LapObatExpiredPage() {
       gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}
+      onReset={reset}
     />
   );
 }

@@ -20,8 +20,8 @@ interface RankedListProps {
   type?: 'obat' | 'katlaris';
 }
 
-const rankColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
-const rankBg     = ['bg-yellow-50', 'bg-gray-50', 'bg-orange-50'];
+const rankColors  = ['#FFD700', '#C0C0C0', '#CD7F32'];
+const medalEmojis = ['🥇', '🥈', '🥉'];
 
 export default function RankedList({ title, icon, color = '#1d4ed8', items, type = 'obat' }: RankedListProps) {
   const router = useRouter();
@@ -52,9 +52,10 @@ export default function RankedList({ title, icon, color = '#1d4ed8', items, type
         {isClickable && (
           <button 
             onClick={handleSeeAll}
-            className="text-[12px] font-semibold text-primary-accent bg-primary-accent/10 px-3 py-1 rounded-full active:scale-95 transition-transform"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-primary-accent/10 active:scale-95 transition-transform"
+            style={{ color: color }}
           >
-            Semua
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </button>
         )}
       </div>
@@ -73,19 +74,32 @@ export default function RankedList({ title, icon, color = '#1d4ed8', items, type
               style={{ animationDelay: delay }}
             >
               {/* Rank badge */}
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0"
-                style={{ 
-                  backgroundColor: isTop3 ? `${rankColor}15` : '#f3f4f6',
-                  color: isTop3 ? rankColor : '#9ca3af',
-                }}
-              >
-                {i + 1}
-              </div>
+              {isTop3 ? (
+                <div className="w-7 h-7 flex items-center justify-center text-[20px] flex-shrink-0">
+                  {medalEmojis[i]}
+                </div>
+              ) : (
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0"
+                  style={{ backgroundColor: '#f3f4f6', color: '#9ca3af' }}
+                >
+                  {i + 1}
+                </div>
+              )}
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[14px] font-semibold text-gray-900 truncate">{item.name}</p>
+                  {isTop3 && (
+                    <span
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: `${rankColor}20`, color: rankColor }}
+                    >
+                      Top {i + 1}
+                    </span>
+                  )}
+                </div>
                 {type === 'obat' && item.jumlah !== undefined && (
                   <p className="text-[12px] font-medium text-gray-500 mt-0.5">
                     {item.jumlah.toLocaleString('id-ID')} <span className="text-gray-400">{item.satuan}</span>

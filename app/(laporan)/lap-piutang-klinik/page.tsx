@@ -29,7 +29,14 @@ export default function LapPiutangKlinikPage() {
     return `${year}-${month}-${day}`;
   };
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: '/kln-piutang/index',
     apiVersion: 'api5',
     apiParams: {
@@ -67,8 +74,8 @@ export default function LapPiutangKlinikPage() {
       onLoadMore={loadMore}
       onFetchData={(params) => {
         refetch({
-          tanggalawal: params.start || '',
-          tanggalakhir: params.end || '',
+          tanggalawal: fmtDate(params.start),
+          tanggalakhir: fmtDate(params.end),
           filter: params.search || '',
           deadline: params.interval !== 'all' ? params.interval : '',
           a: params.cabang,
@@ -88,6 +95,7 @@ export default function LapPiutangKlinikPage() {
       ]}
       intervalTitle="Jatuh Tempo"
       dateField="jatuhTempo"
+      onReset={reset}
     />
   );
 }

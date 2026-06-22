@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { keuanganChartItems } from '@/lib/dummyData';
 import { Icon } from '@iconify/react';
 import StatCard from '@/components/StatCard';
@@ -20,10 +20,14 @@ const tabs = [
   { label: 'Tahun Ini', value: '3' },
 ];
 
-const dateLabels: Record<string, string> = {
-  '1':  '20 Juni 2026',
-  '2': 'Juni 2026',
-  '3': '2026',
+const getDateLabel = (tab: string): string => {
+  const now = new Date();
+  const day = now.getDate();
+  const month = now.toLocaleDateString('id-ID', { month: 'long' });
+  const year = now.getFullYear();
+  if (tab === '1') return `${day} ${month} ${year}`;
+  if (tab === '2') return `${month} ${year}`;
+  return `${year}`;
 };
 
 const formatRupiah = (amount: number) =>
@@ -183,6 +187,7 @@ export default function KeuanganPage() {
   ];
 
   const chartData = normalizedData ? generateSafeChartData(normalizedData, activeTab === '1' ? 'today' : activeTab === '2' ? 'month' : 'year') : [];
+  const currentDateLabel = getDateLabel(activeTab);
 
   return (
     <LiquidPullToRefresh
@@ -192,7 +197,7 @@ export default function KeuanganPage() {
       header={
         <PageHeader
           title="Dashboard Keuangan"
-          subtitle={`Berikut adalah laporan data ${dateLabels[activeTab]}`}
+          subtitle={`Berikut adalah laporan data ${currentDateLabel}`}
           subnavbar={
             <TabSelector 
               tabs={tabs} 
@@ -210,7 +215,7 @@ export default function KeuanganPage() {
         ) : (
           <div className="pb-4 animate-content-in">
             <div className="mt-4">
-              <ChartCarousel data={chartData} items={keuanganChartItems} title={dateLabels[activeTab]} />
+              <ChartCarousel data={chartData} items={keuanganChartItems} title={currentDateLabel} />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-4 px-4">

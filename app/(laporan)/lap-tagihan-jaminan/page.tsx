@@ -22,7 +22,14 @@ export default function LapTagihanJaminanPage() {
     }));
   };
 
-  const { data, loading, error, hasMore, refetch, loadMore } = useReportData({
+  const fmtDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const [y, m, d] = isoDate.split('-');
+    return `${d} ${months[Number(m) - 1]} ${y}`;
+  };
+
+  const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: '/laporan-tagihan-jaminan-pasien/index',
     apiVersion: 'api7',
     apiParams: {
@@ -56,8 +63,8 @@ export default function LapTagihanJaminanPage() {
       onLoadMore={loadMore}
       onFetchData={(params) => {
         refetch({
-          tanggalawal: params.start || '',
-          tanggalakhir: params.end || '',
+          tanggalawal: fmtDate(params.start),
+          tanggalakhir: fmtDate(params.end),
           filter: params.search || '',
           a: params.cabang,
           reg: params.cabangReg,
@@ -68,6 +75,7 @@ export default function LapTagihanJaminanPage() {
       searchFields={['noFaktur', 'pasien', 'jaminan']}
       searchPlaceholder="No. Faktur / Pasien / Jaminan"
       dateField="tanggal"
+      onReset={reset}
     />
   );
 }
