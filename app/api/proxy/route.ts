@@ -1,18 +1,24 @@
 import qs from 'qs';
+import axios from 'axios';
+import https from 'https';
 import { NextResponse } from 'next/server';
 
-const BASE_URL_API7 = process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
-const BASE_URL_API5 = process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
+export const dynamic = 'force-dynamic';
 
-function getBaseUrl(apiVersion: string): string {
+// Disable SSL verification — same as vmedis-react-app-v3 middleware
+axios.defaults.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+
+const getBaseUrl = (apiVersion: string): string => {
   switch (apiVersion) {
     case 'api5':
-      return BASE_URL_API5;
+      return process.env.NEXT_PUBLIC_BASE_URL_API5 || 'https://api3.vmedismart.com/';
+    case 'apivmart':
+      return process.env.NEXT_PUBLIC_BASE_URL_API_MART || '';
     case 'api7':
     default:
-      return BASE_URL_API7;
+      return process.env.NEXT_PUBLIC_BASE_URL_API7 || 'https://api3penjualan.vmedismart.com/';
   }
-}
+};
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,86 +26,65 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Target-URL, Target-Version, Target-Options',
 };
 
-export async function OPTIONS(request: Request) {
-  return new NextResponse(null, {
-    status: 204,
-    headers: corsHeaders,
-  });
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
 }
 
 export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
 
-    // Extract headers (matching vmedis-react-app-v3 middleware style)
     const targetVersion = decodeURIComponent(request.headers.get('Target-Version') ?? '');
     const targetUrl = decodeURIComponent(request.headers.get('Target-URL') ?? '');
     const targetOptionsStr = decodeURIComponent(request.headers.get('Target-Options') ?? '{}');
 
-    // Fallback to body params if headers are not provided (for backward compatibility with our current auth.ts)
     const endpoint = targetUrl || requestBody.endpoint;
     const apiVersion = targetVersion || requestBody.apiVersion || 'api7';
     const params = requestBody.params || requestBody;
-    
-    let options = { method: 'POST' };
+
+    if (!endpoint) {
+      return NextResponse.json(
+        { message: 'Target-Version and Target-URL headers are required.' },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    let options: { method?: string } = { method: 'POST' };
     try {
       if (targetOptionsStr && targetOptionsStr !== '{}') {
         options = JSON.parse(targetOptionsStr);
       }
-    } catch (e) {
-      // ignore parse error
-    }
-
-    if (!endpoint) {
-      return NextResponse.json({ error: 'Missing endpoint or Target-URL header' }, { 
-        status: 400,
-        headers: corsHeaders
-      });
+    } catch {
+      // ignore parse error, default to POST
     }
 
     const baseUrl = getBaseUrl(apiVersion);
-    const apiUrl = `${baseUrl}${endpoint}`;
+    const apiEndpoint = `${baseUrl}${endpoint}`;
 
-    const fetchOptions: RequestInit = {
+    const requestData = options.method === 'GET' ? undefined : qs.stringify(params || {});
+
+    const config = {
+      url: apiEndpoint,
       method: options.method || 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      ...(options.method === 'GET' ? { params } : { data: requestData }),
     };
 
-    if (options.method !== 'GET') {
-      fetchOptions.body = qs.stringify(params || {});
-    }
+    const apiResponse = await axios(config);
 
-    const response = await fetch(apiUrl, fetchOptions);
-
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      if (response.status !== 200) {
-        console.error('API Error Response:', response.status, data);
-      }
-      return NextResponse.json({ data }, { 
-        status: response.status,
-        headers: corsHeaders
-      });
-    } else {
-      const text = await response.text();
-      console.error('Non-JSON response from API:', text.substring(0, 200));
-      return NextResponse.json(
-        { error: 'Invalid response from API', details: text.substring(0, 200) },
-        { 
-          status: response.status,
-          headers: corsHeaders
-        }
-      );
-    }
+    return NextResponse.json(
+      { message: 'Request processed successfully.', data: apiResponse.data },
+      { status: 200, headers: corsHeaders }
+    );
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
-    console.error('Proxy Error:', error);
-    return NextResponse.json({ error: message }, { 
-      status: 500,
-      headers: corsHeaders
-    });
+    const axiosError = error as any;
+    const statusCode = axiosError?.response?.status || 500;
+    const errorData = axiosError?.response?.data || (error instanceof Error ? error.message : 'Unknown error occurred.');
+
+    console.error('[Proxy] Error:', statusCode, errorData);
+
+    return NextResponse.json(
+      { message: 'An error occurred.', data: errorData },
+      { status: statusCode, headers: corsHeaders }
+    );
   }
 }

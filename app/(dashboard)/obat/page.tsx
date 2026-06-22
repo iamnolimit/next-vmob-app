@@ -43,10 +43,13 @@ export default function ObatPage() {
   const [activeTab, setActiveTab] = useState('1');
   const { user } = useAuth();
 
+  const apiParams = user ? obatPageConfig.getApiParams(user, activeTab) : {};
+  console.log('[ObatPage] activeTab:', activeTab, 'params:', JSON.stringify(apiParams));
+
   const { data: apiData, loading, refetch } = useFetch({
     endpoint: obatPageConfig.apiEndpoint,
     apiVersion: obatPageConfig.apiVersion,
-    params: user ? obatPageConfig.getApiParams(user, activeTab) : {},
+    params: apiParams,
     isMutation: false,
   });
 

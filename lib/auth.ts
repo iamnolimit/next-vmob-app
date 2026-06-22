@@ -94,28 +94,26 @@ export function clearUser() {
   }
 }
 
+const API_GATEWAY = process.env.NEXT_PUBLIC_BASE_URL_API_GATEWAY;
+const middlewareEndpoint = API_GATEWAY ? `${API_GATEWAY}api/gateway` : '/api/proxy';
+
 async function callProxy(endpoint: string, params: Record<string, unknown>, apiVersion = 'api7') {
-  // Use absolute URL in Capacitor, relative in browser
-  const baseUrl = typeof window !== 'undefined' && window.location.origin.includes('localhost') 
-    ? '' 
-    : 'https://cheery-dragon-8e5b5a.netlify.app';
-    
-  const response = await fetch(`${baseUrl}/api/proxy`, {
+  const response = await fetch(middlewareEndpoint, {
     method: 'POST',
-    headers: { 
+    headers: {
       'Content-Type': 'application/json',
       'Target-URL': encodeURIComponent(endpoint),
       'Target-Version': encodeURIComponent(apiVersion),
-      'Target-Options': encodeURIComponent(JSON.stringify({ method: 'POST' }))
+      'Target-Options': encodeURIComponent(JSON.stringify({ method: 'POST' })),
     },
     body: JSON.stringify({ params }),
   });
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error || `Request failed: ${response.status}`);
+    throw new Error(err?.message || err?.error || `Request failed: ${response.status}`);
   }
-  
+
   const json = await response.json();
   return json?.data ?? json;
 }

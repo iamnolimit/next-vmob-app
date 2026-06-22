@@ -1,5 +1,7 @@
 import { type UserProfile } from './auth';
-import qs from 'qs';
+
+const API_GATEWAY = process.env.NEXT_PUBLIC_BASE_URL_API_GATEWAY;
+const middlewareEndpoint = API_GATEWAY ? `${API_GATEWAY}api/gateway` : '/api/proxy';
 
 export async function fetchApi(
   endpoint: string,
@@ -18,22 +20,15 @@ export async function fetchApi(
     ...params,
   };
 
-  // Use absolute URL in Capacitor, relative in browser
-  const baseUrl = typeof window !== 'undefined' && window.location.origin.includes('localhost') 
-    ? '' 
-    : 'https://cheery-dragon-8e5b5a.netlify.app';
-
-  const response = await fetch(`${baseUrl}/api/proxy`, {
+  const response = await fetch(middlewareEndpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Target-URL': encodeURIComponent(endpoint),
       'Target-Version': encodeURIComponent(apiVersion),
-      'Target-Options': encodeURIComponent(JSON.stringify({ method: 'POST' }))
+      'Target-Options': encodeURIComponent(JSON.stringify({ method: 'POST' })),
     },
-    body: JSON.stringify({
-      params: requestParams,
-    }),
+    body: JSON.stringify({ params: requestParams }),
   });
 
   if (!response.ok) {
@@ -42,6 +37,6 @@ export async function fetchApi(
 
   const json = await response.json();
 
-  // Proxy wraps response in { data: ... }
+  // Gateway/proxy wraps response in { data: ... }
   return json?.data ?? json;
 }
