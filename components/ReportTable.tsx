@@ -121,7 +121,7 @@ export default function ReportTable({
   const resolvedCabangOptions = cabangOptions ?? fetchedCabangOptions;
   // Fetch gudang from API; fall back to prop if provided
   const { gudangOptions: fetchedGudangOptions } = useGudangOptions();
-  const resolvedGudangOptions = gudangOptions ?? fetchedGudangOptions;
+  const resolvedGudangOptions = gudangField ? (gudangOptions ?? fetchedGudangOptions) : undefined;
 
   // Initialize from prop or user.app_id (available immediately from auth)
   const [selectedCabang, setSelectedCabang] = useState<string>(
