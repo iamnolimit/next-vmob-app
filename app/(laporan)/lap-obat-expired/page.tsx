@@ -2,10 +2,8 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapObatExpiredPage() {
-  const { gudangOptions } = useGudangOptions();
   const formatExpiredDate = (dateString: string) => {
     if (!dateString || dateString === '-') return '-';
     try {
@@ -102,6 +100,7 @@ export default function LapObatExpiredPage() {
       onLoadMore={handleLoadMore}
       searchFields={['namaObat', 'gudang']}
       searchPlaceholder="Nama obat / Batch / gudang"
+      hideDateFilter
       intervalOptions={[
         { label: 'Sudah Expired', value: 1 },
         { label: '30 Hari', value: 2 },
@@ -109,7 +108,6 @@ export default function LapObatExpiredPage() {
         { label: '7 Hari', value: 4 },
       ]}
       intervalTitle="Berdasarkan Tanggal Expired"
-      gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}
       onReset={reset}

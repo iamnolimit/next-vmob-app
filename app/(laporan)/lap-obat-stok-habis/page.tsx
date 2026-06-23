@@ -2,10 +2,8 @@
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
-import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapObatStokHabisPage() {
-  const { gudangOptions } = useGudangOptions();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;
@@ -75,7 +73,6 @@ export default function LapObatStokHabisPage() {
       searchFields={['namaObat', 'gudang']}
       searchPlaceholder="Nama obat / gudang"
       hideDateFilter
-      gudangOptions={gudangOptions}
       gudangField="gudang"
       onFetchData={handleFetchData}
       onReset={reset}

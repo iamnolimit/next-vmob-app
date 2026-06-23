@@ -3,10 +3,8 @@ import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 import { formatRupiah } from '@/lib/dummyData';
-import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapStokOpnamePage() {
-  const { gudangOptions } = useGudangOptions();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;
@@ -84,8 +82,6 @@ export default function LapStokOpnamePage() {
       totalValue={formatRupiah(total)}
       searchFields={['namaObat', 'gudang']}
       searchPlaceholder="Nama obat / gudang"
-      gudangOptions={gudangOptions}
-      gudangField="gudang"
       onFetchData={handleFetchData}
       onReset={reset}
     />

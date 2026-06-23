@@ -3,10 +3,8 @@ import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 import { formatRupiah } from '@/lib/dummyData';
-import { useGudangOptions } from '@/lib/useGudangOptions';
 
 export default function LapPembelianObatPage() {
-  const { gudangOptions } = useGudangOptions();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;
@@ -32,6 +30,8 @@ export default function LapPembelianObatPage() {
       sorting: '',
       reg: 'db',
       cari: 4,
+      bulan: '',
+      tahun: '',
     },
     apiNormalizer,
   });
@@ -43,11 +43,20 @@ export default function LapPembelianObatPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
+  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
+    const cari = periodToCari(filters.periodType || 'tanggal');
+    const [startY, startM] = filters.start.split('-');
+    const [endY] = filters.end.split('-');
+
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
+      cari,
+      bulan: cari === 3 ? startM : '',
+      tahun: cari === 2 ? endY : cari === 3 ? startY : '',
       carimobile: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -65,12 +74,12 @@ export default function LapPembelianObatPage() {
     <ReportTable
       title="Pembelian Obat"
       columns={[
-        { key: 'no', label: 'No', align: 'center', width: 36 },
-        { key: 'tanggal', label: 'Tgl', width: 70 },
-        { key: 'noFaktur', label: 'No Faktur', width: 90 },
-        { key: 'supplier', label: 'Supplier', width: 90 },
-        { key: 'gudang', label: 'Gudang', width: 70 },
-        { key: 'total', label: 'Total', align: 'right', width: 90,
+        { key: 'no', label: 'No', align: 'center', width: 32 },
+        { key: 'tanggal', label: 'Tgl', width: 72 },
+        { key: 'noFaktur', label: 'No Faktur', width: 88 },
+        { key: 'supplier', label: 'Supplier' },
+        { key: 'gudang', label: 'Gudang' },
+        { key: 'total', label: 'Total', align: 'right', width: 88,
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
@@ -83,8 +92,6 @@ export default function LapPembelianObatPage() {
       searchFields={['noFaktur', 'supplier', 'gudang']}
       searchPlaceholder="No faktur / supplier / gudang"
       dateField="tanggal"
-      gudangOptions={gudangOptions}
-      gudangField="gudang"
       onFetchData={handleFetchData}
       onReset={reset}
     />

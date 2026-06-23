@@ -36,7 +36,8 @@ export default function LapPendapatanPetugasMedisPage() {
       sorting: '',
       reg: 'db',
       cari: 4,
-      device: 'mobile',
+      bulan: '',
+      tahun: '',
     },
     apiNormalizer,
   });
@@ -48,13 +49,21 @@ export default function LapPendapatanPetugasMedisPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
+  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
+    const cari = periodToCari(filters.periodType || 'tanggal');
+    const [startY, startM] = filters.start.split('-');
+    const [endY] = filters.end.split('-');
+
     refetch({
       tglAwal: fmtDate(filters.start),
       tglAkhir: fmtDate(filters.end),
+      cari,
+      bulan: cari === 3 ? startM : '',
+      tahun: cari === 2 ? endY : cari === 3 ? startY : '',
       filter: filters.search,
-      cari: 4,
       a: filters.cabang,
       reg: filters.cabangReg,
     });

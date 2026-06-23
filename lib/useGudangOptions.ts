@@ -17,7 +17,7 @@ export function useGudangOptions() {
     if (!user?.app_id) return;
 
     setLoading(true);
-    fetchApi('apgudang/index', { a: user.app_id, device: 'mobile', gudaktif: 1, reg: 'db' }, user, 'api5')
+    fetchApi('apgudang/index', { a: user.app_id, gudaktif: 1, reg: 'db' }, user, 'api5')
       .then((response) => {
         const gudangData: Record<string, string>[] = response?.data || response;
         if (Array.isArray(gudangData) && gudangData.length > 0) {

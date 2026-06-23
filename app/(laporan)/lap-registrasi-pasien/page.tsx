@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 
-// Parse tanggal Indonesia (dd Mon yyyy) ke ISO untuk sorting
+// Parse tanggal Indonesia (dd Mon yyyy [HH:mm:ss]) ke ISO datetime untuk sorting
 function parseTglIndo(tgl: string): string {
   if (!tgl || tgl === '-') return '';
   const months: Record<string, string> = {
@@ -11,11 +11,13 @@ function parseTglIndo(tgl: string): string {
     Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
     Mei: '05', Agt: '08', Okt: '10', Des: '12',
   };
+  // Support both "dd Mon yyyy" and "dd Mon yyyy HH:mm:ss"
   const parts = tgl.trim().split(' ');
-  if (parts.length === 3) {
+  if (parts.length >= 3) {
     const [d, m, y] = parts;
     const mm = months[m] || '01';
-    return `${y}-${mm}-${d.padStart(2, '0')}`;
+    const time = parts[3] || '00:00:00';
+    return `${y}-${mm}-${d.padStart(2, '0')} ${time}`;
   }
   return tgl;
 }

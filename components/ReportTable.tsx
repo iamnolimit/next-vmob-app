@@ -298,11 +298,15 @@ export default function ReportTable({
   };
 
   // ── Sorting (client-side only; all filtering is done server-side) ──────
+  // Matches yyyy-mm-dd or yyyy-mm-dd HH:mm:ss — lexicographic order = chronological
+  const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}/;
   const sorted = sortKey
     ? [...data].sort((a, b) => {
         const av = String(a[sortKey] ?? '');
         const bv = String(b[sortKey] ?? '');
-        const cmp = av.localeCompare(bv, 'id', { numeric: true });
+        const cmp = (ISO_DATE_RE.test(av) && ISO_DATE_RE.test(bv))
+          ? av < bv ? -1 : av > bv ? 1 : 0
+          : av.localeCompare(bv, 'id', { numeric: true });
         return sortDir === 'asc' ? cmp : -cmp;
       })
     : data;
@@ -701,7 +705,7 @@ export default function ReportTable({
           }}
         >
           <table
-            className="w-full border-collapse table-fixed"
+            className="w-full border-collapse table-auto"
           >
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-100">

@@ -104,7 +104,7 @@ export default function LapLabaRugiPage() {
     apiNormalizer,
   });
 
-  const buildRefetchParams = useCallback((start: string, end: string, period: PeriodType) => {
+  const buildRefetchParams = useCallback((start: string, end: string, period: PeriodType, cabang: string) => {
     const formatDate = (isoDate: string) => {
       if (!isoDate) return '';
       const [y, m, d] = isoDate.split('-');
@@ -134,13 +134,14 @@ export default function LapLabaRugiPage() {
       tglAwal = `01 Jan ${y}`;
       tglAkhir = `31 Des ${y}`;
     }
-    return { cari: cariValue, bulan, tahun, tglAwal, tglAkhir,
+    const selectedCabangObj = cabangOptions.find(c => c.value === cabang);
+    return { cari: cariValue, bulan, tahun, tglAwal, tglAkhir, a: cabang, reg: selectedCabangObj?.reg ?? 'db',
       apiEndpoint: cariValue === 2 || cariValue === 3 ? 'dy-lap-laba-rugi-bulan/laporan/' : 'dy-lap-laba-rugi/laporan/' };
-  }, []);
+  }, [cabangOptions]);
 
   const handleRefresh = useCallback(() => {
-    return refetch(buildRefetchParams(appliedStart, appliedEnd, periodType));
-  }, [appliedStart, appliedEnd, periodType, refetch, buildRefetchParams]);
+    return refetch(buildRefetchParams(appliedStart, appliedEnd, periodType, appliedCabang));
+  }, [appliedStart, appliedEnd, periodType, appliedCabang, refetch, buildRefetchParams]);
 
   const reportData = data[0] || {
     pemasukanData: [],
@@ -171,7 +172,7 @@ export default function LapLabaRugiPage() {
     setAppliedEnd(finalEnd);
     setAppliedCabang(selectedCabang);
     setShowFilter(false);
-    refetch(buildRefetchParams(finalStart, finalEnd, periodType));
+    refetch(buildRefetchParams(finalStart, finalEnd, periodType, selectedCabang));
   };
 
   const resetFilter = () => {
@@ -183,12 +184,19 @@ export default function LapLabaRugiPage() {
     setEndDate(todayISO);
     setSelectedMonth(monthStr);
     setSelectedYear(d.getFullYear().toString());
-    setAppliedStart(todayISO);
-    setAppliedEnd(todayISO);
+    
+    const [y, m] = monthStr.split('-');
+    const finalStart = `${y}-${m}-01`;
+    const lastDay = new Date(Number(y), Number(m), 0).getDate();
+    const finalEnd = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
+    
+    setAppliedStart(finalStart);
+    setAppliedEnd(finalEnd);
     const defaultCabang = (cabangOptions.find((c) => c.value === user?.app_id) ?? cabangOptions[0])?.value ?? '';
     setSelectedCabang(defaultCabang);
     setAppliedCabang(defaultCabang);
-    setShowFilter(true);
+    setShowFilter(false);
+    refetch(buildRefetchParams(finalStart, finalEnd, 'bulan', defaultCabang));
   };
 
   const exportSections = [
@@ -217,6 +225,18 @@ export default function LapLabaRugiPage() {
       ],
     },
   ];
+
+  const fmtDisplay = () => {
+    if (periodType === 'bulan') {
+      const [y, m] = appliedStart.split('-');
+      return `${months[Number(m) - 1]} ${y}`;
+    }
+    if (periodType === 'tahun') {
+      const [y] = appliedStart.split('-');
+      return y;
+    }
+    return `${fmtDate(appliedStart)} \u2013 ${fmtDate(appliedEnd)}`;
+  };
 
   const filterNode = (
     <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
@@ -299,7 +319,7 @@ export default function LapLabaRugiPage() {
       {!showFilter && (
         <div className="px-4 pb-2 flex items-center gap-2 flex-wrap">
           <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full">
-            {String.fromCodePoint(0x1F4C5)} {fmtDate(appliedStart)} {String.fromCodePoint(0x2013)} {fmtDate(appliedEnd)}
+            {String.fromCodePoint(0x1F4C5)} {fmtDisplay()}
           </span>
           <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full capitalize">
             {periodType}
@@ -322,55 +342,56 @@ export default function LapLabaRugiPage() {
           <ListSkeleton rows={8} />
         ) : (
           <div className="animate-content-in">
-            <div className="flex gap-2 mb-2">
-              {['PEMASUKAN', 'PENGELUARAN'].map((h) => (
-                <div key={h} className="flex-1 pb-1 border-b-2 border-gray-900 text-sm font-bold">{h}</div>
-              ))}
-            </div>
-            <div className="flex gap-2 mb-2">
-              {[0, 1].map((i) => (
-                <div key={i} className="flex-1 flex justify-between text-xs font-semibold text-gray-500">
-                  <span>Nama Akun</span><span>Nominal</span>
+            <div className="flex gap-2">
+              {/* PEMASUKAN */}
+              <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
+                <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Pemasukan</h2>
+                <div className="flex-1 space-y-1">
+                  {reportData.pemasukanData.map((item: any, i: number) => (
+                    <div key={i} className="flex justify-between text-[10px] pl-2">
+                      <span className="text-gray-600 flex-1 pr-1">{item.aknama}</span>
+                      <span className="font-medium text-right shrink-0">{fmt(parseFloat(item.mutasi || 0))}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {Array.from({ length: Math.max(reportData.pemasukanData.length, reportData.pengeluaranData.length) }).map((_, i) => (
-              <div key={i} className="flex gap-2 mb-1">
-                <div className="flex-1 flex justify-between text-xs">
-                  {reportData.pemasukanData[i]
-                    ? (<><span className="text-gray-700 pl-2">{reportData.pemasukanData[i].aknama}</span><span className="font-medium">{fmt(parseFloat(reportData.pemasukanData[i].mutasi || 0))}</span></>)
-                    : <span />}
-                </div>
-                <div className="flex-1 flex justify-between text-xs">
-                  {reportData.pengeluaranData[i]
-                    ? (<><span className="text-gray-700 pl-2">{reportData.pengeluaranData[i].aknama}</span><span className="font-medium">{fmt(Math.abs(parseFloat(reportData.pengeluaranData[i].mutasi || 0)))}</span></>)
-                    : <span />}
+                <div className="flex justify-between text-xs font-bold mt-3 pt-2 border-t-2 border-gray-900">
+                  <span>Total Pemasukan</span><span>{fmt(reportData.totalPemasukan)}</span>
                 </div>
               </div>
-            ))}
 
-            <div className="flex gap-2 mt-3 pt-2 border-t-2 border-gray-900">
-              <div className="flex-1 flex justify-between text-sm font-bold"><span>Total</span><span>{fmt(reportData.totalPemasukan)}</span></div>
-              <div className="flex-1 flex justify-between text-sm font-bold"><span>Total</span><span>{fmt(reportData.totalPengeluaran)}</span></div>
+              {/* PENGELUARAN */}
+              <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
+                <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Pengeluaran</h2>
+                <div className="flex-1 space-y-1">
+                  {reportData.pengeluaranData.map((item: any, i: number) => (
+                    <div key={i} className="flex justify-between text-[10px] pl-2">
+                      <span className="text-gray-600 flex-1 pr-1">{item.aknama}</span>
+                      <span className="font-medium text-right shrink-0">{fmt(Math.abs(parseFloat(item.mutasi || 0)))}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between text-xs font-bold mt-3 pt-2 border-t-2 border-gray-900">
+                  <span>Total Pengeluaran</span><span>{fmt(reportData.totalPengeluaran)}</span>
+                </div>
+              </div>
             </div>
 
-            <div className="mt-3 space-y-2">
+            <div className="mt-4 bg-white rounded-2xl p-4 ios-shadow space-y-2">
               {[
                 { label: 'Total HPP', val: reportData.totalHPP, color: '' },
                 { label: 'Laba Kotor', val: reportData.labaKotor, color: reportData.labaKotor < 0 ? 'text-red-600' : '' },
                 { label: 'Total Pengeluaran', val: reportData.totalPengeluaran, color: '' },
                 { label: 'Laba Bersih', val: reportData.labaBersih, color: reportData.labaBersih < 0 ? 'text-red-600' : '' },
               ].map(({ label, val, color }) => (
-                <div key={label} className={`flex justify-between text-sm font-bold py-2 border-t border-dashed border-gray-300 ${color}`}>
+                <div key={label} className={`flex justify-between text-sm font-bold py-2 border-b border-dashed border-gray-200 last:border-0 ${color}`}>
                   <span>{label}</span><span>{fmt(val)}</span>
                 </div>
               ))}
             </div>
 
-            <div className={`mt-4 rounded-2xl border-2 p-4 flex items-center justify-center gap-4 ${isProfit ? 'bg-gray-50 border-gray-900' : 'bg-red-50 border-red-500'}`}>
-              <span className={`text-lg font-bold ${isProfit ? 'text-gray-900' : 'text-red-600'}`}>Laba Rugi:</span>
-              <span className={`text-2xl font-extrabold ${isProfit ? 'text-gray-900' : 'text-red-600'}`}>{fmt(reportData.labaBersih)}</span>
+            <div className={`mt-4 rounded-2xl border-2 p-4 flex items-center justify-center gap-4 ${isProfit ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+              <span className={`text-lg font-bold ${isProfit ? 'text-green-700' : 'text-red-600'}`}>Laba Rugi:</span>
+              <span className={`text-2xl font-extrabold ${isProfit ? 'text-green-700' : 'text-red-600'}`}>{fmt(reportData.labaBersih)}</span>
             </div>
 
             <div className="mt-4 relative">

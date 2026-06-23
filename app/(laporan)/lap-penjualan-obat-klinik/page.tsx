@@ -31,9 +31,10 @@ export default function LapPenjualanObatKlinikPage() {
     apiEndpoint: 'ki-penjualanobatklinik/index',
     apiVersion: 'api7',
     apiParams: {
-      cari: '4',
+      cari: 4,
       sorting: '',
-      device: 'mobile',
+      bulan: '',
+      tahun: '',
     },
     apiNormalizer,
   });
@@ -45,14 +46,23 @@ export default function LapPenjualanObatKlinikPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
+  // cari: 4=tanggal, 3=bulan, 2=tahun (same as VWEB)
+  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
+    const cari = periodToCari(filters.periodType || 'tanggal');
+    const [startY, startM] = filters.start.split('-');
+    const [endY] = filters.end.split('-');
+
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
+      cari,
+      bulan: cari === 3 ? startM : '',
+      tahun: cari === 2 ? endY : cari === 3 ? startY : '',
       filter: filters.search,
       carimobile: filters.search,
-      cari: '4',
       a: filters.cabang,
       reg: filters.cabangReg,
     });

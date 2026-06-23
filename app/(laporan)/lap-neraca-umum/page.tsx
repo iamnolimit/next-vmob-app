@@ -69,20 +69,23 @@ export default function LapNeracaUmumPage() {
     apiNormalizer,
   });
 
-  const buildNeracaParams = useCallback((date: string) => {
+  const buildNeracaParams = useCallback((date: string, cabang: string) => {
     const formatDate = (isoDate: string) => {
       if (!isoDate) return '';
       const [y, m, d] = isoDate.split('-');
       return `${d} ${months[Number(m) - 1]} ${y}`;
     };
     const [y, m] = date.split('-');
+    const selectedCabangObj = cabangOptions.find(c => c.value === cabang);
     return {
       bulan: `${months[Number(m) - 1]} ${y}`,
       tahun: y,
       tglAwal: formatDate(date),
       tglAkhir: formatDate(date),
+      a: cabang,
+      reg: selectedCabangObj?.reg ?? 'db',
     };
-  }, []);
+  }, [cabangOptions]);
 
   const reportData = data[0] || { data1: [], data23: [], datalaba: [], datalabacabang: [] };
 
@@ -154,8 +157,8 @@ export default function LapNeracaUmumPage() {
     n.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const handleRefresh = useCallback(() => {
-    return refetch(buildNeracaParams(appliedDate));
-  }, [appliedDate, refetch, buildNeracaParams]);
+    return refetch(buildNeracaParams(appliedDate, appliedCabang));
+  }, [appliedDate, appliedCabang, refetch, buildNeracaParams]);
 
   const filterNode = (
     <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
@@ -202,7 +205,7 @@ export default function LapNeracaUmumPage() {
             <div className="flex gap-2.5">
               <button onClick={() => setShowFilter(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700">Reset</button>
               <button
-                onClick={() => { setAppliedDate(perDate); setAppliedCabang(selectedCabang); setShowFilter(false); refetch(buildNeracaParams(perDate)); }}
+                onClick={() => { setAppliedDate(perDate); setAppliedCabang(selectedCabang); setShowFilter(false); refetch(buildNeracaParams(perDate, selectedCabang)); }}
                 className="flex-1 py-3 rounded-xl text-sm font-bold bg-primary-accent text-white shadow-md active:bg-primary-accent/90"
               >
                 Terapkan

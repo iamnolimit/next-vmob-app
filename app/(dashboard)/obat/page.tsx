@@ -78,11 +78,11 @@ export default function ObatPage() {
     },
     {
       label: 'Obat Expired',
-      value: formatRupiah(dataObatExpired?.nilai || 0),
+      value: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '0 Obat',
       icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
       color: 'var(--primary-accent)',
       change: expiredChange,
-      invoiceCount: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '',
+      invoiceCount: '',
     },
     {
       label: 'Obat Stok Habis',

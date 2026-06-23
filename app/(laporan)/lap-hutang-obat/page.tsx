@@ -41,7 +41,7 @@ export default function LapHutangObatPage() {
   };
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: 'hutang-obat/index-laporan',
+    apiEndpoint: 'hutang-obat/index',
     apiVersion: 'api5',
     apiParams: {
       date: getTodayWIB(),
@@ -49,7 +49,8 @@ export default function LapHutangObatPage() {
       tanggalakhir: '',
       tahun: '',
       bulan: '',
-      carimobile: '',
+      pemofaktur: '',
+      supnama: '',
       sorting: '',
       deadline: '',
       cari: 4,
@@ -68,7 +69,8 @@ export default function LapHutangObatPage() {
       tanggalakhir: fmtDate(filters.end),
       tahun: String(d.getFullYear()),
       bulan: String(d.getMonth() + 1),
-      carimobile: filters.search || '',
+      pemofaktur: filters.search || '',
+      supnama: filters.search || '',
       cari,
       a: filters.cabang,
       reg: filters.cabangReg,
