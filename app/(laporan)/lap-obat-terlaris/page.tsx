@@ -7,7 +7,7 @@ import { formatRupiah } from '@/lib/dummyData';
 export default function LapObatTerlarisPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
-    const dataArray = rawData?.data || rawData;
+    const dataArray = rawData?.data?.data || rawData?.data || rawData;
     if (!Array.isArray(dataArray)) return [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
