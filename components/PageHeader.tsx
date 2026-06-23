@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/sidebarContext';
 import { useAuth } from '@/lib/authContext';
 import type { ReactNode } from 'react';
+import AvatarImage from './AvatarImage';
 
 interface PageHeaderProps {
   title: string;
@@ -41,11 +42,12 @@ function ProfileBtn({ onClick, user }: { onClick: () => void, user: any }) {
       className={`w-12 h-12 flex items-center justify-center rounded-full shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform overflow-hidden border-2 border-white ${user ? (avatarColors[user.group] ?? 'bg-primary-accent') : 'bg-white'}`}
     >
       {user ? (
-        user.avatar.startsWith('http') ? (
-          <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
-        ) : (
-          <span className="text-white font-bold text-lg">{user.avatar}</span>
-        )
+        <AvatarImage 
+          src={user.avatar} 
+          alt={user.nama} 
+          fallbackText={(user.nama || user.username).substring(0, 2).toUpperCase()} 
+          className="w-full h-full object-cover" 
+        />
       ) : (
         <svg viewBox="0 0 24 24" className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />

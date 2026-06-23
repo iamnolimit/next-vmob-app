@@ -83,6 +83,8 @@ interface Props {
   maxPull?: number;
   color?: string;
   className?: string;
+  onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function LiquidPullToRefresh({
@@ -93,10 +95,13 @@ export default function LiquidPullToRefresh({
   maxPull = 160,
   color = 'var(--primary-accent)',
   className = '',
+  onScroll,
+  scrollRef: externalScrollRef,
 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const internalScrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = externalScrollRef || internalScrollRef;
   const spacerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
@@ -367,12 +372,13 @@ export default function LiquidPullToRefresh({
       {/* Scroll area — push content down so the drip is visible above it */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto"
+        className="flex-1 overflow-y-auto overflow-x-hidden"
         style={{ overscrollBehavior: 'none' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         onMouseDown={onMouseDown}
+        onScroll={onScroll}
       >
         {/* Spacer that grows with pull distance, pushing content below the drip */}
         <div ref={spacerRef} style={{ height: 0, flexShrink: 0 }} />

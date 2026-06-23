@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useNavLoading } from '@/lib/navLoadingContext';
+import AvatarImage from './AvatarImage';
 import { 
   Pill, Hospital, Flame, ClipboardList, UserCheck, CalendarDays, 
   CreditCard, Stethoscope, ShoppingCart, ClipboardCheck, Package, 
@@ -194,11 +195,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           {user && (
             <div className="px-4 pb-6 flex-shrink-0 flex flex-col items-center text-center border-b border-gray-100/50">
               <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-3 overflow-hidden border-4 border-white ${avatarColors[user.group] ?? 'bg-primary-accent'}`}>
-                {user.avatar.startsWith('http') ? (
-                  <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
-                ) : (
-                  user.avatar
-                )}
+                <AvatarImage 
+                  src={user.avatar} 
+                  alt={user.nama} 
+                  fallbackText={(user.nama || user.username).substring(0, 2).toUpperCase()} 
+                  className="w-full h-full object-cover" 
+                />
               </div>
               <p className="text-gray-900 font-bold text-[16px] truncate w-full px-2">{user.nama}</p>
               <span className="text-gray-500 text-[12px] truncate w-full px-2 mt-0.5">@{user.username}</span>
@@ -353,11 +355,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                     }}
                   >
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden ${avatarColors[session.group] ?? 'bg-primary-accent'}`}>
-                      {session.avatar.startsWith('http') ? (
-                        <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
-                      ) : (
-                        session.avatar
-                      )}
+                      <AvatarImage 
+                        src={session.avatar} 
+                        alt={session.nama} 
+                        fallbackText={(session.nama || session.username).substring(0, 2).toUpperCase()} 
+                        className="w-full h-full object-cover" 
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-gray-900 truncate">{session.nama}</p>

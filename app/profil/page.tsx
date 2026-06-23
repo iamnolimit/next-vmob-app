@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { User, Hospital, Tag } from 'lucide-react';
+import AvatarImage from '@/components/AvatarImage';
 
 const groupColors: Record<string, string> = {
   Admin: 'bg-purple-500',
@@ -57,11 +58,12 @@ export default function ProfilPage() {
           <div
             className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-4 overflow-hidden border-4 border-white ${groupColors[roleName] ?? 'bg-primary-accent'}`}
           >
-            {user.avatar.startsWith('http') ? (
-              <img src={user.avatar} alt={user.nama} className="w-full h-full object-cover" />
-            ) : (
-              user.avatar
-            )}
+            <AvatarImage 
+              src={user.avatar} 
+              alt={user.nama} 
+              fallbackText={(user.nama || user.username).substring(0, 2).toUpperCase()} 
+              className="w-full h-full object-cover" 
+            />
           </div>
           <h1 className="text-xl font-extrabold text-gray-900">{user.nama}</h1>
           <span className="mt-2 inline-block text-xs font-semibold bg-primary-accent/10 text-primary-accent px-3 py-1 rounded-full">

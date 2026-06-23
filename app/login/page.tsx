@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
+import AvatarImage from '@/components/AvatarImage';
 
 function LoginContent() {
   const router = useRouter();
@@ -276,11 +277,12 @@ function LoginContent() {
                     }}
                   >
                     <div className="w-11 h-11 rounded-full bg-primary-accent/10 flex items-center justify-center text-primary-accent font-bold text-base overflow-hidden border-2 border-primary-accent/20">
-                      {session.avatar.startsWith('http') ? (
-                        <img src={session.avatar} alt={session.nama} className="w-full h-full object-cover" />
-                      ) : (
-                        session.avatar
-                      )}
+                      <AvatarImage 
+                        src={session.avatar} 
+                        alt={session.nama} 
+                        fallbackText={(session.nama || session.username).substring(0, 2).toUpperCase()} 
+                        className="w-full h-full object-cover" 
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-gray-900 truncate">{session.nama}</p>

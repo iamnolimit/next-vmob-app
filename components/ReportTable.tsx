@@ -678,8 +678,23 @@ export default function ReportTable({
   );
 
   return (
-    <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
-      {filterPanel}
+    <LiquidPullToRefresh 
+      header={
+        <div className="flex flex-col">
+          {headerNode}
+          {filterPanel}
+        </div>
+      } 
+      onRefresh={handleRefresh} 
+      className="flex-1 flex flex-col"
+      scrollRef={scrollContainerRef}
+      onScroll={(e) => {
+        const target = e.target as HTMLDivElement;
+        if (target.scrollHeight - target.scrollTop <= target.clientHeight + 150) {
+          handleLoadMore();
+        }
+      }}
+    >
       {/* ── Loading overlay saat filter apply ── */}
       {(isFiltering || (loading && hasDataRef.current)) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
@@ -693,28 +708,19 @@ export default function ReportTable({
         </div>
       )}
       {/* ── Table ── */}
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <div
-          ref={scrollContainerRef}
-          className="flex-1 overflow-auto"
-          onScroll={(e) => {
-            const target = e.target as HTMLDivElement;
-            if (target.scrollHeight - target.scrollTop <= target.clientHeight + 150) {
-              handleLoadMore();
-            }
-          }}
-        >
+      <div className="flex-1 flex flex-col w-full max-w-full">
+        <div className="flex-1 w-full max-w-full">
           <table
-            className="w-full border-collapse table-auto"
+            className="w-full border-collapse table-fixed"
           >
-            <thead className="sticky top-0 z-10">
-              <tr className="bg-gray-100">
+            <thead className="sticky top-0 z-10 bg-gray-100 shadow-sm">
+              <tr>
                 {columns.map((col) => (
                   <th
                     key={col.key}
                     onClick={() => handleSort(col.key)}
-                    className="py-2.5 px-2 text-xs font-bold text-gray-700 border-r border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200"
-                    style={{ width: col.width ? `${col.width}px` : 'auto', textAlign: col.align ?? 'left' }}
+                    className="py-2.5 px-1.5 text-[11px] font-bold text-gray-700 border-r border-b border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200 break-words"
+                    style={{ width: col.key === 'no' ? '40px' : 'auto', textAlign: col.align ?? 'left' }}
                   >
                     <div className={`flex items-center gap-1 ${col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : 'justify-start'}`}>
                       <span>{col.label}</span>
@@ -781,7 +787,7 @@ export default function ReportTable({
                       {columns.map((col) => (
                         <td
                           key={col.key}
-                          className="py-2.5 px-2 text-xs text-gray-800 align-top border-r border-gray-100 last:border-r-0 break-words"
+                          className="py-2.5 px-1.5 text-[11px] text-gray-800 align-top border-r border-gray-100 last:border-r-0 break-all"
                           style={{ textAlign: col.align ?? 'left' }}
                         >
                           {col.render ? col.render(row) : col.key === 'no' ? String(i + 1) : String(row[col.key] ?? '-')}
