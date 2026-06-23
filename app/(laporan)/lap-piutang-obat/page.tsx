@@ -37,7 +37,7 @@ export default function LapPiutangObatPage() {
   };
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: '/appiutang-obat/index-v2',
+    apiEndpoint: 'appiutang-obat/index-v2',
     apiVersion: 'api5',
     apiParams: {
       date: getTodayWIB(),

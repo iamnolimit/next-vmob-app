@@ -77,8 +77,7 @@ export default function LapPembelianObatPage() {
         { key: 'no', label: 'No', align: 'center', width: 32 },
         { key: 'tanggal', label: 'Tgl', width: 72 },
         { key: 'noFaktur', label: 'No Faktur', width: 88 },
-        { key: 'supplier', label: 'Supplier' },
-        { key: 'gudang', label: 'Gudang' },
+        { key: 'supplier', label: 'Supplier', width: 100 },
         { key: 'total', label: 'Total', align: 'right', width: 88,
           render: (r) => formatRupiah(r.total as number) },
       ]}

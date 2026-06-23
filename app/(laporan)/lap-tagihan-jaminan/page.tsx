@@ -30,7 +30,7 @@ export default function LapTagihanJaminanPage() {
   };
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: '/laporan-tagihan-jaminan-pasien/index',
+    apiEndpoint: 'laporan-tagihan-jaminan-pasien/index',
     apiVersion: 'api7',
     apiParams: {
       filter: '',

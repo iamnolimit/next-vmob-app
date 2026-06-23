@@ -40,7 +40,7 @@ export default function LapPiutangKlinikPage() {
   const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: '/kln-piutang/index',
+    apiEndpoint: 'kln-piutang/index',
     apiVersion: 'api5',
     apiParams: {
       date: getTodayWIB(),

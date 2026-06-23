@@ -81,7 +81,7 @@ export default function ObatPage() {
       value: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '0 Obat',
       icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: expiredChange,
+      change: -expiredChange,
       invoiceCount: '',
     },
     {
@@ -89,7 +89,7 @@ export default function ObatPage() {
       value: dataObatStokHabis?.count ? `${dataObatStokHabis.count} Obat` : '0 Obat',
       icon: <Icon icon="material-symbols:inventory-2" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: stokHabisChange,
+      change: -stokHabisChange,
       invoiceCount: '',
     },
     {
@@ -97,7 +97,7 @@ export default function ObatPage() {
       value: formatRupiah(nilaiObatHilang),
       icon: <Icon icon="material-symbols:search-off" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: obatHilangPeningkatan,
+      change: -obatHilangPeningkatan,
       invoiceCount: dataObatStokHilang?.count ? `${dataObatStokHilang.count} Obat` : '0 Obat',
     },
   ];
@@ -147,13 +147,13 @@ export default function ObatPage() {
 
             <div className="mt-6">
               <RankedList title="Pembelian Obat Terbanyak" icon="🛒" color="#4CAF50"
-                items={pembelianObatTerbanyakData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah, nilai: 0 }))}
+                items={pembelianObatTerbanyakData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah }))}
                 type="obat" />
             </div>
 
             <div className="mt-6">
               <RankedList title="Obat Terlaris" icon="🔥" color="#FF5722"
-                items={obatTerlarisData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah, nilai: 0 }))}
+                items={obatTerlarisData.map((item: any, i: number) => ({ rank: i + 1, name: item.obatnama, satuan: item.satuan, jumlah: item.jumlah }))}
                 type="obat" />
             </div>
           </div>

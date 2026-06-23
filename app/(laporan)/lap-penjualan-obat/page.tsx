@@ -44,9 +44,6 @@ export default function LapPenjualanObatPage() {
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      pjnofaktur: filters.search || '',
-      pasnama: filters.search || '',
-      doknama: filters.search || '',
       carimobile: filters.search || '',
       a: filters.cabang,
       reg: filters.cabangReg,

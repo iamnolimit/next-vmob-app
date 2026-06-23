@@ -64,6 +64,10 @@ interface ReportTableProps {
   error?: string | null;
   /** Whether there is more data to load */
   hasMore?: boolean;
+  /** Default sort column key */
+  defaultSortKey?: string;
+  /** Default sort direction */
+  defaultSortDir?: 'asc' | 'desc';
 }
 
 function toISO(d: Date) {
@@ -101,6 +105,8 @@ export default function ReportTable({
   loading,
   error,
   hasMore = false,
+  defaultSortKey,
+  defaultSortDir = 'asc',
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [showFilter, setShowFilter] = useState(true);
@@ -143,8 +149,8 @@ export default function ReportTable({
     start: string; end: string; interval: string | number; cabang?: string; gudang?: string;
   } | null>(null);
 
-  const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [sortKey, setSortKey] = useState<string | null>(defaultSortKey ?? null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>(defaultSortDir);
   const [isFiltering, setIsFiltering] = useState(false);
   const limit = 50;
 
@@ -708,8 +714,8 @@ export default function ReportTable({
         </div>
       )}
       {/* ── Table ── */}
-      <div className="flex-1 flex flex-col w-full max-w-full">
-        <div className="flex-1 w-full max-w-full">
+      <div className="flex-1 flex flex-col w-full max-w-full overflow-x-auto">
+        <div className="flex-1 w-full max-w-full pr-2">
           <table
             className="w-full border-collapse table-fixed"
           >
@@ -719,7 +725,7 @@ export default function ReportTable({
                   <th
                     key={col.key}
                     onClick={() => handleSort(col.key)}
-                    className="py-2.5 px-1.5 text-[11px] font-bold text-gray-700 border-r border-b border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200 break-words"
+                    className="py-2.5 px-1.5 last:pr-3 text-[11px] font-bold text-gray-700 border-r border-b border-gray-200 last:border-r-0 cursor-pointer select-none active:bg-gray-200 break-words"
                     style={{ width: col.key === 'no' ? '40px' : 'auto', textAlign: col.align ?? 'left' }}
                   >
                     <div className={`flex items-center gap-1 ${col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : 'justify-start'}`}>
@@ -787,7 +793,7 @@ export default function ReportTable({
                       {columns.map((col) => (
                         <td
                           key={col.key}
-                          className="py-2.5 px-1.5 text-[11px] text-gray-800 align-top border-r border-gray-100 last:border-r-0 break-all"
+                          className="py-2.5 px-1.5 last:pr-3 text-[11px] text-gray-800 align-top border-r border-gray-100 last:border-r-0 break-all"
                           style={{ textAlign: col.align ?? 'left' }}
                         >
                           {col.render ? col.render(row) : col.key === 'no' ? String(i + 1) : String(row[col.key] ?? '-')}

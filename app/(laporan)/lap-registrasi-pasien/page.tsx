@@ -99,6 +99,8 @@ export default function LapRegistrasiPasienPage() {
       searchFields={['noRM', 'pasien', 'alamat']}
       searchPlaceholder="No RM / pasien / alamat"
       dateField="tanggal"
+      defaultSortKey="tanggalISO"
+      defaultSortDir="desc"
       onFetchData={handleFetchData}
       onReset={reset}
     />

@@ -45,7 +45,7 @@ export default function LapManajemenUserPage() {
   };
 
   const { data: users, loading, error, refetch } = useReportData({
-    apiEndpoint: '/sys/index',
+    apiEndpoint: 'sys/index',
     apiVersion: 'api5',
     apiParams: {},
     apiNormalizer,

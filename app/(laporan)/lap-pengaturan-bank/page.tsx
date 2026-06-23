@@ -20,7 +20,7 @@ export default function LapPengaturanBankPage() {
   };
 
   const { data: banks, loading, error, refetch } = useReportData({
-    apiEndpoint: '/mobile-bank/index',
+    apiEndpoint: 'mobile-bank/index',
     apiVersion: 'apivmart',
     apiParams: {
       user_id: user?.user_id || '',

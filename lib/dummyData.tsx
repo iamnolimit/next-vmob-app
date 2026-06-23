@@ -2,7 +2,8 @@
 // DUMMY STATIC DATA untuk semua halaman mobile Vmedis
 // ============================================================
 import React from 'react';
-import { Store, ShoppingCart, Hospital, Home, CircleDollarSign, Landmark, Banknote, Scale, TrendingUp, TrendingDown, LineChart, ClipboardList, FileText, Pill, AlertTriangle, Package, Search } from 'lucide-react';
+import { Icon } from '@iconify/react';
+import { Store, ShoppingCart, Hospital, Home, CircleDollarSign, Landmark, Banknote, Scale, TrendingUp, TrendingDown, LineChart, ClipboardList, FileText, Pill, AlertTriangle, Package, Search, Star, Users, UserPlus, Building2 } from 'lucide-react';
 
 // ---- DASHBOARD PAGE DATA ----
 export const dashboardStats = {
@@ -41,8 +42,8 @@ export const dashboardChartData = [
 ];
 
 export const dashboardChartItems = [
-  { title: "Total Pendapatan",    dataKey: "totalPendapatan",    color: "#2196F3", icon: <CircleDollarSign size={16} /> },
-  { title: "Penjualan Kasir",     dataKey: "penjualanKasir",     color: "#FF9800", icon: <Store size={16} /> },
+  { title: "Total Pendapatan",    dataKey: "totalPendapatan",    color: "#2196F3", icon: <Icon icon="lucide:line-chart" width={16} height={16} /> },
+  { title: "Penjualan Kasir",     dataKey: "penjualanKasir",     color: "#FF9800", icon: <Pill size={16} /> },
   { title: "Penjualan Online",    dataKey: "penjualanOnline",    color: "#4CAF50", icon: <ShoppingCart size={16} /> },
   { title: "Pemeriksaan Klinik",  dataKey: "pemeriksaanKlinik",  color: "#9C27B0", icon: <Hospital size={16} /> },
   { title: "Pendapatan HomeCare", dataKey: "pendapatanHomecare", color: "#F44336", icon: <Home size={16} /> },
@@ -60,15 +61,15 @@ export const keuanganChartData = [
 ];
 
 export const keuanganChartItems = [
-  { title: "Total Aset",          dataKey: "totalAset",         color: "#2196F3", icon: <Landmark size={16} /> },
-  { title: "Total Cash",          dataKey: "totalCash",         color: "#4CAF50", icon: <Banknote size={16} /> },
-  { title: "Total Pasiva",        dataKey: "totalPasiva",       color: "#FF9800", icon: <Scale size={16} /> },
-  { title: "Total Pendapatan",    dataKey: "totalPendapatan",   color: "#4CAF50", icon: <TrendingUp size={16} /> },
-  { title: "Total Pengeluaran",   dataKey: "totalPengeluaran",  color: "#F44336", icon: <TrendingDown size={16} /> },
-  { title: "Laba Rugi",           dataKey: "labaRugi",          color: "#9C27B0", icon: <LineChart size={16} /> },
-  { title: "Total Hutang Obat",   dataKey: "totalHutangObat",   color: "#F44336", icon: <ClipboardList size={16} /> },
-  { title: "Total Piutang Apotek",dataKey: "totalPiutangApotek",color: "#FF9800", icon: <FileText size={16} /> },
-  { title: "Total Piutang Klinik",dataKey: "totalPiutangKlinik",color: "#9C27B0", icon: <Hospital size={16} /> },
+  { title: "Total Aset",          dataKey: "totalAset",         color: "#2196F3", icon: <Icon icon="material-symbols:account-balance" width={16} height={16} /> },
+  { title: "Total Cash",          dataKey: "totalCash",         color: "#4CAF50", icon: <Icon icon="material-symbols:payments" width={16} height={16} /> },
+  { title: "Total Pasiva",        dataKey: "totalPasiva",       color: "#FF9800", icon: <Icon icon="material-symbols:balance" width={16} height={16} /> },
+  { title: "Total Pendapatan",    dataKey: "totalPendapatan",   color: "#4CAF50", icon: <Icon icon="material-symbols:trending-up" width={16} height={16} /> },
+  { title: "Total Pengeluaran",   dataKey: "totalPengeluaran",  color: "#F44336", icon: <Icon icon="material-symbols:trending-down" width={16} height={16} /> },
+  { title: "Laba Rugi",           dataKey: "labaRugi",          color: "#9C27B0", icon: <Icon icon="material-symbols:analytics" width={16} height={16} /> },
+  { title: "Total Hutang Obat",   dataKey: "totalHutangObat",   color: "#F44336", icon: <Icon icon="material-symbols:receipt-long" width={16} height={16} /> },
+  { title: "Total Piutang Apotek",dataKey: "totalPiutangApotek",color: "#FF9800", icon: <Icon icon="material-symbols:description" width={16} height={16} /> },
+  { title: "Total Piutang Klinik",dataKey: "totalPiutangKlinik",color: "#9C27B0", icon: <Icon icon="material-symbols:local-hospital" width={16} height={16} /> },
 ];
 
 // ---- OBAT PAGE DATA ----
@@ -104,7 +105,7 @@ export const obatChartData = [
 ];
 
 export const obatChartItems = [
-  { title: "Data Obat Hilang", dataKey: "obatHilang",    color: "#FF5722", icon: <Search size={16} /> },
+  { title: "Data Obat Hilang", dataKey: "obatHilang",    color: "#FF5722", icon: <Icon icon="material-symbols:search-off" width={16} height={16} /> },
   { title: "Pembelian Obat",   dataKey: "pembelianObat", color: "#4CAF50", icon: <ShoppingCart size={16} /> },
 ];
 
@@ -211,8 +212,8 @@ export const forecastChartData = {
 };
 
 export const forecastChartItems = [
-  { title: "Kategori Pareto",   dataKey: "paretoAnalysis",  color: "#2196F3", icon: <LineChart size={16} /> },
-  { title: "Status Pengadaan",  dataKey: "statusPengadaan", color: "#FF9800", icon: <Package size={16} /> },
+  { title: "Kategori Pareto",   dataKey: "paretoAnalysis",  color: "#2196F3", icon: <Icon icon="material-symbols:stars" width={16} height={16} /> },
+  { title: "Status Pengadaan",  dataKey: "statusPengadaan", color: "#FF9800", icon: <Icon icon="material-symbols:inventory-2" width={16} height={16} /> },
 ];
 
 export const katlarisData = [
@@ -224,8 +225,6 @@ export const katlarisData = [
 ];
 
 // ---- CUSTOMER PAGE DATA ----
-import { Star, Users, UserPlus, Building2 } from 'lucide-react';
-
 export const customerStats = {
   tigaBulan: [
     { label: "Loyal Customer",     value: "1.240 Pelanggan", change: 7.4,  icon: <Star size={20} />, color: "#1A73E8" },
@@ -258,13 +257,13 @@ export const customerStats = {
 
 // Customer chart — data per periode
 export const customerChartItems = [
-  { title: "Loyal Customer",     dataKey: "loyalCustomer",     color: "#4CAF50", icon: <Star size={16} /> },
-  { title: "Potensial Customer", dataKey: "potensialCustomer", color: "#2196F3", icon: <TrendingUp size={16} /> },
-  { title: "Prospek Customer",   dataKey: "prospekCustomer",   color: "#FF9800", icon: <UserPlus size={16} /> },
-  { title: "Belum Prospek",      dataKey: "belumProspek",      color: "#F44336", icon: <Users size={16} /> },
-  { title: "Total Customer",     dataKey: "totalCustomer",     color: "#9C27B0", icon: <Building2 size={16} /> },
-  { title: "Pasien Baru",        dataKey: "pasienBaru",        color: "#607D8B", icon: <UserPlus size={16} /> },
-  { title: "Kunjungan Pasien",   dataKey: "kunjunganPasien",   color: "#795548", icon: <Hospital size={16} /> },
+  { title: "Loyal Customer",     dataKey: "loyalCustomer",     color: "#4CAF50", icon: <Icon icon="material-symbols:star" width={16} height={16} /> },
+  { title: "Potensial Customer", dataKey: "potensialCustomer", color: "#2196F3", icon: <Icon icon="material-symbols:trending-up" width={16} height={16} /> },
+  { title: "Prospek Customer",   dataKey: "prospekCustomer",   color: "#FF9800", icon: <Icon icon="material-symbols:person-add" width={16} height={16} /> },
+  { title: "Belum Prospek",      dataKey: "belumProspek",      color: "#F44336", icon: <Icon icon="material-symbols:person-outline" width={16} height={16} /> },
+  { title: "Total Customer",     dataKey: "totalCustomer",     color: "#9C27B0", icon: <Icon icon="material-symbols:group" width={16} height={16} /> },
+  { title: "Pasien Baru",        dataKey: "pasienBaru",        color: "#607D8B", icon: <Icon icon="material-symbols:person-add-outline" width={16} height={16} /> },
+  { title: "Kunjungan Pasien",   dataKey: "kunjunganPasien",   color: "#795548", icon: <Icon icon="material-symbols:local-hospital" width={16} height={16} /> },
 ];
 
 export const customerChartData: Record<string, { name: string; loyalCustomer: number; potensialCustomer: number; prospekCustomer: number; belumProspek: number; totalCustomer: number; pasienBaru: number; kunjunganPasien: number }[]> = {
@@ -595,8 +594,8 @@ export function formatRupiah(value: number): string {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 }
 
