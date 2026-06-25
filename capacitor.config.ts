@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Vmedis Mobile',
   webDir: 'out',
   server: {
-    url: 'https://cheery-dragon-8e5b5a.netlify.app',
+    url: 'https://next-vmob-app.vercel.app',
     cleartext: false,
   },
   plugins: {

@@ -358,7 +358,7 @@ export default function ReportTable({
   )?.label;
 
   const handleExportPdf = async () => {
-    const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.app_name || 'Klinik';
+    const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.cabang || 'Klinik';
     let subtitle = '';
     if (appliedFilter) {
       if (appliedFilter.periodType === 'tanggal') {
@@ -384,7 +384,7 @@ export default function ReportTable({
   };
 
   const handleExportExcel = async () => {
-    const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.app_name || 'Klinik';
+    const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.cabang || 'Klinik';
     await exportToExcel(
       `${title} - ${klinikName}`,
       columns.map(c => ({ label: c.label, key: c.key, align: c.align })),
