@@ -78,6 +78,7 @@ export default function LapPiutangObatPage() {
           deadline: params.interval !== 'all' ? params.interval : '',
           a: params.cabang,
           reg: params.cabangReg,
+          device: 'mobile',
         });
       }}
       totalLabel="Total Kekurangan"

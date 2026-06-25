@@ -54,6 +54,7 @@ export default function LapKunjunganPasienPage() {
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

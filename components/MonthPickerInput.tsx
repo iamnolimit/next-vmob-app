@@ -1,10 +1,7 @@
 'use client';
 import { useState } from 'react';
-import ReactDatePicker from 'react-datepicker';
-import { format, parseISO } from 'date-fns';
-import { id } from 'date-fns/locale';
-
-import 'react-datepicker/dist/react-datepicker.css';
+import { createPortal } from 'react-dom';
+import { MonthScrollPicker } from './ScrollPicker';
 
 interface MonthPickerInputProps {
   label: string;
@@ -18,8 +15,7 @@ export default function MonthPickerInput({
   onChange,
 }: MonthPickerInputProps) {
   const [open, setOpen] = useState(false);
-  // parseISO needs a full date, so we append -01
-  const selected = value ? parseISO(`${value}-01`) : new Date();
+  const [draft, setDraft] = useState(value);
 
   const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   const displayDate = value
@@ -29,10 +25,13 @@ export default function MonthPickerInput({
       })()
     : 'Pilih bulan';
 
-  const handleChange = (date: Date | null) => {
-    if (date) {
-      onChange(format(date, 'yyyy-MM'));
-    }
+  const handleOpen = () => {
+    setDraft(value);
+    setOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (draft) onChange(draft);
     setOpen(false);
   };
 
@@ -45,7 +44,7 @@ export default function MonthPickerInput({
         </label>
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-100 rounded-xl border-2 border-transparent active:border-blue-500 transition-all text-left"
         >
           <span className="text-primary-accent text-sm flex-shrink-0">📅</span>
@@ -54,15 +53,15 @@ export default function MonthPickerInput({
         </button>
       </div>
 
-      {/* Bottom sheet overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col justify-end"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={() => setOpen(false)}
-        >
+      {/* Bottom sheet overlay — via portal to escape stacking context */}
+      {open && createPortal(
+        <div className="fixed inset-0 z-[99999] flex flex-col justify-end">
           <div
-            className="bg-white rounded-t-3xl overflow-hidden"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          <div
+            className="relative bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -80,29 +79,21 @@ export default function MonthPickerInput({
               </button>
               <span className="text-sm font-bold text-gray-900">{label}</span>
               <button
-                onClick={() => setOpen(false)}
+                onClick={handleConfirm}
                 className="text-sm font-semibold text-primary-accent py-1"
               >
                 Selesai
               </button>
             </div>
 
-            {/* Calendar */}
-            <div className="vmob-datepicker px-2 pb-6">
-              <ReactDatePicker
-                selected={selected}
-                onChange={handleChange}
-                inline
-                locale={id}
-                showMonthYearPicker
-                dateFormat="MM/yyyy"
-                calendarClassName="vmob-cal"
-                renderCustomHeader={() => <div style={{ display: 'none' }} />}
-              />
-            </div>
+            {/* Scroll Picker */}
+            <MonthScrollPicker
+              value={draft || value}
+              onChange={setDraft}
+            />
           </div>
         </div>
-      )}
+      , document.body)}
     </>
   );
 }

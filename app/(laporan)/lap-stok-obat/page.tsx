@@ -49,6 +49,7 @@ export default function LapStokObatPage() {
       a: filters.cabang,
       reg: filters.cabangReg,
       gudid: filters.gudang || '',
+      device: 'mobile',
     });
   }, [refetch]);
 

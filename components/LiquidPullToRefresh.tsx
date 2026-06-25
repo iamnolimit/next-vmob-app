@@ -83,6 +83,7 @@ interface Props {
   maxPull?: number;
   color?: string;
   className?: string;
+  overflowVisible?: boolean;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
   scrollRef?: React.RefObject<HTMLDivElement | null>;
 }
@@ -95,6 +96,7 @@ export default function LiquidPullToRefresh({
   maxPull = 160,
   color = 'var(--primary-accent)',
   className = '',
+  overflowVisible = false,
   onScroll,
   scrollRef: externalScrollRef,
 }: Props) {
@@ -292,7 +294,7 @@ export default function LiquidPullToRefresh({
   void phase;
 
   return (
-    <div ref={wrapRef} className={`flex flex-col overflow-hidden ${className}`} style={{ position: 'relative' }}>
+    <div ref={wrapRef} className={`flex flex-col ${className}`} style={{ position: 'relative', overflow: overflowVisible ? 'visible' : 'hidden' }}>
 
       {/*
         Layering (bottom → top):
@@ -301,7 +303,7 @@ export default function LiquidPullToRefresh({
           scroll area has no z-index (flows below)
       */}
 
-      {/* SVG drip — zIndex 10 (behind header). clipPath hides the overlap zone. */}
+      {/* SVG drip — position:absolute, no zIndex (DOM order puts it behind header div). */}
       <svg
         ref={svgRef}
         style={{
@@ -310,7 +312,6 @@ export default function LiquidPullToRefresh({
           left: 0,
           width: `${w}px`,
           height: `${OVERLAP}px`,
-          zIndex: 10,
           overflow: 'hidden',
           pointerEvents: 'none',
         }}
@@ -354,16 +355,10 @@ export default function LiquidPullToRefresh({
         </g>
       </svg>
 
-      {/* Header — zIndex 20, above SVG drip.
-          drop-shadow follows the rounded shape (unlike box-shadow which is always a rectangle). */}
-      <div
-        className="flex-shrink-0"
-        style={{
-          position: 'relative',
-          zIndex: 20,
-          filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.18))',
-        }}
-      >
+      {/* Header — above SVG drip via DOM order (SVG is rendered before this div).
+          No z-index set here to avoid creating a stacking context that would
+          cause position:fixed portals to paint behind this element. */}
+      <div className="flex-shrink-0 relative">
         <div ref={headerRef}>
           {header}
         </div>

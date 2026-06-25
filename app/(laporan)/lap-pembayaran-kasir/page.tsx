@@ -84,6 +84,7 @@ export default function LapPembayaranKasirPage() {
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

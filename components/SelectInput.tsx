@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Hospital } from 'lucide-react';
 
 export interface SelectOption {
@@ -51,15 +52,15 @@ export default function SelectInput({
         </button>
       </div>
 
-      {/* Bottom sheet overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col justify-end mb-0"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={() => setOpen(false)}
-        >
+      {/* Bottom sheet overlay — via portal to escape stacking context */}
+      {open && createPortal(
+        <div className="fixed inset-0 z-[99999] flex flex-col justify-end">
           <div
-            className="bg-white rounded-t-3xl overflow-hidden"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          <div
+            className="relative bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -117,7 +118,7 @@ export default function SelectInput({
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
     </>
   );
 }

@@ -84,6 +84,7 @@ export default function LapNeracaUmumPage() {
       tglAkhir: formatDate(date),
       a: cabang,
       reg: selectedCabangObj?.reg ?? 'db',
+      device: 'mobile',
     };
   }, [cabangOptions]);
 

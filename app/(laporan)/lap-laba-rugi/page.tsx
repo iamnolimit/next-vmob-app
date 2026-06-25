@@ -135,7 +135,7 @@ export default function LapLabaRugiPage() {
       tglAkhir = `31 Des ${y}`;
     }
     const selectedCabangObj = cabangOptions.find(c => c.value === cabang);
-    return { cari: cariValue, bulan, tahun, tglAwal, tglAkhir, a: cabang, reg: selectedCabangObj?.reg ?? 'db',
+    return { cari: cariValue, bulan, tahun, tglAwal, tglAkhir, a: cabang, reg: selectedCabangObj?.reg ?? 'db', device: 'mobile',
       apiEndpoint: cariValue === 2 || cariValue === 3 ? 'dy-lap-laba-rugi-bulan/laporan/' : 'dy-lap-laba-rugi/laporan/' };
   }, [cabangOptions]);
 

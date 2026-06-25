@@ -84,6 +84,7 @@ export default function LapPiutangKlinikPage() {
           deadline: params.interval !== 'all' ? params.interval : '',
           a: params.cabang,
           reg: params.cabangReg,
+          device: 'mobile',
         });
       }}
       totalLabel="Total Kekurangan"

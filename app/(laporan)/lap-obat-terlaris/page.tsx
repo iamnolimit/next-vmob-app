@@ -60,6 +60,7 @@ export default function LapObatTerlarisPage() {
       namaobat: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

@@ -68,6 +68,7 @@ export default function LapTagihanJaminanPage() {
           filter: params.search || '',
           a: params.cabang,
           reg: params.cabangReg,
+          device: 'mobile',
         });
       }}
       totalLabel="Total Biaya"

@@ -44,3 +44,16 @@
 
 ## Status: REVISI (MINOR)
 - [x] **Semua Menu Laporan Transaksi**: Kasih koma belakang angka (pada grand total bawah kasih koma belakang angka, agar rapi dan currency sama)
+
+## Note
+Remaining unchecked (all require backend/API fixes or have vague requirements):
+
+Dashboard Obat: Value mismatch with web (API data issue)
+Dashboard Obat: Obat Hilang value not loading (API/stok opname issue)
+Piutang Klinik / Pembayaran Kasir: Filter Periode data mismatch (API issue)
+Dashboard Home: Standarisasi Icon/Logo (vague requirement)
+Dashboard Keuangan: Grand total salah (API data issue)
+Dashboard Forecast: Pareto Tidak Sama (API data issue)
+Penjualan Obat Klinik / Pendapatan Petugas Medis / Hutang Obat: Data mismatch (API issue)
+Laporan Neraca / Laba Rugi: Filter cabang isinya aneh (API data issue)
+Sub Menu: Kategori Menu (vague - no specific requirements given)

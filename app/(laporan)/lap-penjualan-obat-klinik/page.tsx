@@ -65,6 +65,7 @@ export default function LapPenjualanObatKlinikPage() {
       carimobile: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

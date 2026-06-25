@@ -28,7 +28,7 @@ const laporanMenus = [
     ],
   },
   {
-    category: 'Billing Kasir',
+    category: 'Transaksi Klinik',
     icon: <CreditCard size={20} />,
     items: [
       { label: 'Laporan Piutang Klinik',           href: '/lap-piutang-klinik',           icon: <CreditCard size={20} /> },
@@ -39,23 +39,35 @@ const laporanMenus = [
     ],
   },
   {
-    category: 'Laporan Apotek',
+    category: 'Pembelian',
+    icon: <ShoppingCart size={20} />,
+    items: [
+      { label: 'Laporan Pembelian Obat',   href: '/lap-pembelian-obat',   icon: <ShoppingCart size={20} /> },
+      { label: 'Laporan Hutang Obat',      href: '/lap-hutang-obat',      icon: <CreditCard size={20} /> },
+    ],
+  },
+  {
+    category: 'Penjualan Dan Shift',
     icon: <Pill size={20} />,
     items: [
-      { label: 'Laporan Pembelian',        href: '/lap-pembelian-obat',   icon: <ShoppingCart size={20} /> },
-      { label: 'Laporan Hutang Obat',      href: '/lap-hutang-obat',      icon: <CreditCard size={20} /> },
       { label: 'Laporan Penjualan Obat',   href: '/lap-penjualan-obat',   icon: <Pill size={20} /> },
       { label: 'Laporan Piutang Obat',     href: '/lap-piutang-obat',     icon: <CreditCard size={20} /> },
-      { label: 'Laporan Obat Stok Habis',  href: '/lap-obat-stok-habis',  icon: <AlertTriangle size={20} /> },
-      { label: 'Laporan Obat Expired',     href: '/lap-obat-expired',     icon: <XCircle size={20} /> },
-      { label: 'Laporan Obat Terlaris',    href: '/lap-obat-terlaris',    icon: <Flame size={20} /> },
-      { label: 'Laporan Stok Opname',      href: '/lap-stok-opname',      icon: <ClipboardCheck size={20} /> },
-      { label: 'Laporan Stok Obat',        href: '/lap-stok-obat',        icon: <Package size={20} /> },
       { label: 'Laporan Pergantian Shift', href: '/lap-pergantian-shift', icon: <RefreshCcw size={20} /> },
     ],
   },
   {
-    category: 'Laporan Keuangan',
+    category: 'Obat Dan Stok',
+    icon: <Package size={20} />,
+    items: [
+      { label: 'Laporan Obat Stok Habis',  href: '/lap-obat-stok-habis',  icon: <AlertTriangle size={20} /> },
+      { label: 'Laporan Obat Expired',     href: '/lap-obat-expired',     icon: <XCircle size={20} /> },
+      { label: 'Laporan Obat Terlaris',    href: '/lap-obat-terlaris',    icon: <Flame size={20} /> },
+      { label: 'Laporan Stok Obat',        href: '/lap-stok-obat',        icon: <Package size={20} /> },
+      { label: 'Laporan Stok Opname',      href: '/lap-stok-opname',      icon: <ClipboardCheck size={20} /> },
+    ],
+  },
+  {
+    category: 'Keuangan',
     icon: <LineChart size={20} />,
     items: [
       { label: 'Laporan Neraca Umum', href: '/lap-neraca-umum', icon: <LineChart size={20} /> },

@@ -60,6 +60,7 @@ export default function LapPergantianShiftPage() {
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

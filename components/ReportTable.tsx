@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import LiquidPullToRefresh from './LiquidPullToRefresh';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/sidebarContext';
@@ -10,6 +11,7 @@ import MonthPickerInput from './MonthPickerInput';
 import YearPickerInput from './YearPickerInput';
 import SelectInput from './SelectInput';
 import { useGudangOptions } from '@/lib/useGudangOptions';
+import { exportToExcel, exportToPdf } from '@/lib/exportUtils';
 
 
 export interface Column {
@@ -146,12 +148,13 @@ export default function ReportTable({
   }
   const [selectedGudang, setSelectedGudang] = useState<string>('');
   const [appliedFilter, setAppliedFilter] = useState<{
-    start: string; end: string; interval: string | number; cabang?: string; gudang?: string;
+    start: string; end: string; interval: string | number; cabang?: string; gudang?: string; periodType?: 'tanggal' | 'bulan' | 'tahun';
   } | null>(null);
 
   const [sortKey, setSortKey] = useState<string | null>(defaultSortKey ?? null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>(defaultSortDir);
   const [isFiltering, setIsFiltering] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const limit = 50;
 
   // Track whether we have any data yet (to distinguish initial load vs load-more)
@@ -266,7 +269,7 @@ export default function ReportTable({
       finalEnd = `${selectedYear}-12-31`;
     }
 
-    setAppliedFilter({ start: finalStart, end: finalEnd, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang });
+    setAppliedFilter({ start: finalStart, end: finalEnd, interval: selectedInterval, cabang: selectedCabang, gudang: selectedGudang, periodType: dateFilterType });
     setShowFilter(false);
     setIsFiltering(true);
     if (onFetchData) {
@@ -298,8 +301,24 @@ export default function ReportTable({
     setAppliedFilter(null);
     setSearch('');
     setShowFilter(true);
-    if (onReset) {
-      onReset();
+
+    // Call onReset first to clear stale data & lastFilterParamsRef in useReportData,
+    // then immediately re-fetch with the default filter params so the API always
+    // receives valid tanggalawal/tanggalakhir and never returns 500.
+    if (onReset) onReset();
+    if (onFetchData) {
+      onFetchData({
+        start: defaultStart,
+        end: defaultEnd,
+        search: '',
+        interval: defaultInterval,
+        cabang: defaultCabang,
+        cabangReg: defaultCabangReg,
+        gudang: '',
+        offset: 0,
+        limit,
+        periodType: 'tanggal',
+      });
     }
   };
 
@@ -329,7 +348,7 @@ export default function ReportTable({
         interval: appliedFilter?.interval || selectedInterval,
         offset: 0,
         limit,
-        periodType: dateFilterType
+        periodType: appliedFilter?.periodType || dateFilterType
       });
     }
   };
@@ -338,10 +357,48 @@ export default function ReportTable({
     (o) => o.value === (appliedFilter?.interval ?? selectedInterval)
   )?.label;
 
+  const handleExportPdf = async () => {
+    const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.app_name || 'Klinik';
+    let subtitle = '';
+    if (appliedFilter) {
+      if (appliedFilter.periodType === 'tanggal') {
+        subtitle = `Periode: ${fmtDisplay(appliedFilter.start)} - ${fmtDisplay(appliedFilter.end)}`;
+      } else if (appliedFilter.periodType === 'bulan') {
+        subtitle = `Periode: ${fmtDisplay(appliedFilter.start).substring(3)}`;
+      } else if (appliedFilter.periodType === 'tahun') {
+        subtitle = `Tahun: ${appliedFilter.start.substring(0, 4)}`;
+      }
+    } else {
+      subtitle = `Periode: ${fmtDisplay(startDate)} - ${fmtDisplay(endDate)}`;
+    }
+    
+    await exportToPdf(
+      `${title} - ${klinikName}`,
+      title,
+      columns.map(c => ({ label: c.label, key: c.key, align: c.align })),
+      sorted,
+      klinikName,
+      subtitle
+    );
+    setShowExportMenu(false);
+  };
+
+  const handleExportExcel = async () => {
+    const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.app_name || 'Klinik';
+    await exportToExcel(
+      `${title} - ${klinikName}`,
+      columns.map(c => ({ label: c.label, key: c.key, align: c.align })),
+      sorted,
+      title,
+      klinikName
+    );
+    setShowExportMenu(false);
+  };
+
   const headerNode = (
     <>
       {/* ── Header ── */}
-      <div className="relative z-10 mb-4 bg-primary-accent rounded-b-[2.5rem] pb-2">
+      <div className="mb-4 bg-primary-accent rounded-b-[2.5rem] pb-2 shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
         <div className="px-6 pt-8 pb-2 flex items-center justify-between gap-4">
           <div className="flex-shrink-0 self-start">
             <button
@@ -358,7 +415,18 @@ export default function ReportTable({
               {title}
             </h1>
           </div>
-          <div className="flex items-center justify-end gap-1">
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => setShowExportMenu(true)}
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform"
+            >
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+            </button>
+
             <button
               onClick={openSidebar}
               className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform"
@@ -478,8 +546,12 @@ export default function ReportTable({
 
         {/* Collapsible body */}
         <div
-          className="overflow-hidden transition-all duration-300"
-          style={{ maxHeight: showFilter ? 700 : 0, opacity: showFilter ? 1 : 0 }}
+          className="transition-all duration-300"
+          style={{ 
+            maxHeight: showFilter ? 700 : 0, 
+            opacity: showFilter ? 1 : 0,
+            overflow: showFilter ? 'visible' : 'hidden'
+          }}
         >
           <div className="px-4 pb-4 pt-1 space-y-4">
 
@@ -684,42 +756,74 @@ export default function ReportTable({
   );
 
   return (
-    <LiquidPullToRefresh 
-      header={
-        <div className="flex flex-col">
-          {headerNode}
+    <>
+      {/* ── Outer flex column: header (LiquidPullToRefresh) + filter + thead + scrollable tbody ── */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+
+        {/* ── LiquidPullToRefresh hanya untuk title bar + pull gesture ── */}
+        <LiquidPullToRefresh
+          header={headerNode}
+          onRefresh={handleRefresh}
+          className="flex-shrink-0"
+          overflowVisible
+          scrollRef={scrollContainerRef}
+        >
+          {/* children kosong — scroll dihandle di bawah */}
+          <div style={{ height: 0 }} />
+        </LiquidPullToRefresh>
+
+        {/* ── Filter Panel (tidak ikut scroll) ── */}
+        <div className="flex-shrink-0">
           {filterPanel}
         </div>
-      } 
-      onRefresh={handleRefresh} 
-      className="flex-1 flex flex-col"
-      scrollRef={scrollContainerRef}
-      onScroll={(e) => {
-        const target = e.target as HTMLDivElement;
-        if (target.scrollHeight - target.scrollTop <= target.clientHeight + 150) {
-          handleLoadMore();
-        }
-      }}
-    >
-      {/* ── Loading overlay saat filter apply ── */}
-      {(isFiltering || (loading && hasDataRef.current)) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
-          <div className="bg-white rounded-2xl shadow-xl px-8 py-6 flex flex-col items-center gap-3">
-            <svg className="w-10 h-10 animate-spin text-primary-accent" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-            </svg>
-            <span className="text-sm font-semibold text-gray-700">Memuat data...</span>
+
+        {/* ── Loading overlay saat filter apply ── */}
+        {(isFiltering || (loading && hasDataRef.current)) && (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center" style={{ background: 'rgba(248,250,255,0.72)', backdropFilter: 'blur(18px) saturate(1.8)', WebkitBackdropFilter: 'blur(18px) saturate(1.8)' }}>
+            {/* Ambient glow rings */}
+            <div className="relative flex items-center justify-center mb-8">
+              {/* Outer pulse ring */}
+              <div className="absolute w-28 h-28 rounded-full border border-primary-accent/20" style={{ animation: 'ringPulse 2s ease-out infinite' }} />
+              <div className="absolute w-20 h-20 rounded-full border border-primary-accent/30" style={{ animation: 'ringPulse 2s ease-out 0.4s infinite' }} />
+              {/* Inner glow circle */}
+              <div className="w-14 h-14 rounded-full bg-primary-accent/10 flex items-center justify-center" style={{ boxShadow: '0 0 32px 8px rgba(3,90,252,0.15)' }}>
+                {/* Arc spinner */}
+                <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="12" stroke="rgba(3,90,252,0.12)" strokeWidth="2.5" />
+                  <circle
+                    cx="16" cy="16" r="12"
+                    stroke="#035afc"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeDasharray="28 48"
+                    style={{ animation: 'arcSpin 1s linear infinite', transformOrigin: '16px 16px' }}
+                  />
+                </svg>
+              </div>
+            </div>
+            {/* Text */}
+            <p className="text-[13px] font-semibold tracking-[0.12em] uppercase" style={{ color: '#035afc', opacity: 0.7, animation: 'textFade 1.8s ease-in-out infinite' }}>Memuat data</p>
+            {/* Progress bar */}
+            <div className="mt-4 w-24 h-0.5 rounded-full overflow-hidden bg-primary-accent/10">
+              <div className="h-full rounded-full bg-primary-accent/50" style={{ animation: 'progressBar 1.8s ease-in-out infinite' }} />
+            </div>
           </div>
-        </div>
-      )}
-      {/* ── Table ── */}
-      <div className="flex-1 flex flex-col w-full max-w-full overflow-x-auto">
-        <div className="flex-1 w-full max-w-full pr-2">
-          <table
-            className="w-full border-collapse table-fixed"
-          >
-            <thead className="sticky top-0 z-10 bg-gray-100 shadow-sm">
+        )}
+
+        {/* ── Table (thead sticky + tbody scrollable dalam satu tabel) ── */}
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto overflow-x-auto px-3"
+          style={{ overscrollBehavior: 'none' }}
+          onScroll={(e) => {
+            const target = e.target as HTMLDivElement;
+            if (target.scrollHeight - target.scrollTop <= target.clientHeight + 150) {
+              handleLoadMore();
+            }
+          }}
+        >
+          <table className="w-full border-collapse">
+            <thead className="sticky top-0 z-[5] bg-gray-100 shadow-sm">
               <tr>
                 {columns.map((col) => (
                   <th
@@ -748,17 +852,25 @@ export default function ReportTable({
             </thead>
             <tbody>
               {loading && !hasDataRef.current ? (
-                <tr>
-                  <td colSpan={columns.length} className="text-center py-16">
-                    <div className="flex flex-col items-center gap-2 text-gray-400">
-                      <svg className="w-8 h-8 animate-spin text-primary-accent" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                      </svg>
-                      <span className="text-sm">Memuat data...</span>
-                    </div>
-                  </td>
-                </tr>
+                <>
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
+                      {columns.map((col) => (
+                        <td key={col.key} className="py-2.5 px-1.5 last:pr-3">
+                          <div
+                            className="h-3 rounded-full bg-gray-200"
+                            style={{
+                              width: col.key === 'no' ? '24px' : `${55 + ((i * 13 + col.key.length * 7) % 35)}%`,
+                              animation: `shimmer 1.5s ease-in-out ${i * 0.07}s infinite`,
+                              background: 'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)',
+                              backgroundSize: '200% 100%',
+                            }}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
               ) : error && !hasDataRef.current ? (
                 <tr>
                   <td colSpan={columns.length} className="text-center py-16">
@@ -801,17 +913,19 @@ export default function ReportTable({
                       ))}
                     </tr>
                   ))}
-                  {/* Load-more row — always visible when hasMore, shows spinner or button */}
+                  {/* Load-more row */}
                   {hasMore && (
                     <tr>
-                      <td colSpan={columns.length} className="text-center py-5">
+                      <td colSpan={columns.length} className="text-center py-6">
                         {loading ? (
-                          <div className="flex justify-center items-center gap-2">
-                            <svg className="w-5 h-5 animate-spin text-primary-accent" viewBox="0 0 24 24" fill="none">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                            </svg>
-                            <span className="text-xs text-primary-accent font-semibold">Memuat data selanjutnya...</span>
+                          <div className="flex justify-center items-center gap-1.5">
+                            {[0, 1, 2].map((i) => (
+                              <div
+                                key={i}
+                                className="w-2 h-2 rounded-full bg-primary-accent/60"
+                                style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
+                              />
+                            ))}
                           </div>
                         ) : (
                           <button
@@ -828,22 +942,74 @@ export default function ReportTable({
               )}
             </tbody>
           </table>
-          
+
           {/* Spacer inside the scrollable area to prevent content from being hidden behind the floating total */}
           {totalLabel && totalValue && (
             <div className="h-28" />
           )}
+
+          {/* Grand total (Floating) */}
+          {totalLabel && totalValue && (
+            <div className="fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-5 py-4 flex items-center justify-between z-30">
+              <span className="text-sm font-bold text-primary-accent">{totalLabel}</span>
+              <span className="text-lg font-extrabold text-primary-accent">{totalValue}</span>
+            </div>
+          )}
         </div>
 
-        {/* Grand total (Floating) */}
-        {totalLabel && totalValue && (
-          <div className="fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-5 py-4 flex items-center justify-between z-50">
-            <span className="text-sm font-bold text-primary-accent">{totalLabel}</span>
-            <span className="text-lg font-extrabold text-primary-accent">{totalValue}</span>
+      </div>{/* end outer flex column */}
+
+      {/* Export Bottom Sheet — via portal to escape stacking context */}
+      {showExportMenu && createPortal(
+        <div className="fixed inset-0 z-[99999] flex flex-col justify-end">
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowExportMenu(false)}
+          />
+          <div className="relative bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden animate-in slide-in-from-bottom-full duration-300">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <span className="text-base font-bold text-gray-800">Pilih Format Export</span>
+              <button onClick={() => setShowExportMenu(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 active:bg-gray-200">
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-4 space-y-3 pb-8">
+              <button
+                onClick={handleExportPdf}
+                className="w-full px-5 py-4 text-left text-sm font-bold text-gray-700 bg-gray-50 rounded-2xl active:bg-gray-100 flex items-center gap-4 transition-colors border border-gray-100"
+              >
+                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500 flex-shrink-0">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                </div>
+                Export sebagai PDF
+              </button>
+              <button
+                onClick={handleExportExcel}
+                className="w-full px-5 py-4 text-left text-sm font-bold text-gray-700 bg-gray-50 rounded-2xl active:bg-gray-100 flex items-center gap-4 transition-colors border border-gray-100"
+              >
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <path d="M8 13h2" />
+                    <path d="M8 17h2" />
+                    <path d="M14 13h2" />
+                    <path d="M14 17h2" />
+                  </svg>
+                </div>
+                Export sebagai Excel
+              </button>
+            </div>
           </div>
-        )}
-      </div>
-    </LiquidPullToRefresh>
+        </div>
+      , document.body)}
+    </>
   );
 }
 

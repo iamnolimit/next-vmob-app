@@ -74,6 +74,7 @@ export default function LapHutangObatPage() {
       cari,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

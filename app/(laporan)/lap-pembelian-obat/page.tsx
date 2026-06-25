@@ -61,6 +61,7 @@ export default function LapPembelianObatPage() {
       a: filters.cabang,
       reg: filters.cabangReg,
       gudid: filters.gudang || '',
+      device: 'mobile',
     });
   }, [refetch]);
 

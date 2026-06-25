@@ -1,11 +1,7 @@
 'use client';
-import { useState, useRef } from 'react';
-import ReactDatePicker from 'react-datepicker';
-import { format, parseISO } from 'date-fns';
-import { id } from 'date-fns/locale';
-
-// We import the CSS in globals.css override below
-import 'react-datepicker/dist/react-datepicker.css';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { DateScrollPicker } from './ScrollPicker';
 
 interface DatePickerInputProps {
   label: string;
@@ -23,7 +19,7 @@ export default function DatePickerInput({
   maxDate,
 }: DatePickerInputProps) {
   const [open, setOpen] = useState(false);
-  const selected = value ? parseISO(value) : new Date();
+  const [draft, setDraft] = useState(value);
 
   const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
   const displayDate = value
@@ -33,10 +29,13 @@ export default function DatePickerInput({
       })()
     : 'Pilih tanggal';
 
-  const handleChange = (date: Date | null) => {
-    if (date) {
-      onChange(format(date, 'yyyy-MM-dd'));
-    }
+  const handleOpen = () => {
+    setDraft(value);
+    setOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (draft) onChange(draft);
     setOpen(false);
   };
 
@@ -49,7 +48,7 @@ export default function DatePickerInput({
         </label>
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-100 rounded-xl border-2 border-transparent active:border-blue-500 transition-all text-left"
         >
           <span className="text-primary-accent text-sm flex-shrink-0">📅</span>
@@ -58,15 +57,15 @@ export default function DatePickerInput({
         </button>
       </div>
 
-      {/* Bottom sheet overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col justify-end"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={() => setOpen(false)}
-        >
+      {/* Bottom sheet overlay — rendered via portal to escape stacking context */}
+      {open && createPortal(
+        <div className="fixed inset-0 z-[99999] flex flex-col justify-end">
           <div
-            className="bg-white rounded-t-3xl overflow-hidden"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          <div
+            className="relative bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -84,31 +83,23 @@ export default function DatePickerInput({
               </button>
               <span className="text-sm font-bold text-gray-900">{label}</span>
               <button
-                onClick={() => {
-                  // apply current selection (already handled by handleChange)
-                  setOpen(false);
-                }}
+                onClick={handleConfirm}
                 className="text-sm font-semibold text-primary-accent py-1"
               >
                 Selesai
               </button>
             </div>
 
-            {/* Calendar */}
-            <div className="vmob-datepicker px-2 pb-6">
-              <ReactDatePicker
-                selected={selected}
-                onChange={handleChange}
-                inline
-                locale={id}
-                minDate={minDate ? parseISO(minDate) : undefined}
-                maxDate={maxDate ? parseISO(maxDate) : undefined}
-                calendarClassName="vmob-cal"
-              />
-            </div>
+            {/* Scroll Picker */}
+            <DateScrollPicker
+              value={draft || value}
+              onChange={setDraft}
+              minDate={minDate}
+              maxDate={maxDate}
+            />
           </div>
         </div>
-      )}
+      , document.body)}
     </>
   );
 }

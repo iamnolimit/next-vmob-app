@@ -71,6 +71,7 @@ export default function LapRegistrasiPasienPage() {
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
+      device: 'mobile',
     });
   }, [refetch]);
 

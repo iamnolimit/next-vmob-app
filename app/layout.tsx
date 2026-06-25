@@ -36,7 +36,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id" className="h-full">
-        <body className="h-full overflow-hidden bg-[#f4f6f8] relative" suppressHydrationWarning>
+        <body className="h-full overflow-hidden bg-[#f4f6f8]" suppressHydrationWarning>
         {/* Global Ambient Background */}
         <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-accent/10 rounded-full blur-[100px]" />
