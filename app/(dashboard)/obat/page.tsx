@@ -73,7 +73,6 @@ export default function ObatPage() {
       value: formatRupiah(dataNilaiObat?.nilai || 0),
       icon: <Icon icon="material-symbols:medication" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: nilaiObatChange,
       invoiceCount: dataNilaiObat?.count ? `${dataNilaiObat.count} Obat` : '',
     },
     {
@@ -81,7 +80,6 @@ export default function ObatPage() {
       value: dataObatExpired?.count ? `${dataObatExpired.count} Obat` : '0 Obat',
       icon: <Icon icon="material-symbols:warning" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: -expiredChange,
       invoiceCount: '',
     },
     {
@@ -89,7 +87,6 @@ export default function ObatPage() {
       value: dataObatStokHabis?.count ? `${dataObatStokHabis.count} Obat` : '0 Obat',
       icon: <Icon icon="material-symbols:inventory-2" width={20} height={20} />,
       color: 'var(--primary-accent)',
-      change: -stokHabisChange,
       invoiceCount: '',
     },
     {

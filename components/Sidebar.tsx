@@ -325,7 +325,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 Logout
               </span>
             </button>
-            <p className="text-center text-[10px] text-gray-300 mt-2">Vmedis Mobile v1.0.0 · © 2025</p>
+            <p className="text-center text-[10px] text-gray-300 mt-2">Vmedis Mobile v1.0.0 · © 2026</p>
           </div>
         </div>
       </div>

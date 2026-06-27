@@ -125,6 +125,16 @@ export default function ForecastPage() {
   const paretoChartData = chartData.filter(d => d.paretoAnalysis !== undefined && d.name.includes('Pareto'));
   const statusChartData = chartData.filter(d => d.statusPengadaan !== undefined && !d.name.includes('Pareto'));
 
+  const forecastChartItemsModified = forecastChartItems.map(item => {
+    if (item.title === 'Kategori Pareto') {
+      return { ...item, valueFormatter: (value: number) => `${value} Obat` };
+    }
+    if (item.title === 'Status Pengadaan') {
+      return { ...item, valueFormatter: (value: number) => `${value} Obat` };
+    }
+    return item;
+  });
+
   const katlarisDataApi = (() => {
     if (!data.katlaris) return [];
     let result = [];
@@ -176,7 +186,7 @@ export default function ForecastPage() {
                   paretoChartData,
                   statusChartData,
                 ]}
-                items={forecastChartItems}
+                items={forecastChartItemsModified}
                 title="Analisis Periode"
               />
             </div>
@@ -184,13 +194,13 @@ export default function ForecastPage() {
             <div className="mt-6 grid grid-cols-1 gap-4 px-4">
               {stats.map((stat, i) => (
                 <div key={i} className="mx-0 mb-0">
-                  <StatCard label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} />
+                  <StatCard label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} color={stat.color} invoiceCount={stat.invoiceCount} disableRedirect={true} />
                 </div>
               ))}
             </div>
 
             <div className="mt-6">
-              <RankedList title="Kategori Obat Terlaris" icon="�" color="#FF5722"
+              <RankedList title="Kategori Obat Terlaris" icon="🔥" color="#FF5722"
                 items={katlarisDataApi.map((item: any, i: number) => ({ rank: i + 1, name: item.name, persen: item.persen, nilai: item.nilai }))}
                 type="katlaris" />
             </div>

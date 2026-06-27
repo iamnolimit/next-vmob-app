@@ -12,7 +12,7 @@ import YearPickerInput from './YearPickerInput';
 import SelectInput from './SelectInput';
 import { useGudangOptions } from '@/lib/useGudangOptions';
 import { exportToExcel, exportToPdf } from '@/lib/exportUtils';
-
+import AlertModal from '@/components/AlertModal';
 
 export interface Column {
   key: string;
@@ -155,6 +155,7 @@ export default function ReportTable({
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>(defaultSortDir);
   const [isFiltering, setIsFiltering] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const limit = 50;
 
   // Track whether we have any data yet (to distinguish initial load vs load-more)
@@ -358,6 +359,10 @@ export default function ReportTable({
   )?.label;
 
   const handleExportPdf = async () => {
+    if (data.length === 0) {
+      setShowAlert(true);
+      return;
+    }
     const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.cabang || 'Klinik';
     let subtitle = '';
     if (appliedFilter) {
@@ -384,6 +389,10 @@ export default function ReportTable({
   };
 
   const handleExportExcel = async () => {
+    if (data.length === 0) {
+      setShowAlert(true);
+      return;
+    }
     const klinikName = resolvedCabangOptions.find(c => c.value === selectedCabang)?.label || user?.cabang || 'Klinik';
     await exportToExcel(
       `${title} - ${klinikName}`,
@@ -1009,6 +1018,12 @@ export default function ReportTable({
           </div>
         </div>
       , document.body)}
+
+      <AlertModal 
+        isOpen={showAlert} 
+        onClose={() => setShowAlert(false)} 
+        message="Tidak ada data yang bisa dicetak" 
+      />
     </>
   );
 }

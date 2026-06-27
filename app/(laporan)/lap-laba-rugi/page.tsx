@@ -12,6 +12,7 @@ import YearPickerInput from '@/components/YearPickerInput';
 import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
 import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
+import AlertModal from '@/components/AlertModal';
 
 type PeriodType = 'tanggal' | 'bulan' | 'tahun';
 
@@ -42,6 +43,7 @@ export default function LapLabaRugiPage() {
   const [appliedEnd, setAppliedEnd] = useState(toISO(today));
   const [selectedCabang, setSelectedCabang] = useState('');
   const [appliedCabang, setAppliedCabang] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   // Set default cabang when options load
   useEffect(() => {
@@ -332,13 +334,32 @@ export default function LapLabaRugiPage() {
     </div>
   );
 
-  const headerNode = <LaporanHeader title="Laba Rugi" />;
+  const headerNode = (
+    <LaporanHeader 
+      title="Laba Rugi" 
+      onExportPdf={() => {
+        if (reportData.pemasukanData.length === 0 && reportData.pengeluaranData.length === 0) {
+          setShowAlert(true);
+          return;
+        }
+        exportSectionedToPdf(`Laba Rugi - ${namaKlinik}`, 'Laba Rugi', exportSections, namaKlinik, `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)}`);
+      }}
+      onExportExcel={() => {
+        if (reportData.pemasukanData.length === 0 && reportData.pengeluaranData.length === 0) {
+          setShowAlert(true);
+          return;
+        }
+        exportSectionedToExcel(`Laba Rugi - ${namaKlinik}`, 'Laba Rugi', exportSections, namaKlinik);
+      }}
+    />
+  );
 
   return (
-    <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
-      {filterNode}
-      <div className="px-3 py-4 pb-8 bg-gray-50">
-        {loading ? (
+    <>
+      <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
+        {filterNode}
+        <div className="px-3 py-4 pb-8 bg-gray-50">
+          {loading ? (
           <ListSkeleton rows={8} />
         ) : (
           <div className="animate-content-in">
@@ -393,34 +414,15 @@ export default function LapLabaRugiPage() {
               <span className={`text-lg font-bold ${isProfit ? 'text-green-700' : 'text-red-600'}`}>Laba Rugi:</span>
               <span className={`text-2xl font-extrabold ${isProfit ? 'text-green-700' : 'text-red-600'}`}>{fmt(reportData.labaBersih)}</span>
             </div>
-
-            <div className="mt-4 relative">
-              <button
-                onClick={() => setShowExportMenu(!showExportMenu)}
-                className="w-full py-3 rounded-xl text-sm font-bold bg-primary-accent text-white shadow-md active:bg-primary-accent/90"
-              >
-                Export Laporan
-              </button>
-              {showExportMenu && (
-                <div className="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-2xl ios-shadow overflow-hidden z-10">
-                  <button
-                    onClick={() => { exportSectionedToPdf(`Laba Rugi - ${namaKlinik}`, 'Laba Rugi', exportSections, namaKlinik, `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)}`); setShowExportMenu(false); }}
-                    className="w-full px-4 py-3 text-sm font-semibold text-left text-red-600 border-b border-gray-100 active:bg-red-50"
-                  >
-                    {String.fromCodePoint(0x1F4C4)} Export PDF
-                  </button>
-                  <button
-                    onClick={() => { exportSectionedToExcel(`Laba Rugi - ${namaKlinik}`, 'Laba Rugi', exportSections, namaKlinik); setShowExportMenu(false); }}
-                    className="w-full px-4 py-3 text-sm font-semibold text-left text-green-700 active:bg-green-50"
-                  >
-                    {String.fromCodePoint(0x1F4CA)} Export Excel
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         )}
       </div>
-    </LiquidPullToRefresh>
+      </LiquidPullToRefresh>
+      <AlertModal 
+        isOpen={showAlert} 
+        onClose={() => setShowAlert(false)} 
+        message="Tidak ada data yang bisa dicetak" 
+      />
+    </>
   );
 }

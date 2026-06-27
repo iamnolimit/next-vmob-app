@@ -225,7 +225,7 @@ function LoginContent() {
         )}
 
         <p className="text-center text-xs text-gray-400 mt-auto pt-8">
-          © 2025 Vmedis Mobile v1.0.0
+          © 2026 Vmedis Mobile v1.0.0
         </p>
       </div>
 

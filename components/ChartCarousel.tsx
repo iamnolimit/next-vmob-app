@@ -6,6 +6,7 @@ export interface ChartItem {
   dataKey: string;
   color: string;
   icon: React.ReactNode;
+  valueFormatter?: (value: number) => string;
 }
 
 interface ChartCarouselProps {
@@ -45,7 +46,8 @@ export default function ChartCarousel({ data, items, title, dataByChart }: Chart
 
   const handleBarTap = (idx: number) => {
     const raw = values[idx];
-    setSelectedBar({ name: String(activeData[idx].name ?? idx), value: formatShort(raw) });
+    const formattedValue = item.valueFormatter ? item.valueFormatter(raw) : formatShort(raw);
+    setSelectedBar({ name: String(activeData[idx].name ?? idx), value: formattedValue });
     setTimeout(() => setSelectedBar(null), 2000);
   };
 
@@ -192,7 +194,7 @@ export default function ChartCarousel({ data, items, title, dataByChart }: Chart
                   onClick={() => handleBarTap(i)}
                 >
                   <div className="w-full h-full flex flex-col justify-between items-center opacity-0 group-active:opacity-100 transition-opacity">
-                    <span className="text-[10px] text-gray-500 font-medium leading-none mt-1">{formatShort(values[i])}</span>
+                    <span className="text-[10px] text-gray-500 font-medium leading-none mt-1">{item.valueFormatter ? item.valueFormatter(values[i]) : formatShort(values[i])}</span>
                     <div className="w-px h-full bg-gray-300/50 my-1" />
                   </div>
                   <span

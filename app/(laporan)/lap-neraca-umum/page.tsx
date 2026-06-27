@@ -10,6 +10,7 @@ import { useCabangOptions } from '@/lib/useCabangOptions';
 import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
 import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
+import AlertModal from '@/components/AlertModal';
 
 const fmt = (n: number) => n.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const today = new Date();
@@ -30,6 +31,7 @@ export default function LapNeracaUmumPage() {
   const [appliedDate, setAppliedDate] = useState(toISO(today));
   const [selectedCabang, setSelectedCabang] = useState('');
   const [appliedCabang, setAppliedCabang] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   // Set default cabang when options load
   useEffect(() => {
@@ -161,6 +163,93 @@ export default function LapNeracaUmumPage() {
     return refetch(buildNeracaParams(appliedDate, appliedCabang));
   }, [appliedDate, appliedCabang, refetch, buildNeracaParams]);
 
+  const handleExportPdf = () => {
+    if (aktivaSections.length === 0 && kewajibanModalSections.length === 0) {
+      setShowAlert(true);
+      return;
+    }
+    const cabangLabel = (cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? '' }]).find(c => c.value === appliedCabang)?.label || namaKlinik;
+    
+    const sections = [
+      {
+        title: 'AKTIVA',
+        rows: Object.entries(aktivaGrouped).flatMap(([group, items]) => [
+          { label: group, value: '' },
+          ...items.map(item => ({ label: `  ${item.label}`, value: fmtDecimal(item.nominal) })),
+          { label: `Total ${group}`, value: fmtDecimal(items.reduce((sum, item) => sum + item.nominal, 0)) }
+        ])
+      },
+      {
+        title: 'TOTAL AKTIVA',
+        rows: [{ label: 'Total Aktiva', value: fmtDecimal(grandTotalAktiva) }]
+      },
+      {
+        title: 'KEWAJIBAN & MODAL',
+        rows: Object.entries(kewajibanModalGrouped).flatMap(([group, items]) => [
+          { label: group, value: '' },
+          ...items.map(item => ({ label: `  ${item.label}`, value: fmtDecimal(item.nominal) })),
+          { label: `Total ${group}`, value: fmtDecimal(items.reduce((sum, item) => sum + item.nominal, 0)) }
+        ])
+      },
+      {
+        title: 'TOTAL KEWAJIBAN & MODAL',
+        rows: [{ label: 'Total Kewajiban & Modal', value: fmtDecimal(grandTotalKewajibanModal) }]
+      }
+    ];
+
+    exportSectionedToPdf(
+      'Laporan_Neraca_Umum',
+      'Laporan Neraca Umum',
+      sections,
+      cabangLabel,
+      `Per ${fmtDate(appliedDate)}`
+    );
+    setShowExportMenu(false);
+  };
+
+  const handleExportExcel = () => {
+    if (aktivaSections.length === 0 && kewajibanModalSections.length === 0) {
+      setShowAlert(true);
+      return;
+    }
+    const cabangLabel = (cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? '' }]).find(c => c.value === appliedCabang)?.label || namaKlinik;
+    
+    const sections = [
+      {
+        title: 'AKTIVA',
+        rows: Object.entries(aktivaGrouped).flatMap(([group, items]) => [
+          { label: group, value: '' },
+          ...items.map(item => ({ label: `  ${item.label}`, value: item.nominal })),
+          { label: `Total ${group}`, value: items.reduce((sum, item) => sum + item.nominal, 0) }
+        ])
+      },
+      {
+        title: 'TOTAL AKTIVA',
+        rows: [{ label: 'Total Aktiva', value: grandTotalAktiva }]
+      },
+      {
+        title: 'KEWAJIBAN & MODAL',
+        rows: Object.entries(kewajibanModalGrouped).flatMap(([group, items]) => [
+          { label: group, value: '' },
+          ...items.map(item => ({ label: `  ${item.label}`, value: item.nominal })),
+          { label: `Total ${group}`, value: items.reduce((sum, item) => sum + item.nominal, 0) }
+        ])
+      },
+      {
+        title: 'TOTAL KEWAJIBAN & MODAL',
+        rows: [{ label: 'Total Kewajiban & Modal', value: grandTotalKewajibanModal }]
+      }
+    ];
+
+    exportSectionedToExcel(
+      'Laporan_Neraca_Umum',
+      'Laporan Neraca Umum',
+      sections,
+      cabangLabel
+    );
+    setShowExportMenu(false);
+  };
+
   const filterNode = (
     <div className="flex-shrink-0 bg-white border-b border-gray-100 shadow-sm rounded-t-2xl">
         <button
@@ -228,14 +317,21 @@ export default function LapNeracaUmumPage() {
       </div>
   );
 
-  const headerNode = <LaporanHeader title="Neraca Umum" />;
+  const headerNode = (
+    <LaporanHeader 
+      title="Neraca Umum" 
+      onExportPdf={handleExportPdf}
+      onExportExcel={handleExportExcel}
+    />
+  );
 
   return (
-    <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
-      {filterNode}
-      <div className="px-3 py-4 pb-8 bg-gray-50">
-        <div className="flex gap-2">
-          {/* AKTIVA */}
+    <>
+      <LiquidPullToRefresh header={headerNode} onRefresh={handleRefresh} className="flex-1">
+        {filterNode}
+        <div className="px-3 py-4 pb-8 bg-gray-50">
+          <div className="flex gap-2">
+            {/* AKTIVA */}
           <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
             <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Aktiva</h2>
             <div className="flex-1 space-y-3">
@@ -305,6 +401,12 @@ export default function LapNeracaUmumPage() {
           <span className="text-sm font-bold text-gray-900">{fmtDecimal(grandTotalAktiva)}</span>
         </div>
       </div>
-    </LiquidPullToRefresh>
+      </LiquidPullToRefresh>
+      <AlertModal 
+        isOpen={showAlert} 
+        onClose={() => setShowAlert(false)} 
+        message="Tidak ada data yang bisa dicetak" 
+      />
+    </>
   );
 }

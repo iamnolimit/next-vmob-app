@@ -12,9 +12,10 @@ interface StatCardProps {
   icon?: React.ReactNode;
   color?: string;
   invoiceCount?: string;
+  disableRedirect?: boolean;
 }
 
-export default function StatCard({ label, value, change, icon, color = '#1d4ed8', invoiceCount }: StatCardProps) {
+export default function StatCard({ label, value, change, icon, color = '#1d4ed8', invoiceCount, disableRedirect = false }: StatCardProps) {
   const router = useRouter();
   const isZero       = change === 0;
   const isPositive   = change !== undefined && change > 0;
@@ -23,7 +24,7 @@ export default function StatCard({ label, value, change, icon, color = '#1d4ed8'
   const changeSymbol = change === undefined ? '' : isZero ? <Icon icon="material-symbols:sync-alt" className="inline-block mr-0.5" /> : isPositive ? '↑' : '↓';
 
   const route = getStatsRoute(label);
-  const isClickable = !!route;
+  const isClickable = !disableRedirect && !!route;
 
   const handleClick = () => {
     if (isClickable && route) {
