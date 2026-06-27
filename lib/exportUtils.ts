@@ -261,3 +261,187 @@ export async function exportSectionedToExcel(
   const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   await downloadOrShare(blob, `${filename}.xlsx`);
 }
+
+// ─── Custom Export for Laba Rugi ─────────────────────────────────────────────
+
+export interface LabaRugiData {
+  pemasukan: Array<{ label: string; value: string | number }>;
+  pengeluaran: Array<{ label: string; value: string | number }>;
+  totalPemasukan: string | number;
+  hpp: Array<{ label: string; value: string | number }>;
+  totalHpp: string | number;
+  labaKotor: string | number;
+  totalPengeluaran: string | number;
+  labaBersih: string | number;
+}
+
+export async function exportLabaRugiToPdf(
+  filename: string,
+  namaKlinik: string,
+  periode: string,
+  data: LabaRugiData
+) {
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  
+  // Header
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Apotek Vmart MR', 105, 15, { align: 'center' });
+  doc.text('LAPORAN LABA RUGi', 105, 22, { align: 'center' });
+  doc.text(`PERIODE ${periode.toUpperCase()}`, 105, 29, { align: 'center' });
+  
+  doc.setLineWidth(0.5);
+  doc.line(14, 32, 196, 32);
+  
+  let y = 38;
+  
+  // Pemasukan & Pengeluaran Headers
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('PEMASUKAN', 14, y);
+  doc.text(String(data.totalPemasukan), 100, y, { align: 'right' });
+  
+  doc.text('PENGELUARAN', 110, y);
+  doc.text(String(data.totalPengeluaran), 196, y, { align: 'right' });
+  
+  y += 6;
+  doc.text('Nama Akun', 14, y);
+  doc.text('Nominal', 100, y, { align: 'right' });
+  doc.text('Nama Akun', 110, y);
+  doc.text('Nominal', 196, y, { align: 'right' });
+  
+  y += 5;
+  doc.setFont('helvetica', 'normal');
+  
+  const maxRows = Math.max(data.pemasukan.length, data.pengeluaran.length);
+  for (let i = 0; i < maxRows; i++) {
+    if (data.pemasukan[i]) {
+      doc.text(data.pemasukan[i].label, 14, y);
+      doc.text(String(data.pemasukan[i].value), 100, y, { align: 'right' });
+    }
+    if (data.pengeluaran[i]) {
+      doc.text(data.pengeluaran[i].label, 110, y);
+      doc.text(String(data.pengeluaran[i].value), 196, y, { align: 'right' });
+    }
+    y += 5;
+  }
+  
+  y += 2;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Total Pemasukan', 14, y);
+  doc.text(String(data.totalPemasukan), 196, y, { align: 'right' });
+  
+  y += 8;
+  doc.text('Harga Pokok Penjualan', 14, y);
+  y += 5;
+  doc.setFont('helvetica', 'normal');
+  for (const item of data.hpp) {
+    doc.text(item.label, 18, y);
+    doc.text(String(item.value), 100, y, { align: 'right' });
+    y += 5;
+  }
+  
+  y += 2;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Total Harga Pokok Penjualan', 14, y);
+  doc.line(140, y - 3, 196, y - 3);
+  doc.text(String(data.totalHpp), 196, y, { align: 'right' });
+  
+  y += 8;
+  doc.text('Laba Kotor', 14, y);
+  doc.text(String(data.labaKotor), 196, y, { align: 'right' });
+  
+  y += 6;
+  doc.text('Total Pengeluaran', 14, y);
+  doc.line(140, y - 3, 196, y - 3);
+  doc.text(String(data.totalPengeluaran), 196, y, { align: 'right' });
+  
+  y += 8;
+  doc.setFontSize(11);
+  doc.text('Laba Bersih', 14, y);
+  doc.text(String(data.labaBersih), 196, y, { align: 'right' });
+  
+  y += 4;
+  doc.setLineWidth(0.5);
+  doc.line(14, y, 196, y);
+  
+  y += 8;
+  doc.setFontSize(14);
+  doc.text(`Laba Rugi : ${data.labaBersih}`, 105, y, { align: 'center' });
+  
+  y += 6;
+  doc.setLineWidth(0.2);
+  doc.line(14, y, 196, y);
+  
+  addPdfFooter(doc);
+  await downloadOrShare(doc.output('blob'), `${filename}.pdf`);
+}
+
+export async function exportLabaRugiToExcel(
+  filename: string,
+  namaKlinik: string,
+  periode: string,
+  data: LabaRugiData
+) {
+  const aoa: (string | number)[][] = [
+    ['Apotek Vmart MR', '', '', ''],
+    ['LAPORAN LABA RUGI', '', '', ''],
+    [`PERIODE ${periode.toUpperCase()}`, '', '', ''],
+    ['PEMASUKAN', data.totalPemasukan, 'PENGELUARAN', data.totalPengeluaran],
+    ['Nama Akun', 'Nominal', 'Nama Akun', 'Nominal']
+  ];
+
+  const maxRows = Math.max(data.pemasukan.length, data.pengeluaran.length);
+  for (let i = 0; i < maxRows; i++) {
+    const row: (string | number)[] = [];
+    if (data.pemasukan[i]) {
+      row.push(data.pemasukan[i].label, data.pemasukan[i].value);
+    } else {
+      row.push('', '');
+    }
+    if (data.pengeluaran[i]) {
+      row.push(data.pengeluaran[i].label, data.pengeluaran[i].value);
+    } else {
+      row.push('', '');
+    }
+    aoa.push(row);
+  }
+
+  aoa.push(['', '', '', '']);
+  aoa.push(['Total Pemasukan', '', '', data.totalPemasukan]);
+  aoa.push(['', '', '', '']);
+  aoa.push(['Harga Pokok Penjualan', '', '', '']);
+  
+  for (const item of data.hpp) {
+    aoa.push([item.label, item.value, '', '']);
+  }
+  
+  aoa.push(['Total Harga Pokok Penjualan', '', '', data.totalHpp]);
+  aoa.push(['', '', '', '']);
+  aoa.push(['Laba Kotor', '', '', data.labaKotor]);
+  aoa.push(['Total Pengeluaran', '', '', data.totalPengeluaran]);
+  aoa.push(['Laba Bersih', '', '', data.labaBersih]);
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } },
+    { s: { r: 2, c: 0 }, e: { r: 2, c: 3 } },
+  ];
+  
+  // Center align headers
+  for (let r = 0; r <= 2; r++) {
+    const cellRef = XLSX.utils.encode_cell({ r, c: 0 });
+    if (!ws[cellRef].s) ws[cellRef].s = {};
+    ws[cellRef].s.alignment = { horizontal: 'center', vertical: 'center' };
+    ws[cellRef].s.font = { bold: true };
+  }
+
+  ws['!cols'] = [{ wch: 40 }, { wch: 20 }, { wch: 40 }, { wch: 20 }];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Laba Rugi');
+  const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array' }) as ArrayBuffer;
+  const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  await downloadOrShare(blob, `${filename}.xlsx`);
+}

@@ -5,6 +5,8 @@ import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
 import { ListSkeleton } from '@/components/SkeletonLoader';
 import SelectInput from '@/components/SelectInput';
 import DatePickerInput from '@/components/DatePickerInput';
+import MonthPickerInput from '@/components/MonthPickerInput';
+import YearPickerInput from '@/components/YearPickerInput';
 import { formatNumber } from '@/lib/dummyData';
 import { useCabangOptions } from '@/lib/useCabangOptions';
 import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
@@ -21,14 +23,25 @@ const fmtDate = (iso: string) => {
   return `${d} ${months[Number(m) - 1]} ${y}`;
 };
 
+type PeriodType = 'harian' | 'bulanan' | 'tahunan';
+
 export default function LapNeracaUmumPage() {
   const { user } = useAuth();
   const { cabangOptions, loading: cabangLoading } = useCabangOptions();
   const namaKlinik = user?.cabang ?? 'Vmedis Mobile';
   const [showFilter, setShowFilter] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
+  
+  const [periodType, setPeriodType] = useState<PeriodType>('harian');
   const [perDate, setPerDate] = useState(toISO(today));
+  const [perMonth, setPerMonth] = useState(toISO(today).slice(0, 7));
+  const [perYear, setPerYear] = useState(today.getFullYear().toString());
+  
+  const [appliedPeriodType, setAppliedPeriodType] = useState<PeriodType>('harian');
   const [appliedDate, setAppliedDate] = useState(toISO(today));
+  const [appliedMonth, setAppliedMonth] = useState(toISO(today).slice(0, 7));
+  const [appliedYear, setAppliedYear] = useState(today.getFullYear().toString());
+  
   const [selectedCabang, setSelectedCabang] = useState('');
   const [appliedCabang, setAppliedCabang] = useState('');
   const [showAlert, setShowAlert] = useState(false);
@@ -56,10 +69,10 @@ export default function LapNeracaUmumPage() {
     apiVersion: 'api5',
     apiParams: {
       cari: 4,
-      bulan: '',
-      tahun: '',
-      tglAwal: '',
-      tglAkhir: '',
+      bulan: `${months[today.getMonth()]} ${today.getFullYear()}`,
+      tahun: today.getFullYear().toString(),
+      tglAwal: `${today.getDate().toString().padStart(2, '0')} ${months[today.getMonth()]} ${today.getFullYear()}`,
+      tglAkhir: `${today.getDate().toString().padStart(2, '0')} ${months[today.getMonth()]} ${today.getFullYear()}`,
       carimobile: '',
       sorting: '',
       limit: 1000,
@@ -71,19 +84,44 @@ export default function LapNeracaUmumPage() {
     apiNormalizer,
   });
 
-  const buildNeracaParams = useCallback((date: string, cabang: string) => {
+  const buildNeracaParams = useCallback((pType: PeriodType, dDate: string, dMonth: string, dYear: string, cabang: string) => {
     const formatDate = (isoDate: string) => {
       if (!isoDate) return '';
       const [y, m, d] = isoDate.split('-');
       return `${d} ${months[Number(m) - 1]} ${y}`;
     };
-    const [y, m] = date.split('-');
+    
+    let tglAwal = '';
+    let tglAkhir = '';
+    let bulan = '';
+    let tahun = '';
+
+    if (pType === 'harian') {
+      tglAwal = formatDate(dDate);
+      tglAkhir = formatDate(dDate);
+      const [y, m] = dDate.split('-');
+      bulan = `${months[Number(m) - 1]} ${y}`;
+      tahun = y;
+    } else if (pType === 'bulanan') {
+      const [y, m] = dMonth.split('-');
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      tglAwal = `01 ${months[Number(m) - 1]} ${y}`;
+      tglAkhir = `${lastDay} ${months[Number(m) - 1]} ${y}`;
+      bulan = `${months[Number(m) - 1]} ${y}`;
+      tahun = y;
+    } else {
+      tglAwal = `01 Jan ${dYear}`;
+      tglAkhir = `31 Des ${dYear}`;
+      bulan = `Des ${dYear}`;
+      tahun = dYear;
+    }
+
     const selectedCabangObj = cabangOptions.find(c => c.value === cabang);
     return {
-      bulan: `${months[Number(m) - 1]} ${y}`,
-      tahun: y,
-      tglAwal: formatDate(date),
-      tglAkhir: formatDate(date),
+      bulan,
+      tahun,
+      tglAwal,
+      tglAkhir,
       a: cabang,
       reg: selectedCabangObj?.reg ?? 'db',
       device: 'mobile',
@@ -284,18 +322,41 @@ export default function LapNeracaUmumPage() {
           style={{ maxHeight: showFilter ? 500 : 0, opacity: showFilter ? 1 : 0 }}
         >
           <div className="px-4 pb-4 pt-1 space-y-4">
-            {/* Cabang */}
             <SelectInput
               label="Cabang / Klinik"
               value={selectedCabang}
               onChange={setSelectedCabang}
               options={cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? 'Cabang Saat Ini' }]}
             />
-            <DatePickerInput label="Per Tanggal" value={perDate} onChange={setPerDate} />
+            
+            <div className="flex bg-gray-100 p-1 rounded-xl">
+              {(['harian', 'bulanan', 'tahunan'] as PeriodType[]).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPeriodType(p)}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-md capitalize transition-colors ${periodType === p ? 'bg-white text-primary-accent shadow-sm' : 'text-gray-500'}`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+
+            {periodType === 'harian' && <DatePickerInput label="Per Tanggal" value={perDate} onChange={setPerDate} />}
+            {periodType === 'bulanan' && <MonthPickerInput label="Per Bulan" value={perMonth} onChange={setPerMonth} />}
+            {periodType === 'tahunan' && <YearPickerInput label="Per Tahun" value={perYear} onChange={setPerYear} />}
+
             <div className="flex gap-2.5">
-              <button onClick={() => setShowFilter(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700">Reset</button>
+              <button onClick={() => setShowFilter(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold bg-gray-100 text-gray-700">Batal</button>
               <button
-                onClick={() => { setAppliedDate(perDate); setAppliedCabang(selectedCabang); setShowFilter(false); refetch(buildNeracaParams(perDate, selectedCabang)); }}
+                onClick={() => { 
+                  setAppliedPeriodType(periodType);
+                  setAppliedDate(perDate); 
+                  setAppliedMonth(perMonth);
+                  setAppliedYear(perYear);
+                  setAppliedCabang(selectedCabang); 
+                  setShowFilter(false); 
+                  refetch(buildNeracaParams(periodType, perDate, perMonth, perYear, selectedCabang)); 
+                }}
                 className="flex-1 py-3 rounded-xl text-sm font-bold bg-primary-accent text-white shadow-md active:bg-primary-accent/90"
               >
                 Terapkan
@@ -307,9 +368,16 @@ export default function LapNeracaUmumPage() {
         {!showFilter && (
           <div className="px-4 pb-2 flex items-center gap-2 flex-wrap">
             <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full">
-              📅 Per {fmtDate(appliedDate)}
+              {String.fromCodePoint(0x1F4C5)} {
+                appliedPeriodType === 'harian' ? fmtDate(appliedDate) :
+                appliedPeriodType === 'bulanan' ? `${months[Number(appliedMonth.split('-')[1]) - 1]} ${appliedMonth.split('-')[0]}` :
+                appliedYear
+              }
             </span>
-            <span className="text-[11px] bg-green-50 text-green-700 font-medium px-2.5 py-1 rounded-full">
+            <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full capitalize">
+              {appliedPeriodType}
+            </span>
+            <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full">
               🏥 {(cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? '' }]).find(c => c.value === appliedCabang)?.label}
             </span>
           </div>
@@ -333,7 +401,7 @@ export default function LapNeracaUmumPage() {
           <div className="flex gap-2">
             {/* AKTIVA */}
           <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
-            <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Aktiva</h2>
+            <h2 className="text-xs font-bold text-gray-900 pb-1.5 border-b-2 border-gray-900 mb-2 uppercase">Aktiva</h2>
             <div className="flex-1 space-y-3">
               {aktivaSections.map((section, i) => {
                 const items = aktivaGrouped[section];
@@ -364,7 +432,7 @@ export default function LapNeracaUmumPage() {
 
           {/* KEWAJIBAN & MODAL */}
           <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
-            <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Kewajiban &amp; Modal</h2>
+            <h2 className="text-xs font-bold text-gray-900 pb-1.5 border-b-2 border-gray-900 mb-2 uppercase">Kewajiban &amp; Modal</h2>
             <div className="flex-1 space-y-3">
               {kewajibanModalSections.map((section, i) => {
                 const items = kewajibanModalGrouped[section];
@@ -392,13 +460,6 @@ export default function LapNeracaUmumPage() {
               <span>Total Kewajiban &amp; Modal</span><span>{fmtDecimal(grandTotalKewajibanModal)}</span>
             </div>
           </div>
-        </div>
-
-        <div className={`mt-4 rounded-2xl p-4 flex items-center justify-between ${Math.abs(grandTotalAktiva - grandTotalKewajibanModal) < 0.01 ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'}`}>
-          <span className="text-sm font-semibold text-gray-800">
-            {Math.abs(grandTotalAktiva - grandTotalKewajibanModal) < 0.01 ? '✅ Neraca Seimbang' : '❌ Tidak Seimbang'}
-          </span>
-          <span className="text-sm font-bold text-gray-900">{fmtDecimal(grandTotalAktiva)}</span>
         </div>
       </div>
       </LiquidPullToRefresh>

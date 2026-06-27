@@ -9,7 +9,7 @@ import { formatNumber } from '@/lib/dummyData';
 import { useCabangOptions } from '@/lib/useCabangOptions';
 import MonthPickerInput from '@/components/MonthPickerInput';
 import YearPickerInput from '@/components/YearPickerInput';
-import { exportSectionedToPdf, exportSectionedToExcel } from '@/lib/exportUtils';
+import { exportLabaRugiToPdf, exportLabaRugiToExcel } from '@/lib/exportUtils';
 import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
 import AlertModal from '@/components/AlertModal';
@@ -81,6 +81,10 @@ export default function LapLabaRugiPage() {
       return [{
         pemasukanData: resdata.data || [],
         pengeluaranData: resdata.data1 || [],
+        obatterjual,
+        obatretur,
+        jasaterjual,
+        jasaretur,
         totalPemasukan: pemasukan,
         totalPengeluaran: pengeluaran,
         totalHPP: totalhpp,
@@ -148,6 +152,10 @@ export default function LapLabaRugiPage() {
   const reportData = data[0] || {
     pemasukanData: [],
     pengeluaranData: [],
+    obatterjual: 0,
+    obatretur: 0,
+    jasaterjual: 0,
+    jasaretur: 0,
     totalPemasukan: 0,
     totalPengeluaran: 0,
     totalHPP: 0,
@@ -201,32 +209,22 @@ export default function LapLabaRugiPage() {
     refetch(buildRefetchParams(finalStart, finalEnd, 'bulan', defaultCabang));
   };
 
-  const exportSections = [
-    {
-      title: 'PEMASUKAN',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rows: [
-        ...reportData.pemasukanData.map((r: any) => ({ label: r.aknama, value: fmt(parseFloat(r.mutasi || 0)) })),
-        { label: 'Total Pemasukan', value: fmt(reportData.totalPemasukan) },
-      ],
-    },
-    {
-      title: 'PENGELUARAN',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rows: [
-        ...reportData.pengeluaranData.map((r: any) => ({ label: r.aknama, value: fmt(Math.abs(parseFloat(r.mutasi || 0))) })),
-        { label: 'HPP', value: fmt(reportData.totalHPP) },
-        { label: 'Total Pengeluaran', value: fmt(reportData.totalPengeluaran) },
-      ],
-    },
-    {
-      title: 'RINGKASAN',
-      rows: [
-        { label: 'Laba Kotor', value: fmt(reportData.labaKotor) },
-        { label: 'Laba Bersih', value: fmt(reportData.labaBersih) },
-      ],
-    },
-  ];
+  const exportData = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pemasukan: reportData.pemasukanData.map((r: any) => ({ label: r.akkode ? `${r.akkode} - ${r.aknama}` : r.aknama, value: fmt(parseFloat(r.mutasi || 0)) })),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pengeluaran: reportData.pengeluaranData.map((r: any) => ({ label: r.akkode ? `${r.akkode} - ${r.aknama}` : r.aknama, value: fmt(Math.abs(parseFloat(r.mutasi || 0))) })),
+    totalPemasukan: fmt(reportData.totalPemasukan),
+    hpp: [
+      { label: '510001 - Obat Terjual', value: fmt(reportData.obatterjual) },
+      { label: '510001 - Obat Retur', value: fmt(reportData.obatretur) },
+      { label: '510003 - Jasa Terjual', value: fmt(reportData.jasaterjual) },
+    ],
+    totalHpp: fmt(reportData.totalHPP),
+    labaKotor: fmt(reportData.labaKotor),
+    totalPengeluaran: fmt(reportData.totalPengeluaran),
+    labaBersih: fmt(reportData.labaBersih),
+  };
 
   const fmtDisplay = () => {
     if (periodType === 'bulan') {
@@ -326,7 +324,7 @@ export default function LapLabaRugiPage() {
           <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full capitalize">
             {periodType}
           </span>
-          <span className="text-[11px] bg-green-50 text-green-700 font-medium px-2.5 py-1 rounded-full">
+          <span className="text-[11px] bg-primary-accent/10 text-primary-accent font-medium px-2.5 py-1 rounded-full">
             {String.fromCodePoint(0x1F3E5)} {(cabangOptions.length > 0 ? cabangOptions : [{ value: user?.app_id ?? '', label: user?.cabang ?? '' }]).find(c => c.value === appliedCabang)?.label}
           </span>
         </div>
@@ -342,14 +340,34 @@ export default function LapLabaRugiPage() {
           setShowAlert(true);
           return;
         }
-        exportSectionedToPdf(`Laba Rugi - ${namaKlinik}`, 'Laba Rugi', exportSections, namaKlinik, `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)}`);
+        let periodeStr = '';
+        if (periodType === 'bulan') {
+          const [y, m] = appliedStart.split('-');
+          periodeStr = `BULAN ${months[Number(m) - 1].toUpperCase()} ${y}`;
+        } else if (periodType === 'tahun') {
+          const [y] = appliedStart.split('-');
+          periodeStr = `TAHUN ${y}`;
+        } else {
+          periodeStr = `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)}`;
+        }
+        exportLabaRugiToPdf(`Laba Rugi - ${namaKlinik}`, namaKlinik, periodeStr, exportData);
       }}
       onExportExcel={() => {
         if (reportData.pemasukanData.length === 0 && reportData.pengeluaranData.length === 0) {
           setShowAlert(true);
           return;
         }
-        exportSectionedToExcel(`Laba Rugi - ${namaKlinik}`, 'Laba Rugi', exportSections, namaKlinik);
+        let periodeStr = '';
+        if (periodType === 'bulan') {
+          const [y, m] = appliedStart.split('-');
+          periodeStr = `BULAN ${months[Number(m) - 1].toUpperCase()} ${y}`;
+        } else if (periodType === 'tahun') {
+          const [y] = appliedStart.split('-');
+          periodeStr = `TAHUN ${y}`;
+        } else {
+          periodeStr = `${fmtDate(appliedStart)} – ${fmtDate(appliedEnd)}`;
+        }
+        exportLabaRugiToExcel(`Laba Rugi - ${namaKlinik}`, namaKlinik, periodeStr, exportData);
       }}
     />
   );
@@ -366,7 +384,7 @@ export default function LapLabaRugiPage() {
             <div className="flex gap-2">
               {/* PEMASUKAN */}
               <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
-                <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Pemasukan</h2>
+                <h2 className="text-xs font-bold text-gray-900 pb-1.5 border-b-2 border-gray-900 mb-2 uppercase">Pemasukan</h2>
                 <div className="flex-1 space-y-1">
                   {reportData.pemasukanData.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-[10px] pl-2">
@@ -382,7 +400,7 @@ export default function LapLabaRugiPage() {
 
               {/* PENGELUARAN */}
               <div className="flex-1 bg-white rounded-2xl p-3 ios-shadow flex flex-col">
-                <h2 className="text-xs font-bold text-primary-accent pb-1.5 border-b-2 border-primary-accent mb-2 uppercase">Pengeluaran</h2>
+                <h2 className="text-xs font-bold text-gray-900 pb-1.5 border-b-2 border-gray-900 mb-2 uppercase">Pengeluaran</h2>
                 <div className="flex-1 space-y-1">
                   {reportData.pengeluaranData.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-[10px] pl-2">
@@ -410,9 +428,11 @@ export default function LapLabaRugiPage() {
               ))}
             </div>
 
-            <div className={`mt-4 rounded-2xl border-2 p-4 flex items-center justify-center gap-4 ${isProfit ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
-              <span className={`text-lg font-bold ${isProfit ? 'text-green-700' : 'text-red-600'}`}>Laba Rugi:</span>
-              <span className={`text-2xl font-extrabold ${isProfit ? 'text-green-700' : 'text-red-600'}`}>{fmt(reportData.labaBersih)}</span>
+            <div className="h-24" />
+
+            <div className="fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-5 py-4 flex items-center justify-between z-30 border border-gray-100">
+              <span className={`text-sm font-bold ${isProfit ? 'text-primary-accent' : 'text-red-600'}`}>Laba Rugi</span>
+              <span className={`text-lg font-extrabold ${isProfit ? 'text-primary-accent' : 'text-red-600'}`}>{fmt(reportData.labaBersih)}</span>
             </div>
           </div>
         )}
