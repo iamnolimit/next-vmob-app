@@ -151,6 +151,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const { startLoading } = useNavLoading();
   const [showSessions, setShowSessions] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   const toggleGroup = (category: string) => {
     setOpenGroups(prev => ({ ...prev, [category]: !prev[category] }));
@@ -220,81 +221,117 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           )}
 
           {/* ── Nav ── */}
-          <div className="flex-1 overflow-y-auto">
-
-            <div>
-              <SectionLabel 
-                label="Dashboard" 
-                icon={<LayoutDashboard size={18} />}
-                isOpen={openGroups['Dashboard'] ?? true} 
-                onClick={() => toggleGroup('Dashboard')} 
-              />
-              <div 
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  (openGroups['Dashboard'] ?? true) ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-                }`}
-              >
-                <MenuItem
-                  icon={<LayoutDashboard size={20} />}
-                  label="Home"
-                  active={normalizedPathname === '/dashboard'}
-                  onClick={() => go('/dashboard')}
+          <div className="flex-1 overflow-y-auto pt-4">
+            
+            {/* ── Search ── */}
+            <div className="px-4 pb-2">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Cari menu..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-primary-accent focus:border-primary-accent sm:text-sm transition-colors"
                 />
-                <MenuItem
-                  icon={<Stethoscope size={20} />}
-                  label="Obat"
-                  active={normalizedPathname === '/obat'}
-                  onClick={() => go('/obat')}
-                />
-                <MenuItem
-                  icon={<CircleDollarSign size={20} />}
-                  label="Keuangan"
-                  active={normalizedPathname === '/keuangan'}
-                  onClick={() => go('/keuangan')}
-                />
-                <MenuItem
-                  icon={<LineChart size={20} />}
-                  label="Smart Forecast"
-                  active={normalizedPathname === '/forecast'}
-                  onClick={() => go('/forecast')}
-                />
-                <MenuItem
-                  icon={<UsersRound size={20} />}
-                  label="Customer"
-                  active={normalizedPathname === '/customer'}
-                  onClick={() => go('/customer')}
-                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
             </div>
 
-            {laporanMenus.map((group) => {
-              const isOpen = openGroups[group.category];
+            {(() => {
+              const query = searchQuery.toLowerCase();
+              
+              const dashboardItems = [
+                { label: 'Home', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
+                { label: 'Obat', href: '/obat', icon: <Stethoscope size={20} /> },
+                { label: 'Keuangan', href: '/keuangan', icon: <CircleDollarSign size={20} /> },
+                { label: 'Smart Forecast', href: '/forecast', icon: <LineChart size={20} /> },
+                { label: 'Customer', href: '/customer', icon: <UsersRound size={20} /> },
+              ];
+
+              const filteredDashboardItems = dashboardItems.filter(item => item.label.toLowerCase().includes(query));
+              
+              const filteredLaporanMenus = laporanMenus.map(group => ({
+                ...group,
+                items: group.items.filter(item => item.label.toLowerCase().includes(query))
+              })).filter(group => group.items.length > 0);
+
               return (
-                <div key={group.category}>
-                  <SectionLabel 
-                    label={group.category} 
-                    icon={group.icon && React.cloneElement(group.icon as React.ReactElement<any>, { size: 18 })}
-                    isOpen={isOpen} 
-                    onClick={() => toggleGroup(group.category)} 
-                  />
-                  <div 
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                      isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    {group.items.map((item) => (
-                      <MenuItem
-                        key={item.href}
-                        icon={item.icon}
-                        label={item.label}
-                        active={normalizedPathname === item.href}
-                        onClick={() => go(item.href)}
+                <>
+                  {(filteredDashboardItems.length > 0 || query === '') && (
+                    <div>
+                      <SectionLabel 
+                        label="Dashboard" 
+                        icon={<LayoutDashboard size={18} />}
+                        isOpen={query ? true : (openGroups['Dashboard'] ?? true)} 
+                        onClick={() => toggleGroup('Dashboard')} 
                       />
-                    ))}
-                  </div>
-                </div>
+                      <div 
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                          (query ? true : (openGroups['Dashboard'] ?? true)) ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                      >
+                        {filteredDashboardItems.map(item => (
+                          <MenuItem
+                            key={item.href}
+                            icon={item.icon}
+                            label={item.label}
+                            active={normalizedPathname === item.href}
+                            onClick={() => go(item.href)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {filteredLaporanMenus.map((group) => {
+                    const isOpen = query ? true : openGroups[group.category];
+                    return (
+                      <div key={group.category}>
+                        <SectionLabel 
+                          label={group.category} 
+                          icon={group.icon && React.cloneElement(group.icon as React.ReactElement<any>, { size: 18 })}
+                          isOpen={isOpen} 
+                          onClick={() => toggleGroup(group.category)} 
+                        />
+                        <div 
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                            isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                          }`}
+                        >
+                          {group.items.map((item) => (
+                            <MenuItem
+                              key={item.href}
+                              icon={item.icon}
+                              label={item.label}
+                              active={normalizedPathname === item.href}
+                              onClick={() => go(item.href)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {query && filteredDashboardItems.length === 0 && filteredLaporanMenus.length === 0 && (
+                    <div className="px-6 py-8 text-center text-gray-500 text-sm">
+                      Menu tidak ditemukan
+                    </div>
+                  )}
+                </>
               );
-            })}
+            })()}
 
             <div className="h-4" />
           </div>
