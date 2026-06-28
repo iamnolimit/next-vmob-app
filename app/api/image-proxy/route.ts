@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import axios from 'axios';
 import https from 'https';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
     return new NextResponse('Missing url parameter', { status: 400 });
   }
 
-  // Only allow proxying from apt.vmedis.com
+  // Only allow proxying from vmedis.com
   let parsedUrl: URL;
   try {
     parsedUrl = new URL(url);
@@ -26,24 +27,19 @@ export async function GET(request: Request) {
   }
 
   try {
-    const res = await fetch(url, {
-      // @ts-expect-error node-fetch agent
-      agent: httpsAgent,
+    const response = await axios.get(url, {
+      httpsAgent,
+      responseType: 'arraybuffer',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; VmedisApp/1.0)',
         'Accept': 'image/*,*/*',
       },
-      cache: 'no-store',
+      timeout: 10000,
     });
 
-    if (!res.ok) {
-      return new NextResponse(`Upstream error: ${res.status}`, { status: res.status });
-    }
+    const contentType = response.headers['content-type'] || 'image/jpeg';
 
-    const contentType = res.headers.get('content-type') || 'image/jpeg';
-    const buffer = await res.arrayBuffer();
-
-    return new NextResponse(buffer, {
+    return new NextResponse(response.data as ArrayBuffer, {
       status: 200,
       headers: {
         'Content-Type': contentType,
