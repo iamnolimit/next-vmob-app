@@ -12,7 +12,7 @@ export default function AvatarImage({ src, alt, fallbackText, className = '' }: 
   const [error, setError] = useState(false);
 
   if (error || !src || !src.startsWith('http')) {
-    return <span className="w-full h-full flex items-center justify-center">{fallbackText}</span>;
+    return <span className="w-full h-full flex items-center justify-center font-bold">{fallbackText}</span>;
   }
 
   return (
@@ -21,6 +21,7 @@ export default function AvatarImage({ src, alt, fallbackText, className = '' }: 
       alt={alt}
       className={className}
       onError={() => setError(true)}
+      referrerPolicy="no-referrer"
     />
   );
 }
