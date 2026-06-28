@@ -23,6 +23,8 @@ export interface UserProfile {
   token?: string;
   dokid?: string;
   kl_id?: string;
+  lvl?: number;
+  aksesMenu?: string[];
 }
 
 const KEY = 'vmob_user';
@@ -153,10 +155,32 @@ export async function login(
     expired: dayjs().add(4, 'hour').unix(),
   });
 
+  const lvl = Number(dataUser?.lvl ?? 999);
+  const grId = dataUser?.gr_id ?? '';
+  const appJenis = Number(dataUser?.app_jenis ?? 0);
+  const appReg = String(dataUser?.app_reg ?? '');
+  const appId = String(dataUser?.app_id ?? '');
+
+  // Fetch menu access (same logic as iOS LoginService.fetchMenuAccess)
+  let aksesMenu: string[] = [];
+  if (lvl !== 1) {
+    try {
+      aksesMenu = await fetchMenuAccess({
+        grId: Number(grId),
+        appId,
+        appJenis,
+        appReg,
+        token,
+      });
+    } catch {
+      // fallback: no restriction
+    }
+  }
+
   const profile: UserProfile = {
     id: String(dataUser?.id ?? ''),
-    app_id: String(dataUser?.app_id ?? ''),
-    app_reg: String(dataUser?.app_reg ?? ''),
+    app_id: appId,
+    app_reg: appReg,
     user_id: String(dataUser?.id ?? ''),
     nama: dataUser?.nama_lengkap ?? dataUser?.nama ?? dataUser?.name ?? username,
     username: dataUser?.username ?? username,
@@ -164,16 +188,83 @@ export async function login(
     jabatan: dataUser?.jabatan ?? '',
     cabang: dataUser?.kl_nama ?? dataUser?.nama_apotek ?? dataUser?.cabang ?? '',
     avatar: dataUser?.kl_logo ? `https://apt.vmedis.com/foto/${dataUser.kl_logo}` : (dataUser?.nama_lengkap ?? dataUser?.nama ?? username).substring(0, 2).toUpperCase(),
-    group: String(dataUser?.gr_id ?? ''),
+    group: String(grId),
     domain,
-    gr_id: dataUser?.gr_id ?? '',
+    gr_id: grId,
     status: dataUser?.status ?? '',
-    app_jenis: dataUser?.app_jenis ?? '',
+    app_jenis: appJenis,
     token,
     dokid: dataUser?.dokid ?? '',
     kl_id: dataUser?.kl_id ?? '',
+    lvl,
+    aksesMenu,
   };
 
   saveUser(profile);
   return profile;
+}
+
+async function fetchMenuAccess({
+  grId,
+  appId,
+  appJenis,
+  appReg,
+  token,
+}: {
+  grId: number;
+  appId: string;
+  appJenis: number;
+  appReg: string;
+  token: string;
+}): Promise<string[]> {
+  // Hitung jenis berdasarkan app_jenis (sama seperti iOS)
+  let jenis: string;
+  if (appJenis === 3) {
+    jenis = '1,2,3';
+  } else if (appJenis === 2 || appJenis === 1) {
+    jenis = `${appJenis},3`;
+  } else {
+    jenis = `${appJenis}`;
+  }
+
+  const response = await fetch(middlewareEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Target-URL': encodeURIComponent('menu/menu3'),
+      'Target-Version': encodeURIComponent('api7'),
+      'Target-Options': encodeURIComponent(JSON.stringify({ method: 'POST' })),
+    },
+    body: JSON.stringify({
+      params: {
+        a: appId,
+        gr_id: grId,
+        reg: appReg,
+        jenis,
+        devices: '1,2',
+      },
+    }),
+  });
+
+  if (!response.ok) return [];
+
+  const json = await response.json();
+  const raw = json?.data ?? json;
+
+  const aksesMenu: string[] = [];
+
+  // data1 berisi detail menu dengan mn_url
+  const data1 = raw?.data1;
+  if (Array.isArray(data1)) {
+    for (const item of data1) {
+      if (typeof item !== 'object' || !item) continue;
+      const mnUrl = item.mn_url;
+      const mnAktif = item.mn_aktif;
+      if (mnUrl && mnUrl !== '#' && mnAktif === '1') {
+        aksesMenu.push(mnUrl);
+      }
+    }
+  }
+
+  return aksesMenu;
 }

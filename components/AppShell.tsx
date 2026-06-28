@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { SidebarProvider, useSidebar } from '@/lib/sidebarContext';
@@ -8,18 +8,19 @@ import Sidebar from './Sidebar';
 import NavProgressBar from './NavProgressBar';
 import { useNavLoading } from '@/lib/navLoadingContext';
 import { LayoutDashboard, LineChart, CircleDollarSign, Stethoscope, UsersRound } from 'lucide-react';
+import { getAccessibleTabs } from '@/lib/menuAccess';
 
 interface AppShellProps {
   children: React.ReactNode;
   showBottomNav?: boolean;
 }
 
-const bottomTabs = [
-  { label: 'Home',  href: '/dashboard', icon: <LayoutDashboard size={22} /> },
-  { label: 'Obat',  href: '/obat',      icon: <Stethoscope size={22} /> },
-  { label: 'Keuangan', href: '/keuangan', icon: <CircleDollarSign size={22} /> },
-  { label: 'Forecast', href: '/forecast', icon: <LineChart size={22} /> },
-  { label: 'Customer', href: '/customer', icon: <UsersRound size={22} /> },
+const ALL_BOTTOM_TABS = [
+  { label: 'Home',     href: '/dashboard', icon: <LayoutDashboard size={22} /> },
+  { label: 'Obat',     href: '/obat',      icon: <Stethoscope size={22} /> },
+  { label: 'Keuangan', href: '/keuangan',  icon: <CircleDollarSign size={22} /> },
+  { label: 'Forecast', href: '/forecast',  icon: <LineChart size={22} /> },
+  { label: 'Customer', href: '/customer',  icon: <UsersRound size={22} /> },
 ];
 
 function BottomNav() {
@@ -27,6 +28,12 @@ function BottomNav() {
   const pathname = rawPathname?.replace(/\/$/, '') || '/';
   const router = useRouter();
   const { startLoading } = useNavLoading();
+  const { user } = useAuth();
+
+  const bottomTabs = useMemo(() => {
+    const accessible = getAccessibleTabs(user?.aksesMenu, user?.lvl);
+    return ALL_BOTTOM_TABS.filter(tab => accessible.has(tab.href));
+  }, [user?.aksesMenu, user?.lvl]);
 
   return (
     <>

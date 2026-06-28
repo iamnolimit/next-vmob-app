@@ -1,9 +1,10 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useNavLoading } from '@/lib/navLoadingContext';
 import AvatarImage from './AvatarImage';
+import { hasMenuAccess } from '@/lib/menuAccess';
 import { 
   Pill, Hospital, Flame, ClipboardList, UserCheck, CalendarDays, 
   CreditCard, Stethoscope, ShoppingCart, ClipboardCheck, Package, 
@@ -148,6 +149,11 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const router   = useRouter();
   const pathname = usePathname();
   const normalizedPathname = pathname?.replace(/\/$/, '') || '/';
+
+  const canAccess = useMemo(
+    () => (href: string) => hasMenuAccess(href, user?.aksesMenu, user?.lvl),
+    [user?.aksesMenu, user?.lvl]
+  );
   const { startLoading } = useNavLoading();
   const [showSessions, setShowSessions] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
@@ -260,11 +266,15 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 { label: 'Customer', href: '/customer', icon: <UsersRound size={20} /> },
               ];
 
-              const filteredDashboardItems = dashboardItems.filter(item => item.label.toLowerCase().includes(query));
+              const filteredDashboardItems = dashboardItems
+                .filter(item => canAccess(item.href))
+                .filter(item => item.label.toLowerCase().includes(query));
               
               const filteredLaporanMenus = laporanMenus.map(group => ({
                 ...group,
-                items: group.items.filter(item => item.label.toLowerCase().includes(query))
+                items: group.items
+                  .filter(item => canAccess(item.href))
+                  .filter(item => item.label.toLowerCase().includes(query))
               })).filter(group => group.items.length > 0);
 
               return (
