@@ -8,6 +8,11 @@ interface AvatarImageProps {
   className?: string;
 }
 
+function toProxiedUrl(src: string): string {
+  if (!src || !src.startsWith('http')) return src;
+  return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+}
+
 export default function AvatarImage({ src, alt, fallbackText, className = '' }: AvatarImageProps) {
   const [error, setError] = useState(false);
 
@@ -17,11 +22,10 @@ export default function AvatarImage({ src, alt, fallbackText, className = '' }: 
 
   return (
     <img
-      src={src}
+      src={toProxiedUrl(src)}
       alt={alt}
       className={className}
       onError={() => setError(true)}
-      referrerPolicy="no-referrer"
     />
   );
 }
