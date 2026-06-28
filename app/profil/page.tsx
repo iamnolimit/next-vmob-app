@@ -48,9 +48,9 @@ export default function ProfilPage() {
       <div className="px-4 pt-8 pb-8 relative overflow-hidden bg-primary-accent rounded-b-[2.5rem] shadow-md">
         <button
           onClick={() => router.push('/dashboard')}
-          className="absolute top-8 left-6 w-12 h-12 flex items-center justify-center rounded-full bg-white backdrop-blur-sm active:scale-95 transition-transform text-white z-10"
+          className="absolute top-8 left-6 w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm active:scale-95 transition-transform text-white z-10"
         >
-          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="black" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>

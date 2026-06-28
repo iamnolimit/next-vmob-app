@@ -1,4 +1,5 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import { useState, useEffect, useCallback } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
 import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
@@ -26,6 +27,7 @@ function fmtDate(iso: string) {
 }
 
 export default function LapLabaRugiPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Laba Rugi" />;
   const { user } = useAuth();
   const { cabangOptions } = useCabangOptions();
   const namaKlinik = user?.cabang ?? 'Vmedis Mobile';

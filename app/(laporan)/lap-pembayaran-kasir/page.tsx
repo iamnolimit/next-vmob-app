@@ -4,6 +4,7 @@ import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 import { formatRupiah } from '@/lib/dummyData';
 
+
 export default function LapPembayaranKasirPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {

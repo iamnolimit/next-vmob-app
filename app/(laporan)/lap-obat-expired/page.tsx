@@ -1,9 +1,11 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 
 export default function LapObatExpiredPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Obat Expired" />;
   const formatExpiredDate = (dateString: string) => {
     if (!dateString || dateString === '-') return '-';
     try {

@@ -33,10 +33,8 @@ const laporanMenus = [
     icon: <CreditCard size={20} />,
     items: [
       { label: 'Laporan Piutang Klinik',           href: '/lap-piutang-klinik',           icon: <CreditCard size={20} /> },
-      ...(process.env.NEXT_PUBLIC_SHOW_HIDDEN_MENU === 'true' ? [
-        { label: 'Laporan Pembayaran Kasir',         href: '/lap-pembayaran-kasir',         icon: <CreditCard size={20} /> },
-        { label: 'Laporan Penjualan Obat Klinik',    href: '/lap-penjualan-obat-klinik',    icon: <Hospital size={20} /> },
-      ] : []),
+      { label: 'Laporan Pembayaran Kasir',         href: '/lap-pembayaran-kasir',         icon: <CreditCard size={20} /> },
+      { label: 'Laporan Penjualan Obat Klinik',    href: '/lap-penjualan-obat-klinik',    icon: <Hospital size={20} /> },
       { label: 'Laporan Tagihan Jaminan',          href: '/lap-tagihan-jaminan',          icon: <ClipboardList size={20} /> },
       { label: 'Laporan Pendapatan Petugas Medis', href: '/lap-pendapatan-petugas-medis', icon: <Stethoscope size={20} /> },
     ],
@@ -45,9 +43,7 @@ const laporanMenus = [
     category: 'Pembelian',
     icon: <ShoppingCart size={20} />,
     items: [
-      ...(process.env.NEXT_PUBLIC_SHOW_HIDDEN_MENU === 'true' ? [
-        { label: 'Laporan Pembelian Obat',   href: '/lap-pembelian-obat',   icon: <ShoppingCart size={20} /> },
-      ] : []),
+      { label: 'Laporan Pembelian Obat',   href: '/lap-pembelian-obat',   icon: <ShoppingCart size={20} /> },
       { label: 'Laporan Hutang Obat',      href: '/lap-hutang-obat',      icon: <CreditCard size={20} /> },
     ],
   },
@@ -55,13 +51,9 @@ const laporanMenus = [
     category: 'Penjualan Dan Shift',
     icon: <Pill size={20} />,
     items: [
-      ...(process.env.NEXT_PUBLIC_SHOW_HIDDEN_MENU === 'true' ? [
-        { label: 'Laporan Penjualan Obat',   href: '/lap-penjualan-obat',   icon: <Pill size={20} /> },
-      ] : []),
+      { label: 'Laporan Penjualan Obat',   href: '/lap-penjualan-obat',   icon: <Pill size={20} /> },
       { label: 'Laporan Piutang Obat',     href: '/lap-piutang-obat',     icon: <CreditCard size={20} /> },
-      ...(process.env.NEXT_PUBLIC_SHOW_HIDDEN_MENU === 'true' ? [
-        { label: 'Laporan Pergantian Shift', href: '/lap-pergantian-shift', icon: <RefreshCcw size={20} /> },
-      ] : []),
+      { label: 'Laporan Pergantian Shift', href: '/lap-pergantian-shift', icon: <RefreshCcw size={20} /> },
     ],
   },
   {

@@ -1,4 +1,5 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import { useState } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
 import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
@@ -13,6 +14,7 @@ const groupColors: Record<string, string> = {
 };
 
 export default function LapManajemenUserPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Manajemen User" />;
   const [search, setSearch] = useState('');
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

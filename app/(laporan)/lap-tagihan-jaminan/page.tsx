@@ -1,9 +1,11 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import ReportTable from '@/components/ReportTable';
 import { formatRupiah } from '@/lib/dummyData';
 import { useReportData } from '@/lib/useReportData';
 
 export default function LapTagihanJaminanPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Tagihan Jaminan" />;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = (rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;

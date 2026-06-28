@@ -1,9 +1,11 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import { useCallback } from 'react';
 import ReportTable from '@/components/ReportTable';
 import { useReportData } from '@/lib/useReportData';
 
 export default function LapObatStokHabisPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Obat Stok Habis" />;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiNormalizer = useCallback((rawData: any, offset = 0) => {
     const dataArray = rawData?.data || rawData;

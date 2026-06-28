@@ -1,4 +1,5 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import LaporanHeader from '@/components/LaporanHeader';
 import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
 import { ListSkeleton } from '@/components/SkeletonLoader';
@@ -6,6 +7,7 @@ import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
 
 export default function LapDashboardDokterPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Dashboard Dokter" />;
   const { user } = useAuth();
   const today = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 

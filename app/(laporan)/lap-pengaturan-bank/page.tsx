@@ -1,4 +1,5 @@
 'use client';
+import MaintenancePage from '@/components/MaintenancePage';
 import { useState } from 'react';
 import LaporanHeader from '@/components/LaporanHeader';
 import LiquidPullToRefresh from '@/components/LiquidPullToRefresh';
@@ -7,6 +8,7 @@ import { useAuth } from '@/lib/authContext';
 import { useReportData } from '@/lib/useReportData';
 
 export default function LapPengaturanBankPage() {
+  if (process.env.NEXT_PUBLIC_ACTIVE_HIDDEN_MENU !== 'true') return <MaintenancePage title="Laporan Pengaturan Bank" />;
   const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [alert, setAlert] = useState('');
