@@ -26,28 +26,36 @@ export async function GET(request: Request) {
     return new NextResponse('Forbidden', { status: 403 });
   }
 
+  const axiosConfig = {
+    responseType: 'arraybuffer' as const,
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; VmedisApp/1.0)',
+      'Accept': 'image/*,*/*',
+    },
+    timeout: 15000,
+  };
+
+  // Try with SSL disabled first, then fallback to default SSL
+  let response;
   try {
-    const response = await axios.get(url, {
-      httpsAgent,
-      responseType: 'arraybuffer',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; VmedisApp/1.0)',
-        'Accept': 'image/*,*/*',
-      },
-      timeout: 10000,
-    });
-
-    const contentType = String(response.headers['content-type'] || 'image/jpeg');
-
-    return new NextResponse(response.data as ArrayBuffer, {
-      status: 200,
-      headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=86400',
-      },
-    });
-  } catch (err) {
-    console.error('[image-proxy] error:', err);
-    return new NextResponse('Failed to fetch image', { status: 502 });
+    response = await axios.get(url, { ...axiosConfig, httpsAgent });
+  } catch (err1) {
+    console.error('[image-proxy] attempt 1 (no-ssl-verify) failed:', (err1 as Error).message);
+    try {
+      response = await axios.get(url, axiosConfig);
+    } catch (err2) {
+      console.error('[image-proxy] attempt 2 (default-ssl) failed:', (err2 as Error).message);
+      return new NextResponse(`Failed to fetch image: ${(err2 as Error).message}`, { status: 502 });
+    }
   }
+
+  const contentType = String(response.headers['content-type'] || 'image/jpeg');
+
+  return new NextResponse(response.data as ArrayBuffer, {
+    status: 200,
+    headers: {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
 }
