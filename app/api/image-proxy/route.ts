@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       timeout: 10000,
     });
 
-    const contentType = response.headers['content-type'] || 'image/jpeg';
+    const contentType = String(response.headers['content-type'] || 'image/jpeg');
 
     return new NextResponse(response.data as ArrayBuffer, {
       status: 200,
