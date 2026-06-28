@@ -198,8 +198,8 @@ export default function LapNeracaUmumPage() {
     n.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const handleRefresh = useCallback(() => {
-    return refetch(buildNeracaParams(appliedDate, appliedCabang));
-  }, [appliedDate, appliedCabang, refetch, buildNeracaParams]);
+    return refetch(buildNeracaParams(appliedPeriodType, appliedDate, appliedMonth, appliedYear, appliedCabang));
+  }, [appliedPeriodType, appliedDate, appliedMonth, appliedYear, appliedCabang, refetch, buildNeracaParams]);
 
   const handleExportPdf = () => {
     if (aktivaSections.length === 0 && kewajibanModalSections.length === 0) {
