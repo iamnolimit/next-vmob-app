@@ -49,10 +49,10 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 overflow-y-auto">
 
       {/* Header Card Biru */}
-      <div className="relative z-10 bg-primary-accent rounded-b-[2.5rem] shadow-md">
+      <div className="relative z-10 bg-primary-accent rounded-b-[2.5rem] shadow-md flex-shrink-0">
         <div className="px-6 pt-12 pb-8 flex flex-col items-center gap-4">
           {/* Logo */}
           <div className="w-24 h-24 flex items-center justify-center overflow-hidden">
@@ -75,9 +75,9 @@ function LoginContent() {
       </div>
 
       {/* Form area */}
-      <div className="flex-1 px-6 pt-8 pb-10 flex flex-col items-center">
+      <div className="flex-1 px-6 pt-8 pb-10 flex flex-col items-center justify-center">
         {/* Card */}
-        <div className="w-full max-w-sm bg-white rounded-3xl shadow-sm border border-gray-100 px-5 py-6 flex flex-col gap-4">
+        <div className="w-full max-w-sm bg-white rounded-3xl shadow-sm border border-gray-100 px-5 py-6 flex flex-col gap-4 mb-8">
 
           {/* Error */}
         {error && (

@@ -45,18 +45,18 @@ export default function ProfilPage() {
   return (
     <div className="flex flex-col min-h-full bg-gray-50">
       {/* Header */}
-      <div className="px-4 pt-8 pb-8 relative overflow-hidden bg-white border-b border-gray-100">
+      <div className="px-4 pt-8 pb-8 relative overflow-hidden bg-primary-accent rounded-b-[2.5rem] shadow-md">
         <button
           onClick={() => router.push('/dashboard')}
-          className="absolute top-8 left-6 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] active:scale-95 transition-transform text-gray-700 z-10"
+          className="absolute top-8 left-6 w-12 h-12 flex items-center justify-center rounded-full bg-white backdrop-blur-sm active:scale-95 transition-transform text-white z-10"
         >
-          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="black" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
         <div className="flex flex-col items-center relative mt-4">
           <div
-            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-md mb-4 overflow-hidden border-4 border-white ${groupColors[roleName] ?? 'bg-primary-accent'}`}
+            className={`w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-lg mb-4 overflow-hidden border-4 border-white/20 ${groupColors[roleName] ?? 'bg-primary-accent'}`}
           >
             <AvatarImage 
               src={user.avatar} 
@@ -65,8 +65,8 @@ export default function ProfilPage() {
               className="w-full h-full object-cover" 
             />
           </div>
-          <h1 className="text-xl font-extrabold text-gray-900">{user.nama}</h1>
-          <span className="mt-2 inline-block text-xs font-semibold bg-primary-accent/10 text-primary-accent px-3 py-1 rounded-full">
+          <h1 className="text-xl font-extrabold text-white">{user.nama}</h1>
+          <span className="mt-2 inline-block text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-sm">
             {roleName}
           </span>
         </div>

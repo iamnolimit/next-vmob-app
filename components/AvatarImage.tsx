@@ -11,7 +11,7 @@ interface AvatarImageProps {
 export default function AvatarImage({ src, alt, fallbackText, className = '' }: AvatarImageProps) {
   const [error, setError] = useState(false);
 
-  if (error || !src.startsWith('http')) {
+  if (error || !src || !src.startsWith('http')) {
     return <span className="w-full h-full flex items-center justify-center">{fallbackText}</span>;
   }
 

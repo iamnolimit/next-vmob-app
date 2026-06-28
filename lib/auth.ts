@@ -25,6 +25,9 @@ export interface UserProfile {
   kl_id?: string;
   lvl?: number;
   aksesMenu?: string[];
+  logo?: string;
+  apt_logo?: string;
+  kl_logo?: string;
 }
 
 const KEY = 'vmob_user';
@@ -177,6 +180,18 @@ export async function login(
     }
   }
 
+  // Construct avatar URL based on iOS logic
+  let avatarUrl = '';
+  const baseImageURL = 'https://apt.vmedis.com/foto/';
+  
+  if (dataUser?.logo && dataUser.logo !== '') {
+    avatarUrl = baseImageURL + dataUser.logo;
+  } else if (appJenis === 2 && dataUser?.apt_logo && dataUser.apt_logo !== '') {
+    avatarUrl = baseImageURL + dataUser.apt_logo;
+  } else if (dataUser?.kl_logo && dataUser.kl_logo !== '') {
+    avatarUrl = baseImageURL + dataUser.kl_logo;
+  }
+
   const profile: UserProfile = {
     id: String(dataUser?.id ?? ''),
     app_id: appId,
@@ -187,7 +202,7 @@ export async function login(
     email: dataUser?.email ?? '',
     jabatan: dataUser?.jabatan ?? '',
     cabang: dataUser?.kl_nama ?? dataUser?.nama_apotek ?? dataUser?.cabang ?? '',
-    avatar: dataUser?.kl_logo ? `https://apt.vmedis.com/foto/${dataUser.kl_logo}` : (dataUser?.nama_lengkap ?? dataUser?.nama ?? username).substring(0, 2).toUpperCase(),
+    avatar: avatarUrl,
     group: String(grId),
     domain,
     gr_id: grId,
@@ -198,6 +213,9 @@ export async function login(
     kl_id: dataUser?.kl_id ?? '',
     lvl,
     aksesMenu,
+    logo: dataUser?.logo ?? '',
+    apt_logo: dataUser?.apt_logo ?? '',
+    kl_logo: dataUser?.kl_logo ?? '',
   };
 
   saveUser(profile);
