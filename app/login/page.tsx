@@ -18,10 +18,10 @@ function LoginContent() {
   const [showSessions, setShowSessions] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('showSessions') === 'true' && sessions.length > 0) {
+    if (searchParams.get('showSessions') === 'true' && sessions && sessions.length > 0) {
       setShowSessions(true);
     }
-  }, [searchParams, sessions.length]);
+  }, [searchParams, sessions?.length]);
 
   const handleLogin = async () => {
     if (!domain.trim()) {
@@ -51,142 +51,129 @@ function LoginContent() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
 
-      {/* Header — sama seperti dashboard */}
+      {/* Header Card Biru */}
       <div className="relative z-10 bg-primary-accent rounded-b-[2.5rem] shadow-md">
-        <div className="px-6 pt-10 pb-6 flex flex-col items-center gap-4">
+        <div className="px-6 pt-12 pb-8 flex flex-col items-center gap-4">
           {/* Logo */}
-          <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center overflow-hidden shadow-lg">
+          <div className="w-24 h-24 flex items-center justify-center overflow-hidden">
             <Image
               src="/vmedis-ico.png"
               alt="Vmedis"
-              width={52}
-              height={52}
+              width={80}
+              height={80}
               className="object-contain"
               priority
             />
           </div>
           <div className="text-center">
-            <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">Vmedis Mobile</h1>
-            <p className="text-[14px] font-medium text-blue-100 mt-0.5">VMEDIS Apotek / Klinik</p>
+            <h1 className="text-[26px] font-bold text-white tracking-tight leading-tight">Log in</h1>
+            <p className="text-[13px] font-medium text-blue-100 mt-1.5 max-w-[260px] leading-relaxed mx-auto">
+              Masukkan data Anda untuk mengakses akun dan mengelola layanan.
+            </p>
           </div>
         </div>
       </div>
 
       {/* Form area */}
-      <div className="flex-1 px-6 pt-8 pb-10 flex flex-col">
+      <div className="flex-1 px-6 pt-8 pb-10 flex flex-col items-center">
+        {/* Card */}
+        <div className="w-full max-w-sm bg-white rounded-3xl shadow-sm border border-gray-100 px-5 py-6 flex flex-col gap-4">
 
-        {/* Error */}
+          {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 mb-5 flex items-start gap-3">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 flex items-start gap-3">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
               <line x1="12" y1="9" x2="12" y2="13" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            <span className="text-sm text-red-600">{error}</span>
+            <span className="text-xs text-red-600">{error}</span>
           </div>
         )}
 
         {/* Domain */}
-        <div className="mb-4">
-          <label className="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">
-            Domain
-          </label>
-          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-primary-accent transition-colors shadow-sm overflow-hidden">
-            <span className="pl-4 flex-shrink-0 text-primary-accent/60">
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-            </span>
-            <input
-              type="text"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase())}
-              placeholder="nama-domain"
-              className="flex-1 pl-3 pr-2 py-3.5 bg-transparent text-sm outline-none min-w-0 text-gray-800 placeholder:text-gray-300"
-              autoCapitalize="none"
-              autoComplete="off"
-              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            />
-            <span className="pr-4 text-xs text-gray-400 font-semibold flex-shrink-0 bg-gray-50 self-stretch flex items-center px-3 border-l border-gray-100">
-              .vmedis.com
-            </span>
-          </div>
+        <div className="flex items-center bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-primary-accent focus-within:bg-white transition-all overflow-hidden">
+          <span className="pl-4 flex-shrink-0 text-gray-400">
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+            </svg>
+          </span>
+          <input
+            type="text"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase())}
+            placeholder="Domain"
+            className="flex-1 pl-3 pr-2 py-3.5 bg-transparent text-sm outline-none min-w-0 text-gray-800 placeholder:text-gray-400"
+            autoCapitalize="none"
+            autoComplete="off"
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
+          <span className="pr-4 text-xs text-gray-400 font-medium flex-shrink-0">.vmedis.com</span>
         </div>
 
         {/* Username */}
-        <div className="mb-4">
-          <label className="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">
-            Username
-          </label>
-          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-primary-accent transition-colors shadow-sm">
-            <span className="pl-4 flex-shrink-0 text-primary-accent/60">
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </span>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Masukkan username"
-              className="flex-1 pl-3 pr-4 py-3.5 bg-transparent text-sm outline-none text-gray-800 placeholder:text-gray-300"
-              autoCapitalize="none"
-              autoComplete="username"
-              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            />
-          </div>
+        <div className="flex items-center bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-primary-accent focus-within:bg-white transition-all">
+          <span className="pl-4 flex-shrink-0 text-gray-400">
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+            className="flex-1 pl-3 pr-4 py-3.5 bg-transparent text-sm outline-none text-gray-800 placeholder:text-gray-400"
+            autoCapitalize="none"
+            autoComplete="username"
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
         </div>
 
         {/* Password */}
-        <div className="mb-7">
-          <label className="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">
-            Password
-          </label>
-          <div className="flex items-center bg-white rounded-2xl border-2 border-gray-100 focus-within:border-primary-accent transition-colors shadow-sm">
-            <span className="pl-4 flex-shrink-0 text-primary-accent/60">
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" />
-                <path d="M7 11V7a5 5 0 0110 0v4" />
+        <div className="flex items-center bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-primary-accent focus-within:bg-white transition-all">
+          <span className="pl-4 flex-shrink-0 text-gray-400">
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+          </span>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="flex-1 pl-3 pr-2 py-3.5 bg-transparent text-sm outline-none text-gray-800 placeholder:text-gray-400"
+            autoComplete="current-password"
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="pr-4 pl-2 text-gray-400 active:text-gray-600 transition-colors"
+          >
+            {showPassword ? (
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+                <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+                <line x1="1" y1="1" x2="23" y2="23" />
               </svg>
-            </span>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Masukkan password"
-              className="flex-1 pl-3 pr-2 py-3.5 bg-transparent text-sm outline-none text-gray-800 placeholder:text-gray-300"
-              autoComplete="current-password"
-              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="pr-4 pl-2 text-gray-400 active:text-primary-accent transition-colors"
-            >
-              {showPassword ? (
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
-                  <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
-                  <line x1="1" y1="1" x2="23" y2="23" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              )}
-            </button>
-          </div>
+            ) : (
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            )}
+          </button>
         </div>
 
         {/* Submit */}
         <button
           onClick={handleLogin}
           disabled={loading}
-          className="w-full bg-primary-accent text-white font-bold py-4 rounded-2xl text-sm shadow-lg shadow-primary-accent/30 active:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full bg-primary-accent text-white font-bold py-4 rounded-2xl text-[15px] shadow-lg shadow-primary-accent/25 active:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2 mt-1"
         >
           {loading ? (
             <>
@@ -197,37 +184,28 @@ function LoginContent() {
               Proses Masuk...
             </>
           ) : (
-            <>
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4" />
-                <polyline points="10 17 15 12 10 7" />
-                <line x1="15" y1="12" x2="3" y2="12" />
-              </svg>
-              Masuk
-            </>
+            'Login'
           )}
         </button>
 
         {/* Saved Sessions */}
-        {sessions.length > 0 && (
-          <div className="mt-5 text-center">
-            <button
-              onClick={() => setShowSessions(true)}
-              className="inline-flex items-center gap-1.5 text-sm text-primary-accent font-semibold"
-            >
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              Pilih Akun Tersimpan
-            </button>
-          </div>
+        {sessions && sessions.length > 0 && (
+          <button
+            onClick={() => setShowSessions(true)}
+            className="w-full flex items-center justify-center gap-1.5 text-sm text-primary-accent font-semibold py-1 mt-2"
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Pilih Akun Tersimpan
+          </button>
         )}
-
-        <p className="text-center text-xs text-gray-400 mt-auto pt-8">
-          © 2026 Vmedis Mobile v1.0.0
-        </p>
       </div>
+
+      <p className="text-center text-xs text-gray-400 mt-8">
+        © 2026 Vmedis Mobile v1.0.0
+      </p>
 
       {/* Sessions Bottom Sheet */}
       {showSessions && (
@@ -267,7 +245,7 @@ function LoginContent() {
             </div>
 
             <div className="overflow-y-auto p-4 space-y-3">
-              {sessions.map((session) => (
+              {sessions && sessions.map((session) => (
                 <div key={`${session.domain}-${session.username}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100">
                   <button
                     className="flex items-center gap-3 flex-1 text-left"
@@ -323,6 +301,7 @@ function LoginContent() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
