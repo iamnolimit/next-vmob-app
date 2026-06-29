@@ -77,7 +77,7 @@ export default function LapPengaturanBankPage() {
           {loading ? (
             <ListSkeleton rows={4} />
           ) : error ? (
-            <p className="text-center text-sm text-red-500">{error}</p>
+            <p className="text-center text-sm text-red-500 whitespace-pre-line">{error}</p>
           ) : banks.length === 0 ? (
             <p className="text-center text-sm text-gray-500">Belum ada rekening bank.</p>
           ) : (

@@ -47,7 +47,7 @@ export default function LapDashboardDokterPage() {
         {loading ? (
           <ListSkeleton rows={4} />
         ) : error ? (
-          <p className="text-center text-sm text-red-500">{error}</p>
+          <p className="text-center text-sm text-red-500 whitespace-pre-line">{error}</p>
         ) : (
           <div className="space-y-4 animate-content-in">
             {dataKunjungan.map((poli: any) => (

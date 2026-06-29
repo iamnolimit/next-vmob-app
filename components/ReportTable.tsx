@@ -889,7 +889,7 @@ export default function ReportTable({
                         <line x1="12" y1="9" x2="12" y2="13" />
                         <line x1="12" y1="17" x2="12.01" y2="17" />
                       </svg>
-                      <span className="text-sm">{error}</span>
+                      <span className="text-sm whitespace-pre-line text-center">{error}</span>
                     </div>
                   </td>
                 </tr>
@@ -902,7 +902,7 @@ export default function ReportTable({
                         <line x1="3" y1="9" x2="21" y2="9" />
                         <line x1="9" y1="21" x2="9" y2="9" />
                       </svg>
-                      <span className="text-sm text-gray-400">Tidak ada data</span>
+                      <span className="text-sm text-gray-400">Tidak ada data,  Silahkan gunakan filter/fitur pencarian yang tersedia.</span>
                     </div>
                   </td>
                 </tr>

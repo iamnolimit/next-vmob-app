@@ -88,7 +88,7 @@ export default function LapManajemenUserPage() {
         {loading ? (
           <ListSkeleton rows={6} />
         ) : error ? (
-          <p className="text-center text-sm text-red-500">{error}</p>
+          <p className="text-center text-sm text-red-500 whitespace-pre-line">{error}</p>
         ) : (
           <div className="space-y-3 animate-content-in">
             {filtered.map((user: any) => (

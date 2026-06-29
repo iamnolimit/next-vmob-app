@@ -68,7 +68,14 @@ export function useReportData({
           currentOffsetRef.current = offset + normalized.length;
         }
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        const msg = err instanceof Error ? err.message : 'An error occurred';
+        const isNetworkError = msg === 'Failed to fetch' || msg.toLowerCase().includes('network') || msg.toLowerCase().includes('failed to fetch');
+        const isServerError = /status 5\d\d/.test(msg);
+        setError(
+          isNetworkError ? 'Gagal memuat data\nKoneksi terputus' :
+          isServerError ? 'Maaf terjadi kesalahan pada server (500)' :
+          msg
+        );
       } finally {
         setLoading(false);
       }
