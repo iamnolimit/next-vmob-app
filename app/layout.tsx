@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/lib/authContext";
+import AndroidBackButtonHandler from "@/components/AndroidBackButtonHandler";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
         </div>
 
         <AuthProvider>
+          <AndroidBackButtonHandler />
           {children}
         </AuthProvider>
         <ServiceWorkerRegister />
