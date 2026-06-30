@@ -564,24 +564,7 @@ export default function ReportTable({
         >
           <div className="px-4 pb-4 pt-1 space-y-4">
 
-            {/* Cabang select */}
-            {resolvedCabangOptions.length > 1 && (
-              <div>
-                <p className="text-xs font-semibold text-gray-500 mb-1.5 flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-primary-accent" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                    <polyline points="9 22 9 12 15 12 15 22" />
-                  </svg>
-                  Cabang / Klinik
-                </p>
-                <SelectInput
-                  label=""
-                  value={selectedCabang}
-                  onChange={handleCabangChange}
-                  options={resolvedCabangOptions}
-                />
-              </div>
-            )}
+            {/* Cabang select — hidden */}
 
             {/* Gudang select */}
             {resolvedGudangOptions && resolvedGudangOptions.length > 0 && (
