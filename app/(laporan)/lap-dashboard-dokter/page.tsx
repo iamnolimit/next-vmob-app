@@ -25,7 +25,7 @@ export default function LapDashboardDokterPage() {
 
   const { data, loading, error, refetch } = useReportData({
     apiEndpoint: 'mob-dashboard/dashboard-dokter',
-    apiVersion: 'api7',
+    apiVersion: 'api5',
     apiParams: {
       dokid: user?.dokid || '',
       tgl: new Date().toISOString().split('T')[0],

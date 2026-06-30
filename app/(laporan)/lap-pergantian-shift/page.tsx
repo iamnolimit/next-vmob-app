@@ -54,10 +54,18 @@ export default function LapPergantianShiftPage() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
+
   const handleFetchData = useCallback((filters: any) => {
+    const cari = periodToCari(filters.periodType || 'tanggal');
+    const [startY, startM] = filters.start.split('-');
+    const [endY] = filters.end.split('-');
     refetch({
       tglAwal: fmtDateTime(filters.start, false),
       tglAkhir: fmtDateTime(filters.end, true),
+      cari,
+      bulan: cari === '3' ? startM : '',
+      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,

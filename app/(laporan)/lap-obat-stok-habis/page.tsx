@@ -29,7 +29,7 @@ export default function LapObatStokHabisPage() {
   }, []);
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: 'my-data-obat/index-mob-v2',
+    apiEndpoint: 'my-data-obat/index',
     apiVersion: 'api5',
     apiParams: {
       gudid: 1,
@@ -39,6 +39,7 @@ export default function LapObatStokHabisPage() {
       obatnama: '',
       obatstatus: 1,
       obathabisnotif: 1,
+      jenismenu: 'ObathabisBatchSearch',
     },
     apiNormalizer,
   });

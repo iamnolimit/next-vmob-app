@@ -24,7 +24,7 @@ export default function LapPenjualanObatPage() {
   }, []);
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: 'apt-lap-penjualanobat-batch/indexlaporan-v2',
+    apiEndpoint: 'apt-lap-penjualanobat-batch/indexlaporan',
     apiVersion: 'api5',
     apiParams: {
       cari: '4',
@@ -41,10 +41,18 @@ export default function LapPenjualanObatPage() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
+
   const handleFetchData = useCallback((filters: any) => {
+    const cari = periodToCari(filters.periodType || 'tanggal');
+    const [startY, startM] = filters.start.split('-');
+    const [endY] = filters.end.split('-');
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
+      cari,
+      bulan: cari === '3' ? startM : '',
+      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
       carimobile: filters.search || '',
       a: filters.cabang,
       reg: filters.cabangReg,

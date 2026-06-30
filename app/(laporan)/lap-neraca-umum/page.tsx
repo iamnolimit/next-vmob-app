@@ -67,7 +67,7 @@ export default function LapNeracaUmumPage() {
   }, []);
 
   const { data, refetch } = useReportData({
-    apiEndpoint: 'laporanneracanormal/laporan-v2',
+    apiEndpoint: 'laporanneracanormal/laporan',
     apiVersion: 'api5',
     apiParams: {
       cari: 4,

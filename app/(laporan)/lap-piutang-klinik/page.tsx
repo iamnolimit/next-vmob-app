@@ -39,7 +39,7 @@ export default function LapPiutangKlinikPage() {
   };
 
   // cari: 4=tanggal, 3=bulan, 2=tahun
-  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'kln-piutang/index',
@@ -78,11 +78,16 @@ export default function LapPiutangKlinikPage() {
       hasMore={hasMore}
       onLoadMore={loadMore}
       onFetchData={(params) => {
+        const cari = periodToCari(params.periodType || 'tanggal');
+        const [startY, startM] = params.start.split('-');
+        const [endY] = params.end.split('-');
         refetch({
           tanggalawal: fmtDate(params.start),
           tanggalakhir: fmtDate(params.end),
+          cari,
+          bulan: cari === '3' ? startM : '',
+          tahun: cari === '2' ? endY : cari === '3' ? startY : '',
           carimobile: params.search || '',
-          cari: periodToCari(params.periodType || 'tanggal'),
           deadline: params.interval !== 'all' ? params.interval : '',
           a: params.cabang,
           reg: params.cabangReg,

@@ -64,9 +64,16 @@ export default function LapTagihanJaminanPage() {
       hasMore={hasMore}
       onLoadMore={loadMore}
       onFetchData={(params) => {
+        const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
+        const cari = periodToCari(params.periodType || 'tanggal');
+        const [startY, startM] = params.start.split('-');
+        const [endY] = params.end.split('-');
         refetch({
           tanggalawal: fmtDate(params.start),
           tanggalakhir: fmtDate(params.end),
+          cari,
+          bulan: cari === '3' ? startM : '',
+          tahun: cari === '2' ? endY : cari === '3' ? startY : '',
           filter: params.search || '',
           a: params.cabang,
           reg: params.cabangReg,

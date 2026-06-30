@@ -48,7 +48,7 @@ export default function LapPenjualanObatKlinikPage() {
   };
 
   // cari: 4=tanggal, 3=bulan, 2=tahun (same as VWEB)
-  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
@@ -60,8 +60,8 @@ export default function LapPenjualanObatKlinikPage() {
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
       cari,
-      bulan: cari === 3 ? startM : '',
-      tahun: cari === 2 ? endY : cari === 3 ? startY : '',
+      bulan: cari === '3' ? startM : '',
+      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
       filter: filters.search,
       carimobile: filters.search,
       a: filters.cabang,

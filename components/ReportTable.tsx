@@ -112,9 +112,9 @@ export default function ReportTable({
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [showFilter, setShowFilter] = useState(true);
-  const [startDate, setStartDate] = useState(toISO(today));
+  const [startDate, setStartDate] = useState(toISO(firstOfMonth));
   const [endDate, setEndDate] = useState(toISO(today));
-  const [dateFilterType, setDateFilterType] = useState<'tanggal' | 'bulan' | 'tahun'>('tanggal');
+  const [dateFilterType, setDateFilterType] = useState<'tanggal' | 'bulan' | 'tahun'>('bulan');
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -197,9 +197,15 @@ export default function ReportTable({
     if (!cabang || !cabangReg) return; // wait for user to load
     didInitialFetchRef.current = true;
     if (onFetchData) {
+      // Default to current month range
+      const initMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+      const [y, m] = initMonth.split('-');
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      const initStart = `${y}-${m}-01`;
+      const initEnd = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
       onFetchData({
-        start: startDate,
-        end: endDate,
+        start: initStart,
+        end: initEnd,
         search: '',
         interval: selectedInterval,
         cabang,
@@ -207,7 +213,7 @@ export default function ReportTable({
         gudang: selectedGudang,
         offset: 0,
         limit,
-        periodType: dateFilterType,
+        periodType: 'bulan',
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -279,8 +285,12 @@ export default function ReportTable({
   };
 
   const resetFilter = () => {
-    const defaultStart = toISO(today);
-    const defaultEnd = toISO(today);
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const lastDay = new Date(y, d.getMonth() + 1, 0).getDate();
+    const defaultStart = `${y}-${m}-01`;
+    const defaultEnd = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
     const defaultInterval = intervalOptions?.[0]?.value ?? 'all';
     const defaultCabangObj = resolvedCabangOptions.find((c) => c.value === user?.app_id)
       ?? resolvedCabangOptions[0];
@@ -289,9 +299,8 @@ export default function ReportTable({
 
     setStartDate(defaultStart);
     setEndDate(defaultEnd);
-    setDateFilterType('tanggal');
-    const d = new Date();
-    setSelectedMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+    setDateFilterType('bulan');
+    setSelectedMonth(`${y}-${m}`);
     setSelectedYear(d.getFullYear().toString());
     setSelectedInterval(defaultInterval);
     setSelectedCabang(defaultCabang);
@@ -318,7 +327,7 @@ export default function ReportTable({
         gudang: '',
         offset: 0,
         limit,
-        periodType: 'tanggal',
+        periodType: 'bulan',
       });
     }
   };

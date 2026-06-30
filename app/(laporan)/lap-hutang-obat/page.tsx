@@ -31,7 +31,7 @@ export default function LapHutangObatPage() {
   };
 
   // cari: 4=tanggal, 3=bulan, 2=tahun
-  const periodToCari = (p: string) => p === 'tahun' ? 2 : p === 'bulan' ? 3 : 4;
+  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
 
   const getTodayWIB = () => {
     const now = new Date();
@@ -64,16 +64,17 @@ export default function LapHutangObatPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
     const cari = periodToCari(filters.periodType || 'tanggal');
-    const d = new Date(filters.start || new Date());
+    const [startY, startM] = filters.start.split('-');
+    const [endY] = filters.end.split('-');
     refetch({
       date: getTodayWIB(),
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      tahun: String(d.getFullYear()),
-      bulan: String(d.getMonth() + 1),
+      cari,
+      bulan: cari === '3' ? String(Number(startM)) : '',
+      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
       pemofaktur: filters.search || '',
       supnama: filters.search || '',
-      cari,
       a: filters.cabang,
       reg: filters.cabangReg,
       device: 'mobile',
