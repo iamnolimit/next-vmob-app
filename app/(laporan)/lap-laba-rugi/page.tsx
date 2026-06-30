@@ -33,7 +33,7 @@ export default function LapLabaRugiPage() {
   const namaKlinik = user?.cabang ?? 'Vmedis Mobile';
   const [showFilter, setShowFilter] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const [periodType, setPeriodType] = useState<PeriodType>('bulan');
+  const [periodType, setPeriodType] = useState<PeriodType>('tanggal');
   const [startDate, setStartDate] = useState(toISO(today));
   const [endDate, setEndDate] = useState(toISO(today));
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
@@ -191,24 +191,19 @@ export default function LapLabaRugiPage() {
     const d = new Date();
     const todayISO = toISO(d);
     const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    setPeriodType('bulan');
+    setPeriodType('tanggal');
     setStartDate(todayISO);
     setEndDate(todayISO);
     setSelectedMonth(monthStr);
     setSelectedYear(d.getFullYear().toString());
     
-    const [y, m] = monthStr.split('-');
-    const finalStart = `${y}-${m}-01`;
-    const lastDay = new Date(Number(y), Number(m), 0).getDate();
-    const finalEnd = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
-    
-    setAppliedStart(finalStart);
-    setAppliedEnd(finalEnd);
+    setAppliedStart(todayISO);
+    setAppliedEnd(todayISO);
     const defaultCabang = (cabangOptions.find((c) => c.value === user?.app_id) ?? cabangOptions[0])?.value ?? '';
     setSelectedCabang(defaultCabang);
     setAppliedCabang(defaultCabang);
     setShowFilter(false);
-    refetch(buildRefetchParams(finalStart, finalEnd, 'bulan', defaultCabang));
+    refetch(buildRefetchParams(todayISO, todayISO, 'tanggal', defaultCabang));
   };
 
   const exportData = {
