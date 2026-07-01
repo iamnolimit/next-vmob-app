@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Vmedis Mobile',
   webDir: 'out',
   server: {
-    url: 'https://next-vmob-app.vercel.app',
+    url: 'https://next-vmob-app-zeta.vercel.app/',
     cleartext: false,
   },
   plugins: {
