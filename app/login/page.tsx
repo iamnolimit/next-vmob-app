@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
@@ -16,6 +16,7 @@ function LoginContent() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
+  const loginButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (searchParams.get('showSessions') === 'true' && sessions && sessions.length > 0) {
@@ -48,8 +49,14 @@ function LoginContent() {
     }
   };
 
+  const scrollLoginButtonIntoView = () => {
+    window.setTimeout(() => {
+      loginButtonRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 350);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 overflow-y-auto">
+    <div className="min-h-[100dvh] flex flex-col bg-gray-50 overflow-y-auto">
 
       {/* Header Card Biru */}
       <div className="relative z-10 bg-primary-accent rounded-b-[2.5rem] shadow-md flex-shrink-0">
@@ -107,6 +114,7 @@ function LoginContent() {
             className="flex-1 pl-3 pr-2 py-3.5 bg-transparent text-sm outline-none min-w-0 text-gray-800 placeholder:text-gray-400"
             autoCapitalize="none"
             autoComplete="off"
+            onFocus={scrollLoginButtonIntoView}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           />
           <span className="pr-4 text-xs text-gray-400 font-medium flex-shrink-0">.vmedis.com</span>
@@ -128,6 +136,7 @@ function LoginContent() {
             className="flex-1 pl-3 pr-4 py-3.5 bg-transparent text-sm outline-none text-gray-800 placeholder:text-gray-400"
             autoCapitalize="none"
             autoComplete="username"
+            onFocus={scrollLoginButtonIntoView}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           />
         </div>
@@ -147,6 +156,7 @@ function LoginContent() {
             placeholder="Password"
             className="flex-1 pl-3 pr-2 py-3.5 bg-transparent text-sm outline-none text-gray-800 placeholder:text-gray-400"
             autoComplete="current-password"
+            onFocus={scrollLoginButtonIntoView}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           />
           <button
@@ -171,6 +181,7 @@ function LoginContent() {
 
         {/* Submit */}
         <button
+          ref={loginButtonRef}
           onClick={handleLogin}
           disabled={loading}
           className="w-full bg-primary-accent text-white font-bold py-4 rounded-2xl text-[15px] shadow-lg shadow-primary-accent/25 active:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2 mt-1"
