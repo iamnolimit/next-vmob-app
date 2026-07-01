@@ -56,10 +56,34 @@ export function useReportData({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const result: any = await fetchApi(apiEndpoint, mergedParams, user, apiVersion);
         const normalized = apiNormalizer(result, offset);
+
+        // Helper: re-sort combined data client-side to compensate for
+        // API pagination not guaranteeing global order across pages.
+        const applySorting = (rows: any[]) => {
+          const sortingStr: string = lastFilterParamsRef.current?.sorting || '';
+          if (!sortingStr) return rows;
+          const parts = sortingStr.trim().split(/\s+/);
+          const field = parts[0]; // e.g. 'shftutup'
+          const dir = parts[1]?.toUpperCase() === 'DESC' ? -1 : 1;
+          return [...rows].sort((a, b) => {
+            const av = a?.rawData?.[field] ?? a?.[field] ?? '';
+            const bv = b?.rawData?.[field] ?? b?.[field] ?? '';
+            if (av < bv) return -1 * dir;
+            if (av > bv) return 1 * dir;
+            return 0;
+          });
+        };
+
+        const reNumber = (rows: any[]) =>
+          rows.map((r, i) => ('no' in r ? { ...r, no: i + 1 } : r));
+
         if (append) {
-          setData((prev) => [...prev, ...normalized]);
+          setData((prev) => {
+            const combined = [...prev, ...normalized];
+            return reNumber(applySorting(combined));
+          });
         } else {
-          setData(normalized);
+          setData(reNumber(applySorting(normalized)));
           currentOffsetRef.current = 0;
         }
         // If we got fewer rows than pageSize, there's no more data
