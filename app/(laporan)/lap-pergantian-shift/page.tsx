@@ -53,19 +53,13 @@ export default function LapPergantianShiftPage() {
     return `${y}-${m}-${d} ${isEnd ? '23:59:59' : '00:00:00'}`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       tglAwal: fmtDateTime(filters.start, false),
       tglAkhir: fmtDateTime(filters.end, true),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -84,10 +78,10 @@ export default function LapPergantianShiftPage() {
       title="Pergantian Shift"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'bukaShift', label: 'Buka Shift', width: 120 },
-        { key: 'tutupShift', label: 'Tutup Shift', width: 120 },
-        { key: 'kasir', label: 'Kasir', width: 100 },
-        { key: 'saldoKasir', label: 'Saldo Kasir', align: 'right',
+        { key: 'bukaShift', label: 'Buka Shift', width: 120, sortingField: 'shfbuka' },
+        { key: 'tutupShift', label: 'Tutup Shift', width: 120, sortingField: 'shftutup' },
+        { key: 'kasir', label: 'Kasir', width: 100, sortingField: 'username' },
+        { key: 'saldoKasir', label: 'Saldo Kasir', align: 'right', sortingField: 'shfakhir',
           render: (r) => formatRupiah(r.saldoKasir as number) },
       ]}
       data={data}
@@ -101,6 +95,7 @@ export default function LapPergantianShiftPage() {
       searchPlaceholder="Kasir"
       dateField="bukaShift"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

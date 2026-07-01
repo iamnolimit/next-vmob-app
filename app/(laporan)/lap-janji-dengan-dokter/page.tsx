@@ -43,18 +43,13 @@ export default function LapJanjiDenganDokterPage() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -71,9 +66,9 @@ export default function LapJanjiDenganDokterPage() {
       title="Janji Dengan Dokter"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 100 },
-        { key: 'dokter', label: 'Dokter', width: 100 },
+        { key: 'tanggal', label: 'Tanggal', width: 100, sortingField: 'jantanggal' },
+        { key: 'pasien', label: 'Pasien', width: 100, sortingField: 'pasnama' },
+        { key: 'dokter', label: 'Dokter', width: 100, sortingField: 'doknama' },
         { key: 'keterangan', label: 'Keterangan' },
       ]}
       data={data}
@@ -87,6 +82,7 @@ export default function LapJanjiDenganDokterPage() {
       searchPlaceholder="Pasien / No. RM / dokter / keterangan"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

@@ -49,18 +49,13 @@ export default function LapKunjunganPasienPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -72,15 +67,19 @@ export default function LapKunjunganPasienPage() {
     loadMore();
   }, [loadMore]);
 
+  const handleSortChange = useCallback((sorting: string) => {
+    refetch({ sorting });
+  }, [refetch]);
+
   return (
     <ReportTable
       title="Kunjungan Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggal', label: 'Tanggal', width: 80 },
-        { key: 'nama', label: 'Nama', width: 120 },
-        { key: 'poli', label: 'Poli', width: 100 },
-        { key: 'dokter', label: 'Dokter' },
+        { key: 'tanggal', label: 'Tanggal', width: 80, sortingField: 'kuntgl' },
+        { key: 'nama', label: 'Nama', width: 120, sortingField: 'pasnama' },
+        { key: 'poli', label: 'Poli', width: 100, sortingField: 'polnama' },
+        { key: 'dokter', label: 'Dokter', sortingField: 'doknama' },
       ]}
       data={data}
       loading={loading}
@@ -93,6 +92,7 @@ export default function LapKunjunganPasienPage() {
       searchPlaceholder="Pasien / No. RM / poli / dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={handleSortChange}
       onReset={reset}
     />
   );

@@ -52,10 +52,10 @@ export default function LapTagihanJaminanPage() {
       title="Tagihan Jaminan Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No. Faktur', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 100 },
-        { key: 'jaminan', label: 'Jaminan', width: 100 },
-        { key: 'totalBiaya', label: 'Total', align: 'right',
+        { key: 'noFaktur', label: 'No. Faktur', width: 100, sortingField: 'pemnofaktur' },
+        { key: 'pasien', label: 'Pasien', width: 100, sortingField: 'pas.pasnama' },
+        { key: 'jaminan', label: 'Jaminan', width: 100, sortingField: 'katnama' },
+        { key: 'totalBiaya', label: 'Total', align: 'right', sortingField: 'pemtunai',
           render: (r) => formatRupiah(r.totalBiaya as number) },
       ]}
       data={data}
@@ -64,16 +64,12 @@ export default function LapTagihanJaminanPage() {
       hasMore={hasMore}
       onLoadMore={loadMore}
       onFetchData={(params) => {
-        const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-        const cari = periodToCari(params.periodType || 'tanggal');
-        const [startY, startM] = params.start.split('-');
-        const [endY] = params.end.split('-');
         refetch({
           tanggalawal: fmtDate(params.start),
           tanggalakhir: fmtDate(params.end),
-          cari,
-          bulan: cari === '3' ? startM : '',
-          tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+          cari: '4',
+          bulan: '',
+          tahun: '',
           filter: params.search || '',
           a: params.cabang,
           reg: params.cabangReg,
@@ -85,6 +81,7 @@ export default function LapTagihanJaminanPage() {
       searchFields={['noFaktur', 'pasien', 'jaminan']}
       searchPlaceholder="No. Faktur / Pasien / Jaminan"
       dateField="tanggal"
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

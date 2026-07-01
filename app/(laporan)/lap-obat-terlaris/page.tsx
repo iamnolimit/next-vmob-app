@@ -54,19 +54,13 @@ export default function LapObatTerlarisPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       tglAwal: fmtDate(filters.start),
       tglAkhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       namaobat: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -85,11 +79,11 @@ export default function LapObatTerlarisPage() {
       title="Obat Terlaris"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'namaObat', label: 'Nama Obat', width: 120 },
-        { key: 'jumlahTerjual', label: 'Jml Terjual', align: 'right', width: 80 },
-        { key: 'jumlahTransaksi', label: 'Jml Transaksi', align: 'right', width: 80,
+        { key: 'namaObat', label: 'Nama Obat', width: 120, sortingField: 'obatnama' },
+        { key: 'jumlahTerjual', label: 'Jml Terjual', align: 'right', width: 80, sortingField: 'jmlterjual' },
+        { key: 'jumlahTransaksi', label: 'Jml Transaksi', align: 'right', width: 80, sortingField: 'jmlfaktur',
           render: (r) => Number(r.jumlahTransaksi).toLocaleString('id-ID') },
-        { key: 'nominal', label: 'Nominal', align: 'right',
+        { key: 'nominal', label: 'Nominal', align: 'right', sortingField: 'nominaltotal',
           render: (r) => formatRupiah(r.nominal as number) },
       ]}
       data={data}
@@ -102,6 +96,7 @@ export default function LapObatTerlarisPage() {
       searchFields={['namaObat']}
       searchPlaceholder="Nama obat"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

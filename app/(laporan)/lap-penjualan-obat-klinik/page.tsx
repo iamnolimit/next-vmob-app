@@ -29,7 +29,7 @@ export default function LapPenjualanObatKlinikPage() {
   }, []);
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: 'ki-penjualanobatklinik/index',
+    apiEndpoint: 'kl-lap-penjualanobatklinik-batch/index-v2',
     apiVersion: 'api7',
     apiParams: {
       cari: 4,
@@ -47,21 +47,14 @@ export default function LapPenjualanObatKlinikPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // cari: 4=tanggal, 3=bulan, 2=tahun (same as VWEB)
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
-
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       filter: filters.search,
       carimobile: filters.search,
       a: filters.cabang,
@@ -81,10 +74,10 @@ export default function LapPenjualanObatKlinikPage() {
       title="Penjualan Obat Klinik"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No Faktur', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 100 },
-        { key: 'dokter', label: 'Dokter', width: 100 },
-        { key: 'total', label: 'Total', align: 'right',
+        { key: 'noFaktur', label: 'No Faktur', width: 100, sortingField: 'bayar.pemnofaktur' },
+        { key: 'pasien', label: 'Pasien', width: 100, sortingField: 'pasnama' },
+        { key: 'dokter', label: 'Dokter', width: 100, sortingField: 'doknama' },
+        { key: 'total', label: 'Total', align: 'right', sortingField: 'total',
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
@@ -98,6 +91,7 @@ export default function LapPenjualanObatKlinikPage() {
       searchPlaceholder="No faktur / pasien / dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

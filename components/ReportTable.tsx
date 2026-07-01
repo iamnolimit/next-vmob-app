@@ -20,6 +20,8 @@ export interface Column {
   align?: 'left' | 'right' | 'center';
   width?: number;
   render?: (row: Record<string, unknown>) => React.ReactNode;
+  /** DB field name used for server-side sorting (e.g. 'a.pjnofaktur'). If omitted, sorting is client-side only. */
+  sortingField?: string;
 }
 
 export interface IntervalOption {
@@ -70,6 +72,8 @@ interface ReportTableProps {
   defaultSortKey?: string;
   /** Default sort direction */
   defaultSortDir?: 'asc' | 'desc';
+  /** Called when user clicks a sortable column header. Receives SQL-style sorting string e.g. 'a.pjnofaktur ASC' */
+  onSortChange?: (sorting: string) => void;
 }
 
 function toISO(d: Date) {
@@ -109,6 +113,7 @@ export default function ReportTable({
   hasMore = false,
   defaultSortKey,
   defaultSortDir = 'asc',
+  onSortChange,
 }: ReportTableProps) {
   const [search, setSearch] = useState('');
   const [showFilter, setShowFilter] = useState(true);
@@ -166,11 +171,19 @@ export default function ReportTable({
   const savedScrollTopRef = useRef<number>(0);
 
   const handleSort = (key: string) => {
+    const col = columns.find((c) => c.key === key);
+    let newDir: 'asc' | 'desc' = 'asc';
     if (sortKey === key) {
-      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+      newDir = sortDir === 'asc' ? 'desc' : 'asc';
+      setSortDir(newDir);
     } else {
       setSortKey(key);
       setSortDir('asc');
+      newDir = 'asc';
+    }
+    // If column has a DB field, trigger server-side sort
+    if (col?.sortingField && onSortChange) {
+      onSortChange(`${col.sortingField} ${newDir.toUpperCase()}`);
     }
   };
 

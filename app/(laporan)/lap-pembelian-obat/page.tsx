@@ -44,21 +44,14 @@ export default function LapPembelianObatPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
-
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      // API uses new DateTime($tahun.'-'.$bulan.'-01') so needs separate bulan+tahun
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       carimobile: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -78,10 +71,10 @@ export default function LapPembelianObatPage() {
       title="Pembelian Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 32 },
-        { key: 'tanggal', label: 'Tgl', width: 72 },
-        { key: 'noFaktur', label: 'No Faktur', width: 88 },
-        { key: 'supplier', label: 'Supplier', width: 100 },
-        { key: 'total', label: 'Total', align: 'right', width: 88,
+        { key: 'tanggal', label: 'Tgl', width: 72, sortingField: 'beli.pemotanggal' },
+        { key: 'noFaktur', label: 'No Faktur', width: 88, sortingField: 'beli.pemofaktur' },
+        { key: 'supplier', label: 'Supplier', width: 100, sortingField: 'supnama' },
+        { key: 'total', label: 'Total', align: 'right', width: 88, sortingField: 'pemograndtotal',
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
@@ -95,6 +88,7 @@ export default function LapPembelianObatPage() {
       searchPlaceholder="No faktur / supplier / gudang"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

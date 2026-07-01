@@ -39,7 +39,7 @@ export default function LapPiutangObatPage() {
   };
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
-    apiEndpoint: 'appiutang-obat/index',
+    apiEndpoint: 'appiutang-obat/indexlaporan',
     apiVersion: 'api5',
     apiParams: {
       date: getTodayWIB(),
@@ -49,6 +49,8 @@ export default function LapPiutangObatPage() {
       sorting: '',
       deadline: '',
       cari: 4,
+      bulan: '',
+      tahun: '',
     },
     apiNormalizer,
   });
@@ -61,10 +63,10 @@ export default function LapPiutangObatPage() {
       title="Piutang Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No Faktur', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 100 },
-        { key: 'jatuhTempo', label: 'Jatuh Tempo', align: 'center', width: 80 },
-        { key: 'total', label: 'Total', align: 'right',
+        { key: 'noFaktur', label: 'No Faktur', width: 100, sortingField: 'pjnofaktur' },
+        { key: 'pasien', label: 'Pasien', width: 100, sortingField: 'pasnama' },
+        { key: 'jatuhTempo', label: 'Jatuh Tempo', align: 'center', width: 80, sortingField: 'deadline' },
+        { key: 'total', label: 'Total', align: 'right', sortingField: 'kurang',
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
@@ -73,16 +75,14 @@ export default function LapPiutangObatPage() {
       hasMore={hasMore}
       onLoadMore={loadMore}
       onFetchData={(params) => {
-        const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-        const cari = periodToCari(params.periodType || 'tanggal');
-        const [startY, startM] = params.start.split('-');
-        const [endY] = params.end.split('-');
+        const [year, month] = params.start.split('-');
+
         refetch({
           tanggalawal: fmtDate(params.start),
           tanggalakhir: fmtDate(params.end),
-          cari,
-          bulan: cari === '3' ? startM : '',
-          tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+          cari: params.periodType === 'bulan' ? '3' : '4',
+          bulan: params.periodType === 'bulan' ? month : '',
+          tahun: params.periodType === 'bulan' ? year : '',
           carimobile: params.search || '',
           deadline: params.interval !== 'all' ? params.interval : '',
           a: params.cabang,
@@ -103,6 +103,7 @@ export default function LapPiutangObatPage() {
       ]}
       intervalTitle="Jatuh Tempo"
       dateField="jatuhTempo"
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

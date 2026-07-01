@@ -65,23 +65,25 @@ export default function LapRegistrasiPasienPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
+    // Selalu gunakan cari=4 (date range) dengan tglAwal = hari pertama dan tglAkhir = hari terakhir
+    // periode terpilih. ReportTable sudah menghitung finalStart/finalEnd yang benar untuk
+    // mode bulan (01 s/d akhir bulan) dan tahun (01 Jan s/d 31 Des).
     refetch({
       tglAwal: fmtDate(filters.start),
       tglAkhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
-      filter: filters.search,
+      cari: '4',
+      bulan: '',
+      tahun: '',
+      filter: filters.search || '',
       a: filters.cabang,
       reg: filters.cabangReg,
       device: 'mobile',
+      // Required fields by actionIndex (sent as empty to avoid PHP undefined index)
+      pasnama: '', pasrm: '', katid: '', pasalamat: '', pastelp: '',
+      pasaktif: 1, pasjk: '', pastgllahir: '', pasibu: '', pasbbm: '',
+      pasgoldarah: '', umur: '', paskota: '', paspekerjaan: '', pasayah: '',
+      pasnokk: '', passtatusnikah: '', pasemail: '', pasalergi: '',
     });
   }, [refetch]);
 
@@ -94,10 +96,10 @@ export default function LapRegistrasiPasienPage() {
       title="Registrasi Pasien"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'tanggalISO', label: 'Tanggal', width: 80,
+        { key: 'tanggalISO', label: 'Tanggal', width: 80, sortingField: 'pastglreg',
           render: (r) => String(r.tanggal ?? '-') },
-        { key: 'noRM', label: 'No. RM', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 120 },
+        { key: 'noRM', label: 'No. RM', width: 100, sortingField: 'pasrm' },
+        { key: 'pasien', label: 'Pasien', width: 120, sortingField: 'pasnama' },
         { key: 'alamat', label: 'Alamat' },
       ]}
       data={data}
@@ -113,6 +115,7 @@ export default function LapRegistrasiPasienPage() {
       defaultSortKey="tanggalISO"
       defaultSortDir="desc"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

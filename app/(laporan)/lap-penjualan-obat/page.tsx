@@ -25,7 +25,7 @@ export default function LapPenjualanObatPage() {
 
   const { data, loading, error, hasMore, refetch, loadMore, reset } = useReportData({
     apiEndpoint: 'apt-lap-penjualanobat-batch/indexlaporan',
-    apiVersion: 'api5',
+    apiVersion: 'api7',
     apiParams: {
       cari: '4',
       sorting: '',
@@ -40,24 +40,22 @@ export default function LapPenjualanObatPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       carimobile: filters.search || '',
       a: filters.cabang,
       reg: filters.cabangReg,
       device: 'mobile',
     });
+  }, [refetch]);
+
+  const handleSortChange = useCallback((sorting: string) => {
+    refetch({ sorting });
   }, [refetch]);
 
   const handleLoadMore = useCallback(() => {
@@ -71,10 +69,10 @@ export default function LapPenjualanObatPage() {
       title="Penjualan Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'noFaktur', label: 'No Faktur', width: 100 },
-        { key: 'pasien', label: 'Pasien', width: 100 },
-        { key: 'dokter', label: 'Dokter', width: 100 },
-        { key: 'total', label: 'Total', align: 'right',
+        { key: 'noFaktur', label: 'No Faktur', width: 100, sortingField: 'pjnofaktur' },
+        { key: 'pasien', label: 'Pasien', width: 100, sortingField: 'pasnama' },
+        { key: 'dokter', label: 'Dokter', width: 100, sortingField: 'doknama' },
+        { key: 'total', label: 'Total', align: 'right', sortingField: 'grandtotal',
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
@@ -88,6 +86,7 @@ export default function LapPenjualanObatPage() {
       searchPlaceholder="No faktur / pasien / dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={handleSortChange}
       onReset={reset}
     />
   );

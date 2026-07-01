@@ -58,22 +58,14 @@ export default function LapPembayaranKasirPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // cari: 4=tanggal, 3=bulan, 2=tahun (same as VWEB)
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
-
     refetch({
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      // bulan: "YYYY-MM" format required by kl-lap-pembayarankasir-v2 (date_create needs year)
-      bulan: cari === '3' ? `${startY}-${startM}` : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       filter: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -92,11 +84,11 @@ export default function LapPembayaranKasirPage() {
       title="Pembayaran Kasir"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 32 },
-        { key: 'tanggalISO', label: 'Tgl', width: 72, render: (r) => String(r.tanggal ?? '-') },
-        { key: 'noFaktur', label: 'No Faktur', width: 88 },
-        { key: 'pasien', label: 'Pasien' },
-        { key: 'dokter', label: 'Dokter' },
-        { key: 'total', label: 'Total', align: 'right', width: 88,
+        { key: 'tanggalISO', label: 'Tgl', width: 72, sortingField: 'bayar.pemtanggal', render: (r) => String(r.tanggal ?? '-') },
+        { key: 'noFaktur', label: 'No Faktur', width: 88, sortingField: 'bayar.pemnofaktur' },
+        { key: 'pasien', label: 'Pasien', sortingField: 'pasnama' },
+        { key: 'dokter', label: 'Dokter', sortingField: 'doknama' },
+        { key: 'total', label: 'Total', align: 'right', width: 88, sortingField: 'total',
           render: (r) => formatRupiah(r.total as number) },
       ]}
       data={data}
@@ -110,6 +102,7 @@ export default function LapPembayaranKasirPage() {
       searchPlaceholder="Nama Pasien / No Faktur / Dokter"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

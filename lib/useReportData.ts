@@ -39,9 +39,11 @@ export function useReportData({
       setError(null);
       try {
         const offset = append ? currentOffsetRef.current : 0;
-        // On fresh fetch, save the filter params for use by loadMore
+        // On fresh fetch, merge new params into existing filter params so that
+        // partial updates (e.g. only sorting) don't lose previously set filters
+        // (e.g. tanggalawal/tanggalakhir).
         if (!append) {
-          lastFilterParamsRef.current = extraParams;
+          lastFilterParamsRef.current = { ...lastFilterParamsRef.current, ...extraParams };
         }
         const mergedParams = {
           a: user.app_id,

@@ -59,14 +59,18 @@ export default function LapStokObatPage() {
     loadMore();
   }, [loadMore]);
 
+  const handleSortChange = useCallback((sorting: string) => {
+    refetch({ sorting });
+  }, [refetch]);
+
   return (
     <ReportTable
       title="Stok Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'gudang', label: 'Gudang', width: 80 },
-        { key: 'kodeObat', label: 'Kode Obat', width: 80 },
-        { key: 'namaObat', label: 'Nama Obat', width: 120 },
+        { key: 'gudang', label: 'Gudang', width: 80, sortingField: 'gudnama' },
+        { key: 'kodeObat', label: 'Kode Obat', width: 80, sortingField: 'obatkode' },
+        { key: 'namaObat', label: 'Nama Obat', width: 120, sortingField: 'obatnama' },
         { key: 'stok', label: 'Stok', align: 'right' },
       ]}
       data={data}
@@ -79,6 +83,7 @@ export default function LapStokObatPage() {
       hideDateFilter
       gudangField="gudang"
       onFetchData={handleFetchData}
+      onSortChange={handleSortChange}
       onReset={reset}
     />
   );

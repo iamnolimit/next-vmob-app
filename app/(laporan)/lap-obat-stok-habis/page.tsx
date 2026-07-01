@@ -64,10 +64,10 @@ export default function LapObatStokHabisPage() {
       title="Obat Stok Habis"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'gudang', label: 'Gudang', width: 80 },
-        { key: 'namaObat', label: 'Nama Obat', width: 120 },
-        { key: 'stokMinimal', label: 'Stok Minimal', align: 'right', width: 80 },
-        { key: 'stokNyata', label: 'Stok Nyata', align: 'right' },
+        { key: 'gudang', label: 'Gudang', width: 80, sortingField: 'gudnama' },
+        { key: 'namaObat', label: 'Nama Obat', width: 120, sortingField: 'obatnama' },
+        { key: 'stokMinimal', label: 'Stok Minimal', align: 'right', width: 80, sortingField: 'obatminstok' },
+        { key: 'stokNyata', label: 'Stok Nyata', align: 'right', sortingField: 'stok' },
       ]}
       data={data}
       loading={loading}
@@ -79,6 +79,7 @@ export default function LapObatStokHabisPage() {
       hideDateFilter
       gudangField="gudang"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

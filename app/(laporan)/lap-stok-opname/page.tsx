@@ -46,19 +46,13 @@ export default function LapStokOpnamePage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       tglAwal: fmtDate(filters.start),
       tglAkhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       namaobat: filters.search,
       a: filters.cabang,
       reg: filters.cabangReg,
@@ -78,9 +72,9 @@ export default function LapStokOpnamePage() {
       title="Stok Opname"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'gudang', label: 'Gudang', width: 80 },
-        { key: 'namaObat', label: 'Nama Obat', width: 120 },
-        { key: 'selisih', label: 'Selisih', align: 'right', width: 60 },
+        { key: 'gudang', label: 'Gudang', width: 80, sortingField: 'gudnama' },
+        { key: 'namaObat', label: 'Nama Obat', width: 120, sortingField: 'obatnama' },
+        { key: 'selisih', label: 'Selisih', align: 'right', width: 60, sortingField: 'sopselisih' },
         { key: 'nominalSelisih', label: 'Nominal Selisih', align: 'right',
           render: (r) => formatRupiah(r.nominalSelisih as number) },
       ]}
@@ -94,6 +88,7 @@ export default function LapStokOpnamePage() {
       searchFields={['namaObat', 'gudang']}
       searchPlaceholder="Nama obat / gudang"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

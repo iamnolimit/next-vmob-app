@@ -51,20 +51,14 @@ export default function LapPendapatanPetugasMedisPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
-
     refetch({
       tglAwal: fmtDate(filters.start),
       tglAkhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? startM : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: '4',
+      bulan: '',
+      tahun: '',
       filter: filters.search,
       pemnofaktur: '',
       bianama: '',
@@ -89,9 +83,9 @@ export default function LapPendapatanPetugasMedisPage() {
       title="Pendapatan Petugas Medis"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 40 },
-        { key: 'dokter', label: 'Dokter', width: 100 },
-        { key: 'noFaktur', label: 'No. Faktur', width: 100 },
-        { key: 'pemeriksaan', label: 'Pemeriksaan', width: 100 },
+        { key: 'dokter', label: 'Dokter', width: 100, sortingField: 'c.doknama' },
+        { key: 'noFaktur', label: 'No. Faktur', width: 100, sortingField: 'pemnofaktur' },
+        { key: 'pemeriksaan', label: 'Pemeriksaan', width: 100, sortingField: 'bianama' },
         { key: 'feeDokter', label: 'Fee Dokter', align: 'right',
           render: (r) => formatRupiah(r.feeDokter as number) },
       ]}
@@ -106,6 +100,7 @@ export default function LapPendapatanPetugasMedisPage() {
       searchPlaceholder="Dokter / No. Faktur / pemeriksaan"
       dateField="tanggal"
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       onReset={reset}
     />
   );

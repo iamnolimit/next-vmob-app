@@ -30,9 +30,6 @@ export default function LapHutangObatPage() {
     return `${d} ${months[Number(m) - 1]} ${y}`;
   };
 
-  // cari: 4=tanggal, 3=bulan, 2=tahun
-  const periodToCari = (p: string) => p === 'tahun' ? '2' : p === 'bulan' ? '3' : '4';
-
   const getTodayWIB = () => {
     const now = new Date();
     const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
@@ -63,16 +60,13 @@ export default function LapHutangObatPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFetchData = useCallback((filters: any) => {
-    const cari = periodToCari(filters.periodType || 'tanggal');
-    const [startY, startM] = filters.start.split('-');
-    const [endY] = filters.end.split('-');
     refetch({
       date: getTodayWIB(),
       tanggalawal: fmtDate(filters.start),
       tanggalakhir: fmtDate(filters.end),
-      cari,
-      bulan: cari === '3' ? String(Number(startM)) : '',
-      tahun: cari === '2' ? endY : cari === '3' ? startY : '',
+      cari: 4,
+      bulan: '',
+      tahun: '',
       pemofaktur: filters.search || '',
       supnama: filters.search || '',
       a: filters.cabang,
@@ -89,10 +83,10 @@ export default function LapHutangObatPage() {
       title="Hutang Obat"
       columns={[
         { key: 'no', label: 'No', align: 'center', width: 36 },
-        { key: 'tanggal', label: 'Tgl', width: 70 },
-        { key: 'noFaktur', label: 'No Faktur', width: 90 },
-        { key: 'supplier', label: 'Supplier', width: 100 },
-        { key: 'totalBayar', label: 'Total Bayar', align: 'right', width: 90,
+        { key: 'tanggal', label: 'Tgl', width: 70, sortingField: 'pemotanggal' },
+        { key: 'noFaktur', label: 'No Faktur', width: 90, sortingField: 'pemofaktur' },
+        { key: 'supplier', label: 'Supplier', width: 100, sortingField: 'supnama' },
+        { key: 'totalBayar', label: 'Total Bayar', align: 'right', width: 90, sortingField: 'jml_bayar',
           render: (r) => formatRupiah(r.totalBayar as number) },
       ]}
       data={data}
@@ -101,6 +95,7 @@ export default function LapHutangObatPage() {
       hasMore={hasMore}
       onLoadMore={loadMore}
       onFetchData={handleFetchData}
+      onSortChange={(sorting) => refetch({ sorting })}
       totalLabel="Total Pembayaran Hutang"
       totalValue={formatRupiah(total)}
       searchFields={['noFaktur', 'supplier']}
